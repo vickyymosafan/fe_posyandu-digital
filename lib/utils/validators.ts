@@ -185,3 +185,11 @@ export const updatePasswordSchema = z.object({
   kataSandiLama: z.string().min(1, 'Password lama tidak boleh kosong'),
   kataSandiBaru: passwordSchema,
 });
+
+/**
+ * Schema untuk form login
+ */
+export const loginFormSchema = z.object({
+  email: emailSchema,
+  password: z.string().min(1, 'Password tidak boleh kosong'),
+});
