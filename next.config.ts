@@ -154,6 +154,16 @@ const nextConfig: NextConfig = {
     minimumCacheTTL: 60,
   },
 
+  // Rewrites untuk manifest compatibility
+  async rewrites() {
+    return [
+      {
+        source: '/manifest.webmanifest',
+        destination: '/manifest.json',
+      },
+    ];
+  },
+
   // Security headers
   async headers() {
     return [
