@@ -13,3 +13,4 @@ export * from './layout';
 
 // Feature Components
 export { OfflineIndicator } from './OfflineIndicator';
+export { ErrorBoundary } from './ErrorBoundary';
