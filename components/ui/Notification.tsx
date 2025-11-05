@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useCallback } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 /**
@@ -46,6 +46,12 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   defaultDuration = 5000,
 }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  // Only render portal after client-side hydration to prevent hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const hideNotification = useCallback((id: string) => {
     setNotifications((prev) => prev.filter((n) => n.id !== id));
@@ -81,7 +87,7 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   return (
     <NotificationContext.Provider value={{ notifications, showNotification, hideNotification }}>
       {children}
-      {typeof window !== 'undefined' &&
+      {mounted && notifications.length > 0 &&
         createPortal(
           <div className={`fixed ${positionClasses[position]} z-50 flex flex-col gap-2 max-w-sm w-full`}>
             {notifications.map((notification) => (
