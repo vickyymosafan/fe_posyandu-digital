@@ -44,11 +44,16 @@ interface RequestOptions extends RequestInit {
 }
 
 /**
+ * Token key - harus sama dengan AuthContext
+ */
+const TOKEN_KEY = 'auth_token';
+
+/**
  * Get JWT token dari localStorage
  */
 function getToken(): string | null {
   if (typeof window === 'undefined') return null;
-  return localStorage.getItem('token');
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 /**
@@ -56,7 +61,7 @@ function getToken(): string | null {
  */
 export function setToken(token: string): void {
   if (typeof window === 'undefined') return;
-  localStorage.setItem('token', token);
+  localStorage.setItem(TOKEN_KEY, token);
 }
 
 /**
@@ -64,7 +69,7 @@ export function setToken(token: string): void {
  */
 export function removeToken(): void {
   if (typeof window === 'undefined') return;
-  localStorage.removeItem('token');
+  localStorage.removeItem(TOKEN_KEY);
 }
 
 /**
@@ -163,6 +168,16 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
       status: response.status,
       timestamp: new Date().toISOString(),
     });
+    
+    // Backend return data langsung tanpa wrapper "data"
+    // Wrap ke format APIResponse jika belum
+    if (!('data' in data) && !('error' in data)) {
+      // Response dari backend adalah data langsung, wrap ke APIResponse format
+      return {
+        data: data as T,
+      };
+    }
+    
     return data;
   }
 

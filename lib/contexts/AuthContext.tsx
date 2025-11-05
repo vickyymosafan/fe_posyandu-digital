@@ -167,6 +167,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('[AuthContext] Login response received:', {
           hasData: !!response.data,
           hasError: !!response.error,
+          response: response,
+          responseKeys: Object.keys(response),
           timestamp: new Date().toISOString(),
         });
 

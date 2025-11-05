@@ -57,6 +57,7 @@ class AuthAPI {
         hasToken: !!response.data?.token,
         hasUser: !!response.data?.user,
         hasError: !!response.error,
+        response: response,
         timestamp: new Date().toISOString(),
       });
 
@@ -68,12 +69,17 @@ class AuthAPI {
 
       return response;
     } catch (error) {
-      console.error('[AuthAPI] Login failed:', {
+      console.error('[AuthAPI] Login failed (caught error):', {
         error: error instanceof Error ? error.message : 'Unknown error',
         errorType: error instanceof Error ? error.constructor.name : 'Unknown',
         timestamp: new Date().toISOString(),
       });
-      throw error;
+
+      // Return APIResponse format dengan error
+      // Jangan throw, biar AuthContext bisa handle dengan konsisten
+      return {
+        error: error instanceof Error ? error.message : 'Login gagal',
+      };
     }
   }
 
