@@ -77,3 +77,7 @@ export {
   NetworkError,
   handleAPIError,
 } from './errors';
+
+// Cookies
+export { setCookie, getCookie, removeCookie, hasCookie } from './cookies';
+export type { CookieOptions } from './cookies';
