@@ -8,3 +8,9 @@
 export { useAuth } from './useAuth';
 export { useOffline } from './useOffline';
 export { useLoginForm } from './useLoginForm';
+export { useDashboardStats } from './useDashboardStats';
+export type {
+  DashboardStats,
+  TrendData,
+  UseDashboardStatsReturn,
+} from './useDashboardStats';
