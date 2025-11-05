@@ -26,7 +26,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   logout: () => Promise<void>;
   updateNama: (nama: string) => Promise<void>;
   updatePassword: (oldPassword: string, newPassword: string) => Promise<void>;
@@ -149,26 +149,62 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Login function
+   * Returns user data untuk immediate redirect
    */
   const login = useCallback(
-    async (email: string, password: string) => {
+    async (email: string, password: string): Promise<User> => {
+      console.log('[AuthContext] Login attempt:', {
+        email,
+        timestamp: new Date().toISOString(),
+      });
+
       try {
         setIsLoading(true);
 
+        console.log('[AuthContext] Calling authAPI.login...');
         const response = await authAPI.login(email, password);
 
+        console.log('[AuthContext] Login response received:', {
+          hasData: !!response.data,
+          hasError: !!response.error,
+          timestamp: new Date().toISOString(),
+        });
+
         if (!response.data) {
+          console.error('[AuthContext] Login failed - no data:', {
+            error: response.error,
+            timestamp: new Date().toISOString(),
+          });
           throw new AuthenticationError(response.error || 'Login gagal');
         }
 
         const { token, user: userData } = response.data;
 
+        console.log('[AuthContext] Login successful:', {
+          userId: userData.id,
+          userName: userData.nama,
+          userRole: userData.role,
+          hasToken: !!token,
+          timestamp: new Date().toISOString(),
+        });
+
         // Save token
         saveToken(token);
+        console.log('[AuthContext] Token saved to localStorage and cookie');
 
         // Set user state
         setUser(userData);
+        console.log('[AuthContext] User state updated');
+
+        // Return user data untuk immediate use
+        return userData;
       } catch (error) {
+        console.error('[AuthContext] Login error:', {
+          error: error instanceof Error ? error.message : 'Unknown error',
+          errorType: error instanceof Error ? error.constructor.name : 'Unknown',
+          timestamp: new Date().toISOString(),
+        });
+
         clearToken();
         setUser(null);
         throw error;

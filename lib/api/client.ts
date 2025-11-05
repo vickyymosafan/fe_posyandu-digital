@@ -25,7 +25,10 @@ import type { APIResponse } from '@/types';
 /**
  * Base URL dari environment variable
  */
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+// Log BASE_URL saat module dimuat
+console.log('[API Client] Initialized with BASE_URL:', BASE_URL);
 
 /**
  * Timeout untuk setiap request (30 detik)
@@ -73,6 +76,13 @@ async function fetchWithTimeout(
 ): Promise<Response> {
   const { timeout = REQUEST_TIMEOUT, ...fetchOptions } = options;
 
+  console.log('[API Client] Request:', {
+    url,
+    method: fetchOptions.method || 'GET',
+    headers: fetchOptions.headers,
+    timestamp: new Date().toISOString(),
+  });
+
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeout);
 
@@ -82,12 +92,41 @@ async function fetchWithTimeout(
       signal: controller.signal,
     });
     clearTimeout(timeoutId);
+
+    console.log('[API Client] Response:', {
+      url,
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      timestamp: new Date().toISOString(),
+    });
+
     return response;
   } catch (error) {
     clearTimeout(timeoutId);
+
+    console.error('[API Client] Request Failed:', {
+      url,
+      error: error instanceof Error ? error.message : 'Unknown error',
+      errorName: error instanceof Error ? error.name : 'Unknown',
+      timestamp: new Date().toISOString(),
+    });
+
     if (error instanceof Error && error.name === 'AbortError') {
+      console.error('[API Client] Request Timeout:', {
+        url,
+        timeout,
+        timestamp: new Date().toISOString(),
+      });
       throw new TimeoutError();
     }
+
+    console.error('[API Client] Network Error:', {
+      url,
+      message: 'Tidak dapat terhubung ke server',
+      baseUrl: BASE_URL,
+      timestamp: new Date().toISOString(),
+    });
     throw new NetworkError();
   }
 }
@@ -100,7 +139,18 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
   let data: APIResponse<T>;
   try {
     data = await response.json();
-  } catch {
+    console.log('[API Client] Response Data:', {
+      status: response.status,
+      data,
+      timestamp: new Date().toISOString(),
+    });
+  } catch (parseError) {
+    console.error('[API Client] Failed to parse response:', {
+      status: response.status,
+      statusText: response.statusText,
+      error: parseError instanceof Error ? parseError.message : 'Unknown',
+      timestamp: new Date().toISOString(),
+    });
     // Jika response bukan JSON, buat response object
     data = {
       error: response.statusText || 'Unknown error',
@@ -109,11 +159,22 @@ async function handleResponse<T>(response: Response): Promise<APIResponse<T>> {
 
   // Handle success response
   if (response.ok) {
+    console.log('[API Client] Success Response:', {
+      status: response.status,
+      timestamp: new Date().toISOString(),
+    });
     return data;
   }
 
   // Handle error response berdasarkan status code
   const errorMessage = data.error || 'Terjadi kesalahan';
+
+  console.error('[API Client] Error Response:', {
+    status: response.status,
+    errorMessage,
+    details: data.details,
+    timestamp: new Date().toISOString(),
+  });
 
   switch (response.status) {
     case 400:

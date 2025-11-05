@@ -39,7 +39,7 @@ interface UseLoginFormReturn {
 
 export function useLoginForm(): UseLoginFormReturn {
   const router = useRouter();
-  const { login, user } = useAuth();
+  const { login } = useAuth();
   const { showNotification } = useNotification();
 
   const [formData, setFormData] = useState<LoginFormData>({
@@ -115,11 +115,18 @@ export function useLoginForm(): UseLoginFormReturn {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    console.log('[useLoginForm] Form submitted:', {
+      email: formData.email,
+      timestamp: new Date().toISOString(),
+    });
+
     // Validate all fields
     try {
       loginFormSchema.parse(formData);
       setErrors({});
+      console.log('[useLoginForm] Validation passed');
     } catch (error) {
+      console.error('[useLoginForm] Validation failed:', error);
       const fieldErrors: LoginFormErrors = {};
       if (error instanceof Error && 'errors' in error) {
         const zodError = error as { errors: Array<{ path: string[]; message: string }> };
@@ -134,28 +141,40 @@ export function useLoginForm(): UseLoginFormReturn {
 
     // Submit login
     setIsSubmitting(true);
+    console.log('[useLoginForm] Submitting login...');
+
     try {
-      await login(formData.email, formData.password);
+      // Login dan dapatkan user data langsung
+      console.log('[useLoginForm] Calling login function...');
+      const userData = await login(formData.email, formData.password);
+
+      console.log('[useLoginForm] Login successful:', {
+        userId: userData.id,
+        userName: userData.nama,
+        userRole: userData.role,
+        timestamp: new Date().toISOString(),
+      });
 
       // Show success notification
       showNotification('success', 'Login berhasil');
 
-      // Redirect based on role
-      // Note: user state might not be updated immediately, so we wait a bit
-      setTimeout(() => {
-        if (user) {
-          const dashboardUrl = getDashboardUrl(user.role);
-          router.push(dashboardUrl);
-        } else {
-          // Fallback: let middleware handle redirect
-          router.push('/');
-        }
-      }, 100);
+      // Redirect based on role dari user data yang dikembalikan
+      const dashboardUrl = getDashboardUrl(userData.role);
+      console.log('[useLoginForm] Redirecting to:', dashboardUrl);
+      router.push(dashboardUrl);
     } catch (error) {
+      console.error('[useLoginForm] Login failed:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        errorType: error instanceof Error ? error.constructor.name : 'Unknown',
+        timestamp: new Date().toISOString(),
+      });
+
       const errorMessage = handleAPIError(error);
+      console.error('[useLoginForm] Error message:', errorMessage);
       showNotification('error', errorMessage);
     } finally {
       setIsSubmitting(false);
+      console.log('[useLoginForm] Submit completed');
     }
   };
 
