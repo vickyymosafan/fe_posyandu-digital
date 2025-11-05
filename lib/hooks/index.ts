@@ -6,3 +6,4 @@
  */
 
 export { useAuth } from './useAuth';
+export { useOffline } from './useOffline';

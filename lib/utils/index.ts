@@ -81,3 +81,6 @@ export {
 // Cookies
 export { setCookie, getCookie, removeCookie, hasCookie } from './cookies';
 export type { CookieOptions } from './cookies';
+
+// Sync Manager
+export { syncManager, SyncManager } from './syncManager';
