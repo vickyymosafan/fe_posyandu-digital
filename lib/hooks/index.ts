@@ -13,8 +13,10 @@ export { usePetugasList } from './usePetugasList';
 export { usePetugasForm } from './usePetugasForm';
 export { useLansiaList } from './useLansiaList';
 export { useLansiaForm } from './useLansiaForm';
+export { useLansiaDetail } from './useLansiaDetail';
 export type {
   DashboardStats,
   TrendData,
   UseDashboardStatsReturn,
 } from './useDashboardStats';
+export type { UseLansiaDetailReturn } from './useLansiaDetail';
