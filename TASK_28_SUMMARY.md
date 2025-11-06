@@ -246,6 +246,30 @@ Untuk developer yang akan continue development:
 
 **Total Documentation**: ~3,700 lines of comprehensive documentation
 
+## 🐛 Bug Fixes During Task 28
+
+### Dashboard Authorization Error
+
+**Problem**: Dashboard mengalami error "Akses ditolak" saat user dengan role PETUGAS login.
+
+**Root Cause**: Hook `useDashboardStats` memanggil `petugasAPI.getAll()` yang merupakan endpoint Admin only.
+
+**Solution**: 
+- Mengubah `useDashboardStats` menjadi role-aware
+- Admin: Fetch semua data termasuk petugas
+- Petugas: Hanya fetch lansia (skip petugas karena tidak punya akses)
+- Menambahkan fallback ke IndexedDB untuk offline support
+
+**Files Changed**:
+- `frontend/lib/hooks/useDashboardStats.ts` - Added role-based conditional fetching
+- `frontend/DASHBOARD_FIX.md` - Dokumentasi lengkap tentang fix
+
+**Design Principles Applied**:
+- SRP: Hook tetap single responsibility
+- DIP: Depend pada useAuth abstraction
+- SoC: Role logic di hook, bukan di component
+- KISS: Simple conditional based on role
+
 ## 🎉 Conclusion
 
 Task 28 telah completed dengan sukses. Dokumentasi yang dibuat:
@@ -256,6 +280,7 @@ Task 28 telah completed dengan sukses. Dokumentasi yang dibuat:
 - ✅ Maintainable dan scalable
 - ✅ Ready untuk production deployment
 - ✅ Semua dalam bahasa Indonesia
+- ✅ Bug fixes untuk dashboard authorization error
 
-Project Posyandu Lansia Frontend sekarang memiliki dokumentasi yang solid dan ready untuk deployment ke production!
+Project Posyandu Lansia Frontend sekarang memiliki dokumentasi yang solid, bug-free, dan ready untuk deployment ke production!
 

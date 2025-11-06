@@ -2,9 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { lansiaAPI, petugasAPI } from '@/lib/api';
-import { pemeriksaanRepository } from '@/lib/db';
+import { pemeriksaanRepository, lansiaRepository } from '@/lib/db';
 import { startOfDay, endOfDay, subDays, format } from 'date-fns';
 import { checkBackendHealthVerbose } from '@/lib/utils/healthCheck';
+import { useAuth } from './useAuth';
+import type { UserRole } from '@/types';
 
 /**
  * Interface untuk statistik dashboard
@@ -41,6 +43,11 @@ export interface UseDashboardStatsReturn {
  * - SRP: Hanya bertanggung jawab untuk fetch dan aggregate data statistik
  * - SoC: Memisahkan data fetching logic dari UI component
  * - DRY: Reusable di berbagai dashboard component
+ * - DIP: Depend pada user role untuk menentukan data yang di-fetch
+ * 
+ * Hook ini smart: otomatis adjust data yang di-fetch berdasarkan role user
+ * - ADMIN: Fetch semua data termasuk petugas
+ * - PETUGAS: Hanya fetch data lansia dan pemeriksaan (skip petugas karena tidak punya akses)
  * 
  * @returns {UseDashboardStatsReturn} Stats, trend data, loading state, error, dan refetch function
  * 
@@ -60,6 +67,7 @@ export interface UseDashboardStatsReturn {
  * ```
  */
 export function useDashboardStats(): UseDashboardStatsReturn {
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [trendData, setTrendData] = useState<TrendData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -67,6 +75,7 @@ export function useDashboardStats(): UseDashboardStatsReturn {
 
   /**
    * Fetch statistics dari API dan IndexedDB
+   * Smart function yang adjust berdasarkan user role
    */
   const fetchStats = async () => {
     try {
@@ -74,33 +83,52 @@ export function useDashboardStats(): UseDashboardStatsReturn {
       setError(null);
 
       console.log('[useDashboardStats] Starting to fetch dashboard statistics...');
+      console.log('[useDashboardStats] User role:', user?.role);
 
-      // Fetch data secara parallel untuk performa lebih baik
-      console.log('[useDashboardStats] Fetching petugas and lansia data from API...');
-      const [petugasResponse, lansiaResponse] = await Promise.all([
-        petugasAPI.getAll(),
-        lansiaAPI.getAll(),
-      ]);
+      let totalPetugasAktif = 0;
+      let totalLansia = 0;
 
-      console.log('[useDashboardStats] API responses received:', {
-        petugasResponse,
-        lansiaResponse,
-      });
+      // Fetch data berdasarkan role
+      if (user?.role === 'ADMIN') {
+        // Admin: Fetch semua data termasuk petugas
+        console.log('[useDashboardStats] Admin mode: Fetching petugas and lansia data...');
+        const [petugasResponse, lansiaResponse] = await Promise.all([
+          petugasAPI.getAll(),
+          lansiaAPI.getAll(),
+        ]);
 
-      // Hitung jumlah petugas aktif
-      const totalPetugasAktif = petugasResponse.data
-        ? petugasResponse.data.filter((p) => p.aktif).length
-        : 0;
+        totalPetugasAktif = petugasResponse.data
+          ? petugasResponse.data.filter((p) => p.aktif).length
+          : 0;
+        totalLansia = lansiaResponse.data ? lansiaResponse.data.length : 0;
 
-      // Hitung total lansia
-      const totalLansia = lansiaResponse.data ? lansiaResponse.data.length : 0;
+        console.log('[useDashboardStats] Admin stats:', {
+          totalPetugasAktif,
+          totalLansia,
+        });
+      } else {
+        // Petugas: Hanya fetch lansia (tidak punya akses ke petugas endpoint)
+        console.log('[useDashboardStats] Petugas mode: Fetching lansia data only...');
+        
+        // Try fetch from API first, fallback to IndexedDB if offline
+        try {
+          const lansiaResponse = await lansiaAPI.getAll();
+          totalLansia = lansiaResponse.data ? lansiaResponse.data.length : 0;
+        } catch (apiError) {
+          console.warn('[useDashboardStats] API fetch failed, using IndexedDB fallback');
+          const lansiaFromDB = await lansiaRepository.getAll();
+          totalLansia = lansiaFromDB.length;
+        }
 
-      console.log('[useDashboardStats] Calculated stats:', {
-        totalPetugasAktif,
-        totalLansia,
-      });
+        // Petugas tidak perlu data petugas, set 0
+        totalPetugasAktif = 0;
 
-      // Hitung pemeriksaan hari ini dari IndexedDB
+        console.log('[useDashboardStats] Petugas stats:', {
+          totalLansia,
+        });
+      }
+
+      // Hitung pemeriksaan hari ini dari IndexedDB (sama untuk semua role)
       console.log('[useDashboardStats] Fetching pemeriksaan from IndexedDB...');
       const today = new Date();
       const startToday = startOfDay(today);
@@ -128,16 +156,9 @@ export function useDashboardStats(): UseDashboardStatsReturn {
       const errorMessage =
         err instanceof Error ? err.message : 'Gagal memuat data statistik';
       
-      // FAIL FAST: Log error dengan detail lengkap
-      console.error('❌ [useDashboardStats] CRITICAL ERROR - Dashboard failed to load!');
-      console.error('❌ [useDashboardStats] Error message:', errorMessage);
-      console.error('❌ [useDashboardStats] Error object:', err);
-      console.error('❌ [useDashboardStats] Error stack:', err instanceof Error ? err.stack : 'No stack trace');
+      console.error('❌ [useDashboardStats] Error fetching stats:', errorMessage);
       
       setError(errorMessage);
-      
-      // FAIL FAST: Throw error untuk stop execution
-      throw err;
     } finally {
       setIsLoading(false);
     }
@@ -173,8 +194,7 @@ export function useDashboardStats(): UseDashboardStatsReturn {
       console.log('[useDashboardStats] Trend data fetched:', trends);
       setTrendData(trends);
     } catch (err) {
-      console.error('❌ [useDashboardStats] Error fetching trend data:', err);
-      console.error('❌ [useDashboardStats] Trend error stack:', err instanceof Error ? err.stack : 'No stack trace');
+      console.warn('[useDashboardStats] Error fetching trend data:', err);
       // Tidak set error karena trend data bersifat optional
       setTrendData([]);
     }
@@ -187,14 +207,25 @@ export function useDashboardStats(): UseDashboardStatsReturn {
     await fetchStats();
   };
 
-  // Fetch data saat component mount
+  // Fetch data saat component mount dan saat user berubah
   useEffect(() => {
+    // Only fetch if user is authenticated
+    if (!user) {
+      console.log('[useDashboardStats] No user, skipping fetch');
+      setIsLoading(false);
+      return;
+    }
+
     // Check backend health first
     checkBackendHealthVerbose().then(() => {
       fetchStats();
+    }).catch((err) => {
+      console.error('[useDashboardStats] Backend health check failed:', err);
+      setError('Backend tidak dapat diakses');
+      setIsLoading(false);
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.role]); // Re-fetch when user role changes
 
   return {
     stats,
