@@ -3,21 +3,26 @@
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { PetugasLayout } from '@/components/layout';
-import { PemeriksaanFisikForm } from '@/components/pemeriksaan';
+import { PemeriksaanGabunganForm } from '@/components/pemeriksaan';
 import { Card, Loading } from '@/components/ui';
 import { useLansiaDetail } from '@/lib/hooks/useLansiaDetail';
-import { usePemeriksaanFisikForm } from '@/lib/hooks/usePemeriksaanFisikForm';
+import { usePemeriksaanGabunganForm } from '@/lib/hooks/usePemeriksaanGabunganForm';
 import { formatDate, formatUmur } from '@/lib/utils/formatters';
 import { Button } from '@/components/ui/Button';
 
 /**
- * Halaman Tambah Pemeriksaan Fisik
+ * Halaman Tambah Pemeriksaan (Gabungan: Fisik + Kesehatan)
  * 
  * Responsibilities (SRP):
  * - Display lansia info
- * - Show pemeriksaan fisik form
+ * - Show pemeriksaan gabungan form (fisik + lab)
  * - Handle form submission
  * - Navigate back on success
+ * 
+ * Design Principles:
+ * - SRP: Hanya compose layout dan content
+ * - DIP: Depend on hook abstraction
+ * - Composition: Reuse components
  * 
  * Route: /petugas/lansia/[kode]/pemeriksaan/tambah
  */
@@ -26,11 +31,15 @@ interface PageProps {
   params: Promise<{ kode: string }>;
 }
 
-export default function TambahPemeriksaanFisikPage({ params }: PageProps) {
+export default function TambahPemeriksaanPage({ params }: PageProps) {
   const router = useRouter();
   const { kode } = use(params);
   const { lansia, isLoading, error } = useLansiaDetail(kode);
-  const formState = usePemeriksaanFisikForm(kode, lansia?.id || 0);
+  const formState = usePemeriksaanGabunganForm(
+    kode,
+    lansia?.id || 0,
+    lansia?.gender || 'L'
+  );
 
   if (isLoading) {
     return (
@@ -73,10 +82,10 @@ export default function TambahPemeriksaanFisikPage({ params }: PageProps) {
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-neutral-950 mb-2">
-            Input Pemeriksaan Fisik
+            Input Pemeriksaan
           </h1>
           <p className="text-neutral-600">
-            Masukkan data pemeriksaan fisik untuk lansia
+            Masukkan data pemeriksaan fisik dan kesehatan (lab) untuk lansia
           </p>
         </div>
 
@@ -108,8 +117,8 @@ export default function TambahPemeriksaanFisikPage({ params }: PageProps) {
           </div>
         </Card>
 
-        {/* Form */}
-        <PemeriksaanFisikForm formState={formState} />
+        {/* Form Gabungan */}
+        <PemeriksaanGabunganForm formState={formState} />
       </div>
     </PetugasLayout>
   );
