@@ -71,7 +71,7 @@ export function GrafikTrenContent({
                 {lansiaNama} (ID: {lansiaKode})
               </p>
             </div>
-            <Button variant="outline" onClick={handleBack}>
+            <Button variant="secondary" onClick={handleBack}>
               Kembali
             </Button>
           </div>
