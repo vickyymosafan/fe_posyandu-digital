@@ -52,13 +52,7 @@ export default function DaftarPetugasPage() {
     router.push('/admin/petugas/tambah');
   };
 
-  /**
-   * Handle klik tombol edit petugas
-   * Navigate ke halaman form edit
-   */
-  const handleEditPetugas = (id: number) => {
-    router.push(`/admin/petugas/edit/${id}`);
-  };
+
 
   /**
    * Handle klik tombol toggle status
@@ -174,24 +168,14 @@ export default function DaftarPetugasPage() {
                       </span>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => handleEditPetugas(p.id)}
-                          aria-label={`Edit petugas ${p.nama}`}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          variant={p.aktif ? 'danger' : 'primary'}
-                          size="sm"
-                          onClick={() => handleToggleStatusClick(p)}
-                          aria-label={`${p.aktif ? 'Nonaktifkan' : 'Aktifkan'} petugas ${p.nama}`}
-                        >
-                          {p.aktif ? 'Nonaktifkan' : 'Aktifkan'}
-                        </Button>
-                      </div>
+                      <Button
+                        variant={p.aktif ? 'danger' : 'primary'}
+                        size="sm"
+                        onClick={() => handleToggleStatusClick(p)}
+                        aria-label={`${p.aktif ? 'Nonaktifkan' : 'Aktifkan'} petugas ${p.nama}`}
+                      >
+                        {p.aktif ? 'Nonaktifkan' : 'Aktifkan'}
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
