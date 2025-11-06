@@ -1,6 +1,6 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import {
   Button,
   Input,
@@ -14,6 +14,7 @@ import {
 } from '@/components/ui';
 import { useLansiaList } from '@/lib/hooks/useLansiaList';
 import { formatDate, formatUmur } from '@/lib/utils/formatters';
+import { ROUTES } from '@/lib/constants/navigation';
 
 /**
  * LansiaListContent Component
@@ -32,23 +33,27 @@ import { formatDate, formatUmur } from '@/lib/utils/formatters';
  * - SRP: Component hanya untuk presentasi
  * - DIP: Depends on useLansiaList hook abstraction
  * - Composition: Compose dari UI components yang sudah ada
+ * - DRY: Routes diambil dari constants yang terpusat
  * 
  * @returns {JSX.Element} Konten daftar lansia
  */
 export function LansiaListContent() {
   const router = useRouter();
+  const pathname = usePathname();
   const { lansia, isLoading, searchQuery, isSearching, handleSearch } =
     useLansiaList();
 
   /**
    * Handle klik tombol lihat detail
-   * Navigate ke halaman detail lansia
+   * Navigate ke halaman detail lansia berdasarkan role
    */
   const handleViewDetail = (kode: string) => {
     // Detect current path to determine navigation
-    const currentPath = window.location.pathname;
-    const baseUrl = currentPath.includes('/admin') ? '/admin' : '/petugas';
-    router.push(`${baseUrl}/lansia/${kode}`);
+    const isAdmin = pathname.startsWith('/admin');
+    const detailUrl = isAdmin 
+      ? ROUTES.ADMIN.LANSIA_DETAIL(kode)
+      : ROUTES.PETUGAS.LANSIA_DETAIL(kode);
+    router.push(detailUrl);
   };
 
   return (

@@ -3,19 +3,25 @@
 import React, { useState } from 'react';
 import { Header } from './Header';
 import { Sidebar, NavigationItem } from './Sidebar';
+import { ROUTES } from '@/lib/constants/navigation';
 
 /**
  * PetugasLayout Component
  * 
  * Layout khusus untuk role Petugas dengan navigation items yang sesuai.
  * Mengikuti prinsip Composition Over Inheritance - compose Header + Sidebar.
+ * 
+ * Design Principles:
+ * - SRP: Hanya bertanggung jawab untuk layout composition
+ * - DRY: Route paths diambil dari constants yang terpusat
+ * - OCP: Mudah diperluas tanpa mengubah kode internal
  */
 
 // Navigation items untuk Petugas
 const petugasNavigationItems: NavigationItem[] = [
   {
     label: 'Dashboard',
-    href: '/petugas/dashboard',
+    href: ROUTES.PETUGAS.DASHBOARD,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -29,7 +35,7 @@ const petugasNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Pendaftaran Lansia',
-    href: '/petugas/lansia/tambah',
+    href: ROUTES.PETUGAS.LANSIA_TAMBAH,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -43,7 +49,7 @@ const petugasNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Pencarian Lansia',
-    href: '/petugas/lansia/cari',
+    href: ROUTES.PETUGAS.LANSIA_CARI,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -57,7 +63,7 @@ const petugasNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Daftar Lansia',
-    href: '/petugas/lansia',
+    href: ROUTES.PETUGAS.LANSIA,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -71,7 +77,7 @@ const petugasNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Profil',
-    href: '/petugas/profil',
+    href: ROUTES.PETUGAS.PROFIL,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path

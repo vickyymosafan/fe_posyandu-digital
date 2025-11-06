@@ -4,6 +4,7 @@ import { PetugasLayout } from '@/components/layout';
 import { LansiaListContent } from '@/components/lansia';
 import { Button } from '@/components/ui';
 import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/lib/constants/navigation';
 
 /**
  * Halaman Daftar Lansia (Petugas)
@@ -20,7 +21,7 @@ import { useRouter } from 'next/navigation';
  * Design Principles:
  * - SRP: Component hanya untuk layout dan orchestration
  * - Composition: Menggunakan LansiaListContent yang shared
- * - DRY: Reuse komponen yang sama dengan Admin
+ * - DRY: Reuse komponen yang sama dengan Admin, routes dari constants
  * 
  * @returns {JSX.Element} Halaman daftar lansia petugas
  */
@@ -28,7 +29,7 @@ export default function DaftarLansiaPetugasPage() {
   const router = useRouter();
 
   const handleDaftarBaru = () => {
-    router.push('/petugas/lansia/daftar');
+    router.push(ROUTES.PETUGAS.LANSIA_TAMBAH);
   };
 
   return (

@@ -3,19 +3,25 @@
 import React, { useState } from 'react';
 import { Header } from './Header';
 import { Sidebar, NavigationItem } from './Sidebar';
+import { ROUTES } from '@/lib/constants/navigation';
 
 /**
  * AdminLayout Component
  * 
  * Layout khusus untuk role Admin dengan navigation items yang sesuai.
  * Mengikuti prinsip Composition Over Inheritance - compose Header + Sidebar.
+ * 
+ * Design Principles:
+ * - SRP: Hanya bertanggung jawab untuk layout composition
+ * - DRY: Route paths diambil dari constants yang terpusat
+ * - OCP: Mudah diperluas tanpa mengubah kode internal
  */
 
 // Navigation items untuk Admin
 const adminNavigationItems: NavigationItem[] = [
   {
     label: 'Dashboard',
-    href: '/admin/dashboard',
+    href: ROUTES.ADMIN.DASHBOARD,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -29,7 +35,7 @@ const adminNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Daftar Petugas',
-    href: '/admin/petugas',
+    href: ROUTES.ADMIN.PETUGAS,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -43,7 +49,7 @@ const adminNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Daftar Lansia',
-    href: '/admin/lansia',
+    href: ROUTES.ADMIN.LANSIA,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -57,7 +63,7 @@ const adminNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Audit Log',
-    href: '/admin/audit',
+    href: ROUTES.ADMIN.AUDIT,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
@@ -71,7 +77,7 @@ const adminNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Profil',
-    href: '/admin/profil',
+    href: ROUTES.ADMIN.PROFIL,
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
