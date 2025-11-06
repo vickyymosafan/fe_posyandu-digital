@@ -248,7 +248,7 @@ Untuk developer yang akan continue development:
 
 ## 🐛 Bug Fixes During Task 28
 
-### Dashboard Authorization Error
+### 1. Dashboard Authorization Error
 
 **Problem**: Dashboard mengalami error "Akses ditolak" saat user dengan role PETUGAS login.
 
@@ -269,6 +269,40 @@ Untuk developer yang akan continue development:
 - DIP: Depend pada useAuth abstraction
 - SoC: Role logic di hook, bukan di component
 - KISS: Simple conditional based on role
+
+### 2. useEffect Dependency Array Error
+
+**Problem**: React warning "The final argument passed to useEffect changed size between renders"
+
+**Root Cause**: Dependency array di `useDashboardStats` berubah dari `[]` ke `[user?.role]` saat hot reload.
+
+**Solution**:
+- Mengubah dependency array kembali ke `[]` (empty array)
+- Hook hanya run once on mount, tidak perlu re-run saat role berubah
+- User role tidak akan berubah tanpa re-login yang akan unmount component
+
+**Files Changed**:
+- `frontend/lib/hooks/useDashboardStats.ts` - Fixed useEffect dependency
+
+### 3. Search Lansia Debounce Error
+
+**Problem**: Search lansia tidak properly cleanup setTimeout, causing memory leaks.
+
+**Root Cause**: `handleSearch` return cleanup function tapi tidak di-handle dengan benar.
+
+**Solution**:
+- Memindahkan debounce logic ke useEffect
+- `handleSearch` hanya update searchQuery state
+- useEffect watch searchQuery dan trigger search dengan debounce
+- Proper cleanup dengan return clearTimeout
+
+**Files Changed**:
+- `frontend/lib/hooks/useLansiaList.ts` - Fixed debounce implementation
+
+**Design Principles Applied**:
+- SRP: Separate concerns (state update vs search execution)
+- Clean Code: Proper cleanup untuk prevent memory leaks
+- React Best Practices: useEffect untuk side effects dengan cleanup
 
 ## 🎉 Conclusion
 

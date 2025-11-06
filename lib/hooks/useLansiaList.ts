@@ -108,15 +108,9 @@ export function useLansiaList(): UseLansiaListReturn {
   const handleSearch = useCallback(
     (query: string) => {
       setSearchQuery(query);
-
-      // Debounce search
-      const timeoutId = setTimeout(() => {
-        searchLansia(query);
-      }, 500);
-
-      return () => clearTimeout(timeoutId);
+      // Search akan di-trigger oleh useEffect yang watch searchQuery
     },
-    [searchLansia]
+    []
   );
 
   /**
@@ -135,6 +129,19 @@ export function useLansiaList(): UseLansiaListReturn {
   useEffect(() => {
     fetchAll();
   }, [fetchAll]);
+
+  // Handle search dengan debounce
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (searchQuery.length >= 3) {
+        searchLansia(searchQuery);
+      } else if (searchQuery.length === 0) {
+        fetchAll();
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [searchQuery, searchLansia, fetchAll]);
 
   return {
     lansia,

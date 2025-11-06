@@ -217,15 +217,17 @@ export function useDashboardStats(): UseDashboardStatsReturn {
     }
 
     // Check backend health first
-    checkBackendHealthVerbose().then(() => {
-      fetchStats();
-    }).catch((err) => {
-      console.error('[useDashboardStats] Backend health check failed:', err);
-      setError('Backend tidak dapat diakses');
-      setIsLoading(false);
-    });
+    checkBackendHealthVerbose()
+      .then(() => {
+        fetchStats();
+      })
+      .catch((err) => {
+        console.error('[useDashboardStats] Backend health check failed:', err);
+        setError('Backend tidak dapat diakses');
+        setIsLoading(false);
+      });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.role]); // Re-fetch when user role changes
+  }, []); // Empty dependency - only run once on mount
 
   return {
     stats,
