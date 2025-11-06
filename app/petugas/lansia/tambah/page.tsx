@@ -20,7 +20,7 @@ import { LansiaForm } from '@/components/lansia';
 export default function TambahLansiaPage() {
   return (
     <PetugasLayout>
-      <div className="max-w-3xl">
+      <div className="max-w-3xl mx-auto">
         <LansiaForm />
       </div>
     </PetugasLayout>
