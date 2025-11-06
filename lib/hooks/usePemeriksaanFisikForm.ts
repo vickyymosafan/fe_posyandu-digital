@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { pemeriksaanAPI } from '@/lib/api';
 import { pemeriksaanRepository, syncQueueRepository } from '@/lib/db';
 import { useOffline } from './useOffline';
+import { useNotification } from '@/components/ui';
 import { hitungBMI, klasifikasiBMI } from '@/lib/utils/bmi';
 import { klasifikasiTekananDarah } from '@/lib/utils/tekananDarah';
 import { pemeriksaanFisikSchema } from '@/lib/utils/validators';
@@ -74,6 +75,7 @@ export function usePemeriksaanFisikForm(
 ): UsePemeriksaanFisikFormReturn {
   const router = useRouter();
   const { isOnline } = useOffline();
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState<PemeriksaanFisikFormData>(initialFormData);
   const [errors, setErrors] = useState<PemeriksaanFisikFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -192,6 +194,9 @@ export function usePemeriksaanFisikForm(
             });
           }
 
+          // Show success notification
+          showNotification('success', 'Pemeriksaan fisik berhasil disimpan');
+
           // Redirect to detail page
           router.push(`/petugas/lansia/${kode}`);
         } else {
@@ -219,11 +224,15 @@ export function usePemeriksaanFisikForm(
             data: { kode, ...data },
           });
 
+          // Show success notification (offline mode)
+          showNotification('success', 'Pemeriksaan fisik disimpan (akan disinkronkan saat online)');
+
           // Redirect to detail page
           router.push(`/petugas/lansia/${kode}`);
         }
       } catch (error) {
         const errorMessage = handleAPIError(error);
+        showNotification('error', errorMessage);
         setErrors({ tinggi: errorMessage });
       } finally {
         setIsSubmitting(false);
@@ -238,6 +247,7 @@ export function usePemeriksaanFisikForm(
       tekananDarahResult,
       validateForm,
       router,
+      showNotification,
     ]
   );
 

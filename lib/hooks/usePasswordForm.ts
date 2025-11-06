@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './useAuth';
+import { useNotification } from '@/components/ui';
 import { handleAPIError } from '@/lib/utils/errors';
 
 /**
@@ -27,8 +28,6 @@ interface UsePasswordFormReturn {
   formData: PasswordFormData;
   errors: PasswordFormErrors;
   isSubmitting: boolean;
-  successMessage: string | null;
-  errorMessage: string | null;
   showOldPassword: boolean;
   showNewPassword: boolean;
   showConfirmPassword: boolean;
@@ -48,14 +47,16 @@ interface UsePasswordFormReturn {
  * - Password strength validation (min 8 chars, letters, numbers, symbols)
  * - Password visibility toggle
  * - API integration dengan AuthContext.updatePassword
- * - Success/error message handling
+ * - Global notification untuk success/error
  * 
  * Follows SRP: Hanya handle logic untuk update password
+ * Follows DRY: Menggunakan global notification system
  * 
  * @returns Object dengan form state dan handlers
  */
 export function usePasswordForm(): UsePasswordFormReturn {
   const { updatePassword } = useAuth();
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState<PasswordFormData>({
     kataSandiLama: '',
     kataSandiBaru: '',
@@ -63,8 +64,6 @@ export function usePasswordForm(): UsePasswordFormReturn {
   });
   const [errors, setErrors] = useState<PasswordFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showOldPassword, setShowOldPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -132,10 +131,6 @@ export function usePasswordForm(): UsePasswordFormReturn {
     const newFormData = { ...formData, [field]: value };
     setFormData(newFormData);
     
-    // Clear messages
-    setSuccessMessage(null);
-    setErrorMessage(null);
-    
     // Validate on change
     const newErrors: PasswordFormErrors = {};
     
@@ -181,10 +176,6 @@ export function usePasswordForm(): UsePasswordFormReturn {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Clear messages
-    setSuccessMessage(null);
-    setErrorMessage(null);
-    
     // Validate all fields
     const oldPasswordError = validateOldPassword(formData.kataSandiLama);
     const newPasswordError = validateNewPassword(formData.kataSandiBaru);
@@ -209,7 +200,8 @@ export function usePasswordForm(): UsePasswordFormReturn {
       // Use AuthContext's updatePassword which handles API call
       await updatePassword(formData.kataSandiLama, formData.kataSandiBaru);
       
-      setSuccessMessage('Password berhasil diperbarui');
+      // Show success notification
+      showNotification('success', 'Password berhasil diperbarui');
       
       // Clear form
       setFormData({
@@ -222,19 +214,11 @@ export function usePasswordForm(): UsePasswordFormReturn {
       setShowOldPassword(false);
       setShowNewPassword(false);
       setShowConfirmPassword(false);
-      
-      // Auto-dismiss success message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
     } catch (error) {
       const errorMsg = handleAPIError(error);
-      setErrorMessage(errorMsg);
       
-      // Auto-dismiss error message after 5 seconds
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      // Show error notification
+      showNotification('error', errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -244,8 +228,6 @@ export function usePasswordForm(): UsePasswordFormReturn {
     formData,
     errors,
     isSubmitting,
-    successMessage,
-    errorMessage,
     showOldPassword,
     showNewPassword,
     showConfirmPassword,

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { pemeriksaanAPI } from '@/lib/api';
 import { pemeriksaanRepository, syncQueueRepository } from '@/lib/db';
 import { useOffline } from './useOffline';
+import { useNotification } from '@/components/ui';
 import { klasifikasiGulaDarah } from '@/lib/utils/gulaDarah';
 import { klasifikasiKolesterol } from '@/lib/utils/kolesterol';
 import { klasifikasiAsamUrat } from '@/lib/utils/asamUrat';
@@ -70,6 +71,7 @@ export function usePemeriksaanKesehatanForm(
 ): UsePemeriksaanKesehatanFormReturn {
   const router = useRouter();
   const { isOnline } = useOffline();
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState<PemeriksaanKesehatanFormData>(initialFormData);
   const [errors, setErrors] = useState<PemeriksaanKesehatanFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -202,6 +204,9 @@ export function usePemeriksaanKesehatanForm(
             });
           }
 
+          // Show success notification
+          showNotification('success', 'Pemeriksaan kesehatan berhasil disimpan');
+
           // Redirect to detail page
           router.push(`/petugas/lansia/${kode}`);
         } else {
@@ -229,11 +234,15 @@ export function usePemeriksaanKesehatanForm(
             data: { kode, ...data },
           });
 
+          // Show success notification (offline mode)
+          showNotification('success', 'Pemeriksaan kesehatan disimpan (akan disinkronkan saat online)');
+
           // Redirect to detail page
           router.push(`/petugas/lansia/${kode}`);
         }
       } catch (error) {
         const errorMessage = handleAPIError(error);
+        showNotification('error', errorMessage);
         setErrors({ gulaPuasa: errorMessage });
       } finally {
         setIsSubmitting(false);
@@ -248,6 +257,7 @@ export function usePemeriksaanKesehatanForm(
       klasifikasiKolesterolValue,
       validateForm,
       router,
+      showNotification,
     ]
   );
 

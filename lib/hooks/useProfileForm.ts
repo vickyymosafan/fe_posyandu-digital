@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from './useAuth';
+import { useNotification } from '@/components/ui';
 import { handleAPIError } from '@/lib/utils/errors';
 
 /**
@@ -23,8 +24,6 @@ interface UseProfileFormReturn {
   formData: ProfileFormData;
   errors: ProfileFormErrors;
   isSubmitting: boolean;
-  successMessage: string | null;
-  errorMessage: string | null;
   handleChange: (value: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
 }
@@ -36,22 +35,22 @@ interface UseProfileFormReturn {
  * - Form state management
  * - Real-time validation
  * - API integration dengan AuthContext.updateNama
- * - Success/error message handling
+ * - Global notification untuk success/error
  * - Auto-update AuthContext setelah berhasil
  * 
  * Follows SRP: Hanya handle logic untuk update nama
+ * Follows DRY: Menggunakan global notification system
  * 
  * @returns Object dengan form state dan handlers
  */
 export function useProfileForm(): UseProfileFormReturn {
   const { user, updateNama } = useAuth();
+  const { showNotification } = useNotification();
   const [formData, setFormData] = useState<ProfileFormData>({
     nama: user?.nama || '',
   });
   const [errors, setErrors] = useState<ProfileFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   /**
    * Validate nama field
@@ -75,10 +74,6 @@ export function useProfileForm(): UseProfileFormReturn {
   const handleChange = (value: string) => {
     setFormData({ nama: value });
     
-    // Clear messages
-    setSuccessMessage(null);
-    setErrorMessage(null);
-    
     // Validate on change
     const error = validateNama(value);
     setErrors({ nama: error });
@@ -89,10 +84,6 @@ export function useProfileForm(): UseProfileFormReturn {
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Clear messages
-    setSuccessMessage(null);
-    setErrorMessage(null);
     
     // Validate
     const namaError = validateNama(formData.nama);
@@ -108,20 +99,13 @@ export function useProfileForm(): UseProfileFormReturn {
       // Use AuthContext's updateNama which handles API call and state update
       await updateNama(formData.nama.trim());
       
-      setSuccessMessage('Nama berhasil diperbarui');
-      
-      // Auto-dismiss success message after 5 seconds
-      setTimeout(() => {
-        setSuccessMessage(null);
-      }, 5000);
+      // Show success notification
+      showNotification('success', 'Nama berhasil diperbarui');
     } catch (error) {
       const errorMsg = handleAPIError(error);
-      setErrorMessage(errorMsg);
       
-      // Auto-dismiss error message after 5 seconds
-      setTimeout(() => {
-        setErrorMessage(null);
-      }, 5000);
+      // Show error notification
+      showNotification('error', errorMsg);
     } finally {
       setIsSubmitting(false);
     }
@@ -131,8 +115,6 @@ export function useProfileForm(): UseProfileFormReturn {
     formData,
     errors,
     isSubmitting,
-    successMessage,
-    errorMessage,
     handleChange,
     handleSubmit,
   };

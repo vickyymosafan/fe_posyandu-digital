@@ -35,8 +35,6 @@ export function ProfilContent() {
     formData: profileFormData,
     errors: profileErrors,
     isSubmitting: isProfileSubmitting,
-    successMessage: profileSuccessMessage,
-    errorMessage: profileErrorMessage,
     handleChange: handleProfileChange,
     handleSubmit: handleProfileSubmit,
   } = useProfileForm();
@@ -45,8 +43,6 @@ export function ProfilContent() {
     formData: passwordFormData,
     errors: passwordErrors,
     isSubmitting: isPasswordSubmitting,
-    successMessage: passwordSuccessMessage,
-    errorMessage: passwordErrorMessage,
     showOldPassword,
     showNewPassword,
     showConfirmPassword,
@@ -123,20 +119,6 @@ export function ProfilContent() {
               placeholder="Masukkan nama lengkap"
             />
           </div>
-
-          {/* Success Message */}
-          {profileSuccessMessage && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
-              <p className="text-sm text-green-800">{profileSuccessMessage}</p>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {profileErrorMessage && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-sm text-red-800">{profileErrorMessage}</p>
-            </div>
-          )}
 
           <Button
             type="submit"
@@ -247,20 +229,6 @@ export function ProfilContent() {
               </button>
             </div>
           </div>
-
-          {/* Success Message */}
-          {passwordSuccessMessage && (
-            <div className="p-4 bg-green-50 border border-green-200 rounded-xl">
-              <p className="text-sm text-green-800">{passwordSuccessMessage}</p>
-            </div>
-          )}
-
-          {/* Error Message */}
-          {passwordErrorMessage && (
-            <div className="p-4 bg-red-50 border border-red-200 rounded-xl">
-              <p className="text-sm text-red-800">{passwordErrorMessage}</p>
-            </div>
-          )}
 
           <Button
             type="submit"
