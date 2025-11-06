@@ -91,7 +91,6 @@ Layout lengkap untuk role Admin dengan navigation items yang sesuai.
 - Dashboard (`/admin/dashboard`)
 - Daftar Petugas (`/admin/petugas`)
 - Daftar Lansia (`/admin/lansia`)
-- Audit Log (`/admin/audit`)
 - Profil (`/admin/profil`)
 
 **Props:**

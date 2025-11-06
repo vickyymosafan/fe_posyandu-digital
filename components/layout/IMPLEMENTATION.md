@@ -65,7 +65,6 @@ interface NavigationItem {
   - Dashboard (`/admin/dashboard`)
   - Daftar Petugas (`/admin/petugas`)
   - Daftar Lansia (`/admin/lansia`)
-  - Audit Log (`/admin/audit`)
   - Profil (`/admin/profil`)
 - ✅ Sidebar state management
 - ✅ Responsive container dengan max-width

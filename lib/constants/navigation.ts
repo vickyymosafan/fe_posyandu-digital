@@ -30,7 +30,6 @@ export const ROUTES = {
     LANSIA: '/admin/lansia',
     LANSIA_DETAIL: (kode: string) => `/admin/lansia/${kode}`,
     LANSIA_GRAFIK: (kode: string) => `/admin/lansia/${kode}/grafik`,
-    AUDIT: '/admin/audit',
     PROFIL: '/admin/profil',
   },
 

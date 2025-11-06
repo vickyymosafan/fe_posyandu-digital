@@ -26,7 +26,6 @@ import {
   ClipboardCheckIcon,
   CogIcon,
   ClipboardListIcon,
-  DocumentTextIcon,
 } from '@/components/icons/DashboardIcons';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ROUTES } from '@/lib/constants/navigation';
@@ -149,7 +148,7 @@ function AdminDashboardContent() {
         <h2 className="text-xl font-semibold text-neutral-950 mb-4">
           Navigasi Cepat
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <QuickNavCard
             title="Daftar Petugas"
             description="Kelola data petugas dan akses sistem"
@@ -164,13 +163,6 @@ function AdminDashboardContent() {
             icon={<ClipboardListIcon size={24} />}
             color="green"
           />
-          <QuickNavCard
-            title="Audit Log"
-            description="Monitor aktivitas dan log sistem"
-            href={ROUTES.ADMIN.AUDIT}
-            icon={<DocumentTextIcon size={24} />}
-            color="orange"
-          />
         </div>
       </div>
     </div>
@@ -183,7 +175,7 @@ function AdminDashboardContent() {
  * Halaman dashboard untuk role Admin dengan fitur:
  * - Statistik petugas aktif, lansia terdaftar, dan pemeriksaan hari ini
  * - Trend chart pemeriksaan 7 hari terakhir
- * - Navigasi cepat ke daftar petugas, lansia, dan audit log
+ * - Navigasi cepat ke daftar petugas dan lansia
  * - Loading state dengan skeleton UI
  * - Error handling dengan pesan yang jelas
  * - Sidebar navigation yang konsisten
