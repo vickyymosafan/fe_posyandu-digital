@@ -150,9 +150,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
   /**
    * Login function
    * Returns user data untuk immediate redirect
+   * FAIL FAST: Validate input immediately
    */
   const login = useCallback(
     async (email: string, password: string): Promise<User> => {
+      // FAIL FAST: Validate input
+      if (!email || email.trim().length === 0) {
+        console.error('❌ [AuthContext] Login failed - empty email');
+        throw new AuthenticationError('Email tidak boleh kosong');
+      }
+
+      if (!password || password.length === 0) {
+        console.error('❌ [AuthContext] Login failed - empty password');
+        throw new AuthenticationError('Password tidak boleh kosong');
+      }
+
       console.log('[AuthContext] Login attempt:', {
         email,
         timestamp: new Date().toISOString(),
@@ -238,9 +250,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Update nama user
+   * FAIL FAST: Validate input immediately
    */
   const updateNama = useCallback(
     async (nama: string) => {
+      // FAIL FAST: Validate input
+      if (!nama || nama.trim().length === 0) {
+        console.error('❌ [AuthContext] Update nama failed - empty nama');
+        throw new Error('Nama tidak boleh kosong');
+      }
+
+      if (!user) {
+        console.error('❌ [AuthContext] Update nama failed - no user');
+        throw new AuthenticationError('User tidak ditemukan');
+      }
+
       try {
         setIsLoading(true);
 
@@ -263,8 +287,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   /**
    * Update password user
+   * FAIL FAST: Validate input immediately
    */
   const updatePassword = useCallback(async (oldPassword: string, newPassword: string) => {
+    // FAIL FAST: Validate input
+    if (!oldPassword || oldPassword.length === 0) {
+      console.error('❌ [AuthContext] Update password failed - empty old password');
+      throw new Error('Password lama tidak boleh kosong');
+    }
+
+    if (!newPassword || newPassword.length === 0) {
+      console.error('❌ [AuthContext] Update password failed - empty new password');
+      throw new Error('Password baru tidak boleh kosong');
+    }
+
+    if (newPassword.length < 6) {
+      console.error('❌ [AuthContext] Update password failed - password too short');
+      throw new Error('Password baru minimal 6 karakter');
+    }
+
     try {
       setIsLoading(true);
 

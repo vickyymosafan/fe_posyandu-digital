@@ -7,9 +7,16 @@
  * - SRP: Hanya handle operasi database untuk pemeriksaan
  * - DIP: Depend on abstraction (Dexie table)
  * - KISS: Implementasi sederhana dan straightforward
+ * - Fail Fast: Validate input immediately dan throw pada error
  */
 
 import { db, type PemeriksaanDB } from '../schema';
+import {
+  assertDefined,
+  assertValidNumber,
+  assertValidDate,
+  assertHasProperties,
+} from '@/lib/utils/failFast';
 
 /**
  * Pemeriksaan Repository Class
@@ -17,17 +24,48 @@ import { db, type PemeriksaanDB } from '../schema';
 class PemeriksaanRepository {
   /**
    * Create pemeriksaan baru
+   * FAIL FAST: Validate input sebelum insert
    */
   async create(pemeriksaan: PemeriksaanDB): Promise<number> {
-    const id = await db.pemeriksaan.add(pemeriksaan);
-    return id as number;
+    // Validate required fields
+    assertDefined(pemeriksaan, 'Pemeriksaan data is required');
+    assertHasProperties(pemeriksaan, ['lansiaId', 'tanggal'], 'Pemeriksaan');
+    assertValidNumber(pemeriksaan.lansiaId, 'Lansia ID');
+    assertValidDate(pemeriksaan.tanggal, 'Tanggal pemeriksaan');
+
+    try {
+      const id = await db.pemeriksaan.add(pemeriksaan);
+      console.log('[PemeriksaanRepository] Created pemeriksaan:', {
+        id,
+        lansiaId: pemeriksaan.lansiaId,
+      });
+      return id as number;
+    } catch (error) {
+      console.error('❌ [PemeriksaanRepository] Failed to create pemeriksaan:', error);
+      throw new Error(
+        `Failed to create pemeriksaan: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
 
   /**
    * Get pemeriksaan by ID
+   * FAIL FAST: Validate ID before query
    */
   async getById(id: number): Promise<PemeriksaanDB | undefined> {
-    return await db.pemeriksaan.get(id);
+    assertValidNumber(id, 'Pemeriksaan ID');
+
+    try {
+      return await db.pemeriksaan.get(id);
+    } catch (error) {
+      console.error('❌ [PemeriksaanRepository] Failed to get pemeriksaan by ID:', {
+        id,
+        error,
+      });
+      throw new Error(
+        `Failed to get pemeriksaan by ID: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
 
   /**
@@ -62,12 +100,35 @@ class PemeriksaanRepository {
 
   /**
    * Get pemeriksaan dalam range tanggal
+   * FAIL FAST: Validate dates before query
    */
   async getByDateRange(startDate: Date, endDate: Date): Promise<PemeriksaanDB[]> {
-    return await db.pemeriksaan
-      .where('tanggal')
-      .between(startDate, endDate, true, true)
-      .toArray();
+    assertValidDate(startDate, 'Start date');
+    assertValidDate(endDate, 'End date');
+
+    if (startDate > endDate) {
+      console.error('❌ [PemeriksaanRepository] Invalid date range:', {
+        startDate,
+        endDate,
+      });
+      throw new Error('Start date must be before or equal to end date');
+    }
+
+    try {
+      return await db.pemeriksaan
+        .where('tanggal')
+        .between(startDate, endDate, true, true)
+        .toArray();
+    } catch (error) {
+      console.error('❌ [PemeriksaanRepository] Failed to get pemeriksaan by date range:', {
+        startDate,
+        endDate,
+        error,
+      });
+      throw new Error(
+        `Failed to get pemeriksaan by date range: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
 
   /**
@@ -79,9 +140,20 @@ class PemeriksaanRepository {
 
   /**
    * Delete pemeriksaan
+   * FAIL FAST: Validate ID before delete
    */
   async delete(id: number): Promise<void> {
-    await db.pemeriksaan.delete(id);
+    assertValidNumber(id, 'Pemeriksaan ID');
+
+    try {
+      await db.pemeriksaan.delete(id);
+      console.log('[PemeriksaanRepository] Deleted pemeriksaan:', { id });
+    } catch (error) {
+      console.error('❌ [PemeriksaanRepository] Failed to delete pemeriksaan:', { id, error });
+      throw new Error(
+        `Failed to delete pemeriksaan: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+    }
   }
 
   /**

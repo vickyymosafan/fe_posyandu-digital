@@ -6,20 +6,31 @@
  * Mengikuti prinsip:
  * - SRP: Hanya handle BMI calculation dan classification
  * - KISS: Implementasi sederhana dan straightforward
+ * - Fail Fast: Validate input immediately dan throw pada invalid input
  */
+
+import { assertValidNumber, assertInRange } from './failFast';
 
 /**
  * Hitung BMI berdasarkan berat dan tinggi
+ * FAIL FAST: Validate input immediately
  *
  * @param berat - Berat badan dalam kilogram (kg)
  * @param tinggi - Tinggi badan dalam centimeter (cm)
  * @returns BMI (Body Mass Index)
+ * @throws Error if input is invalid
  *
  * @example
  * const bmi = hitungBMI(70, 170);
  * // Output: 24.22
  */
 export function hitungBMI(berat: number, tinggi: number): number {
+  // FAIL FAST: Validate input
+  assertValidNumber(berat, 'Berat badan');
+  assertValidNumber(tinggi, 'Tinggi badan');
+  assertInRange(berat, 20, 300, 'Berat badan');
+  assertInRange(tinggi, 50, 250, 'Tinggi badan');
+
   // Konversi tinggi dari cm ke meter
   const tinggiMeter = tinggi / 100;
 
@@ -32,9 +43,11 @@ export function hitungBMI(berat: number, tinggi: number): number {
 
 /**
  * Klasifikasi BMI berdasarkan standar Asia Pasifik
+ * FAIL FAST: Validate input immediately
  *
  * @param bmi - Body Mass Index
  * @returns Kategori BMI
+ * @throws Error if BMI is invalid
  *
  * Kategori:
  * - < 17.0: Berat Badan Sangat Kurang
@@ -49,6 +62,10 @@ export function hitungBMI(berat: number, tinggi: number): number {
  * // Output: "Berat Badan Normal"
  */
 export function klasifikasiBMI(bmi: number): string {
+  // FAIL FAST: Validate input
+  assertValidNumber(bmi, 'BMI');
+  assertInRange(bmi, 5, 100, 'BMI');
+
   if (bmi < 17.0) return 'Berat Badan Sangat Kurang';
   if (bmi < 18.5) return 'Berat Badan Kurang';
   if (bmi <= 25.0) return 'Berat Badan Normal';

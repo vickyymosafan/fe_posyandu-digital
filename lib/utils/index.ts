@@ -84,3 +84,18 @@ export type { CookieOptions } from './cookies';
 
 // Sync Manager
 export { syncManager, SyncManager } from './syncManager';
+
+// Fail Fast Utilities
+export {
+  assertDefined,
+  assert,
+  assertNonEmptyString,
+  assertValidNumber,
+  assertInRange,
+  assertNonEmptyArray,
+  assertOneOf,
+  assertHasProperties,
+  assertValidDate,
+  assertValidContext,
+  unreachable,
+} from './failFast';
