@@ -14,9 +14,17 @@ export { usePetugasForm } from './usePetugasForm';
 export { useLansiaList } from './useLansiaList';
 export { useLansiaForm } from './useLansiaForm';
 export { useLansiaDetail } from './useLansiaDetail';
+export { usePemeriksaanFisikForm } from './usePemeriksaanFisikForm';
 export type {
   DashboardStats,
   TrendData,
   UseDashboardStatsReturn,
 } from './useDashboardStats';
 export type { UseLansiaDetailReturn } from './useLansiaDetail';
+export type {
+  UsePemeriksaanFisikFormReturn,
+  PemeriksaanFisikFormData,
+  PemeriksaanFisikFormErrors,
+  BMIResult,
+  TekananDarahResult,
+} from './usePemeriksaanFisikForm';

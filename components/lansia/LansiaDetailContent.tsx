@@ -36,7 +36,7 @@ export function LansiaDetailContent({
   const router = useRouter();
 
   const handleInputPemeriksaan = () => {
-    router.push(`/petugas/pemeriksaan/tambah?kode=${lansia.kode}`);
+    router.push(`/petugas/lansia/${lansia.kode}/pemeriksaan/tambah`);
   };
 
   return (
