@@ -316,6 +316,15 @@ npm run test:e2e
 
 ## 📚 Dokumentasi Tambahan
 
+### Dokumentasi Project
+
+- **[API Integration](./API_INTEGRATION.md)** - Dokumentasi lengkap integrasi dengan Backend API
+- **[Project Structure](./PROJECT_STRUCTURE.md)** - Penjelasan detail struktur folder dan file
+- **[Deployment Guide](./DEPLOYMENT.md)** - Panduan lengkap deployment ke Vercel
+- **[Troubleshooting](./TROUBLESHOOTING.md)** - Panduan mengatasi masalah umum
+
+### Dokumentasi External
+
 - [Next.js Documentation](https://nextjs.org/docs)
 - [TailwindCSS Documentation](https://tailwindcss.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs)
