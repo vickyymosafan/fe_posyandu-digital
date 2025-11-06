@@ -18,7 +18,66 @@ export interface TekananDarahResult {
 }
 
 /**
- * Klasifikasi tekanan darah berdasarkan standar AHA
+ * Klasifikasi tekanan darah berdasarkan standar AHA (safe version)
+ * Tidak throw error, return null jika input invalid
+ *
+ * @param sistolik - Tekanan darah sistolik (mmHg)
+ * @param diastolik - Tekanan darah diastolik (mmHg)
+ * @returns Hasil klasifikasi dengan kategori dan status emergency, atau null jika invalid
+ *
+ * Kategori:
+ * - Normal: <120/<80
+ * - Batas Waspada: 120-129/<80
+ * - Hipertensi Tahap 1: 130-139/80-89
+ * - Hipertensi Tahap 2: ≥140/≥90
+ * - Krisis Hipertensi: >180/>120 (EMERGENCY)
+ *
+ * @example
+ * const hasil = klasifikasiTekananDarahSafe(120, 80);
+ * // Output: { kategori: "Batas Waspada", emergency: false }
+ */
+export function klasifikasiTekananDarahSafe(
+  sistolik: number,
+  diastolik: number
+): TekananDarahResult | null {
+  // Validasi input tanpa throw error
+  if (
+    typeof sistolik !== 'number' ||
+    typeof diastolik !== 'number' ||
+    isNaN(sistolik) ||
+    isNaN(diastolik) ||
+    sistolik <= 0 ||
+    diastolik <= 0
+  ) {
+    return null;
+  }
+
+  // Krisis Hipertensi - EMERGENCY
+  if (sistolik > 180 || diastolik > 120) {
+    return { kategori: 'Krisis Hipertensi', emergency: true };
+  }
+
+  // Hipertensi Tahap 2
+  if (sistolik >= 140 || diastolik >= 90) {
+    return { kategori: 'Hipertensi Tahap 2', emergency: false };
+  }
+
+  // Hipertensi Tahap 1
+  if (sistolik >= 130 || diastolik >= 80) {
+    return { kategori: 'Hipertensi Tahap 1', emergency: false };
+  }
+
+  // Batas Waspada
+  if (sistolik >= 120 && diastolik < 80) {
+    return { kategori: 'Batas Waspada', emergency: false };
+  }
+
+  // Normal
+  return { kategori: 'Normal', emergency: false };
+}
+
+/**
+ * Klasifikasi tekanan darah berdasarkan standar AHA (strict version)
  *
  * @param sistolik - Tekanan darah sistolik (mmHg)
  * @param diastolik - Tekanan darah diastolik (mmHg)

@@ -6,8 +6,8 @@ import { pemeriksaanAPI } from '@/lib/api';
 import { pemeriksaanRepository, syncQueueRepository } from '@/lib/db';
 import { useOffline } from './useOffline';
 import { useNotification } from '@/components/ui';
-import { hitungBMI, klasifikasiBMI } from '@/lib/utils/bmi';
-import { klasifikasiTekananDarah } from '@/lib/utils/tekananDarah';
+import { hitungBMISafe, klasifikasiBMISafe } from '@/lib/utils/bmi';
+import { klasifikasiTekananDarahSafe } from '@/lib/utils/tekananDarah';
 import { pemeriksaanFisikSchema } from '@/lib/utils/validators';
 import { handleAPIError } from '@/lib/utils/errors';
 import type { PemeriksaanFisikData } from '@/types';
@@ -86,15 +86,15 @@ export function usePemeriksaanFisikForm(
   });
 
   /**
-   * Calculate BMI realtime
+   * Calculate BMI realtime (menggunakan safe version untuk tidak throw error)
    */
   useEffect(() => {
     const tinggi = parseFloat(formData.tinggi);
     const berat = parseFloat(formData.berat);
 
     if (!isNaN(tinggi) && !isNaN(berat) && tinggi > 0 && berat > 0) {
-      const bmi = hitungBMI(berat, tinggi);
-      const kategori = klasifikasiBMI(bmi);
+      const bmi = hitungBMISafe(berat, tinggi);
+      const kategori = klasifikasiBMISafe(bmi);
       setBmiResult({ nilai: bmi, kategori });
     } else {
       setBmiResult({ nilai: null, kategori: null });
@@ -102,15 +102,19 @@ export function usePemeriksaanFisikForm(
   }, [formData.tinggi, formData.berat]);
 
   /**
-   * Classify blood pressure realtime
+   * Classify blood pressure realtime (menggunakan safe version untuk tidak throw error)
    */
   useEffect(() => {
     const sistolik = parseFloat(formData.sistolik);
     const diastolik = parseFloat(formData.diastolik);
 
     if (!isNaN(sistolik) && !isNaN(diastolik) && sistolik > 0 && diastolik > 0) {
-      const result = klasifikasiTekananDarah(sistolik, diastolik);
-      setTekananDarahResult(result);
+      const result = klasifikasiTekananDarahSafe(sistolik, diastolik);
+      if (result) {
+        setTekananDarahResult(result);
+      } else {
+        setTekananDarahResult({ kategori: null, emergency: false });
+      }
     } else {
       setTekananDarahResult({ kategori: null, emergency: false });
     }

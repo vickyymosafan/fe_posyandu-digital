@@ -11,10 +11,10 @@
 export { generateIdPasien } from './generateIdPasien';
 
 // BMI
-export { hitungBMI, klasifikasiBMI } from './bmi';
+export { hitungBMI, hitungBMISafe, klasifikasiBMI, klasifikasiBMISafe } from './bmi';
 
 // Tekanan Darah
-export { klasifikasiTekananDarah } from './tekananDarah';
+export { klasifikasiTekananDarah, klasifikasiTekananDarahSafe } from './tekananDarah';
 export type { TekananDarahResult } from './tekananDarah';
 
 // Gula Darah
