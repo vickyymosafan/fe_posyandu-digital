@@ -201,6 +201,28 @@ Closes: Navigation bug pada sidebar petugas
 4. **SOLID Principles**: Menerapkan SOLID membuat code lebih maintainable
 5. **Testing**: Selalu test navigation flow setelah perubahan
 
+## 🆕 Update Terbaru: Sidebar Consistency Fix
+
+### Masalah Baru yang Diperbaiki
+**Issue:** Dashboard (Admin & Petugas) tidak menampilkan sidebar navigation, sehingga user harus menggunakan browser back button atau mengetik URL manual.
+
+**Solusi:**
+1. Wrap Dashboard pages dengan Layout component (PetugasLayout/AdminLayout)
+2. Hapus redundant padding yang sudah dihandle oleh Layout
+3. Gunakan route constants untuk konsistensi
+
+**Prinsip yang Diterapkan:**
+- **Composition Over Inheritance**: Menggunakan Layout component composition
+- **DRY**: Tidak duplikasi padding/spacing logic
+- **SRP**: Page hanya compose, Layout handle structure
+- **Consistency**: Semua halaman menggunakan pattern yang sama
+
+**File yang Diubah:**
+- `app/petugas/dashboard/page.tsx` - Wrap dengan PetugasLayout
+- `app/admin/dashboard/page.tsx` - Wrap dengan AdminLayout
+
+**Dokumentasi Lengkap:** Lihat `SIDEBAR_CONSISTENCY_FIX.md`
+
 ## 🔮 Future Improvements
 
 1. **Route Guards**: Tambah middleware untuk protected routes
@@ -208,13 +230,15 @@ Closes: Navigation bug pada sidebar petugas
 3. **Route Transitions**: Tambah smooth transitions antar halaman
 4. **Error Boundaries**: Improve error handling dengan error boundaries
 5. **Analytics**: Track navigation patterns untuk insights
+6. **Layout Variants**: Buat layout variants jika diperlukan
 
 ## 📞 Support
 
 Jika ada pertanyaan atau issue terkait perbaikan ini, silakan:
 1. Baca dokumentasi lengkap di `INTEGRATION_IMPROVEMENTS.md`
-2. Check route constants di `lib/constants/navigation.ts`
-3. Review component implementation di masing-masing file
+2. Baca dokumentasi sidebar fix di `SIDEBAR_CONSISTENCY_FIX.md`
+3. Check route constants di `lib/constants/navigation.ts`
+4. Review component implementation di masing-masing file
 
 ---
 
