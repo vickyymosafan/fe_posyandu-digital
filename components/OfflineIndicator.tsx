@@ -10,12 +10,40 @@
  * - Responsive: Adapt untuk mobile dan desktop
  */
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import { useOffline } from '@/lib/hooks';
 import { syncManager } from '@/lib/utils';
 
+/**
+ * Subscribe function untuk useSyncExternalStore
+ * Mengembalikan true setelah component mounted di client
+ */
+function subscribe() {
+  // No-op karena kita tidak perlu subscribe ke perubahan
+  return () => {};
+}
+
+/**
+ * Get snapshot untuk server (SSR)
+ * Selalu return false untuk menghindari render di server
+ */
+function getServerSnapshot() {
+  return false;
+}
+
+/**
+ * Get snapshot untuk client
+ * Return true setelah mounted
+ */
+function getClientSnapshot() {
+  return true;
+}
+
 export function OfflineIndicator() {
-  const [mounted, setMounted] = useState(false);
+  // Gunakan useSyncExternalStore untuk menghindari hydration mismatch
+  // tanpa perlu setState di useEffect
+  const isMounted = useSyncExternalStore(subscribe, getClientSnapshot, getServerSnapshot);
+
   const { isOnline } = useOffline({
     onOnline: async () => {
       console.log('Back online! Triggering sync...');
@@ -26,14 +54,8 @@ export function OfflineIndicator() {
     },
   });
 
-  // Prevent hydration mismatch by only rendering after mount
-  // This is a standard pattern for client-only components
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Don't render on server or if online
-  if (!mounted || isOnline) {
+  if (!isMounted || isOnline) {
     return null;
   }
 
