@@ -11,12 +11,16 @@ Fitur detail lansia menampilkan informasi lengkap lansia beserta riwayat pemerik
 ```
 LansiaDetailContent (Composition Root)
 ├── Card (Personal Info)
-├── PemeriksaanHistoryTable (History Display)
+└── PemeriksaanHistoryTable (History Display)
+
+GrafikTrenContent (Separate Page)
 └── HealthTrendCharts (Trend Visualization)
     ├── BMI Chart
     ├── Tekanan Darah Chart
     └── Gula Darah Chart
 ```
+
+**Note**: Grafik tren kesehatan telah dipisahkan ke halaman terpisah untuk meningkatkan maintainability dan mengurangi kompleksitas halaman detail.
 
 ### Data Flow
 
@@ -36,7 +40,8 @@ Sub-components (Specialized Display)
 
 1. **SRP (Single Responsibility Principle)**
    - `useLansiaDetail`: Hanya bertanggung jawab untuk data fetching
-   - `LansiaDetailContent`: Hanya untuk layout dan composition
+   - `LansiaDetailContent`: Hanya untuk layout personal info dan tabel
+   - `GrafikTrenContent`: Hanya untuk layout grafik
    - `PemeriksaanHistoryTable`: Hanya untuk display tabel
    - `HealthTrendCharts`: Hanya untuk display charts
 
@@ -105,13 +110,15 @@ const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode)
 
 **Responsibilities**:
 - Display personal information card
-- Compose PemeriksaanHistoryTable and HealthTrendCharts
+- Compose PemeriksaanHistoryTable
 - Show action buttons based on role
+- Navigate to grafik page
 
 **Props**:
 - `lansia`: Lansia data
 - `pemeriksaan`: Array of pemeriksaan
 - `showActions`: Boolean untuk show/hide action buttons
+- `grafikUrl`: URL untuk halaman grafik (optional)
 
 **Usage**:
 ```tsx
@@ -119,6 +126,34 @@ const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode)
   lansia={lansia}
   pemeriksaan={pemeriksaan}
   showActions={true} // Petugas
+  grafikUrl={`/petugas/lansia/${kode}/grafik`}
+/>
+```
+
+### GrafikTrenContent Component
+
+**Location**: `components/lansia/GrafikTrenContent.tsx`
+
+**Responsibilities**:
+- Display health trend charts
+- Show back navigation
+- Handle empty state
+
+**Props**:
+- `lansiaKode`: Kode lansia untuk navigasi
+- `lansiaNama`: Nama lansia untuk display
+- `pemeriksaan`: Array of pemeriksaan data
+- `months`: Number of months to show (default: 6)
+- `backUrl`: URL untuk tombol kembali
+
+**Usage**:
+```tsx
+<GrafikTrenContent
+  lansiaKode={lansia.kode}
+  lansiaNama={lansia.nama}
+  pemeriksaan={pemeriksaan}
+  months={6}
+  backUrl={`/petugas/lansia/${kode}`}
 />
 ```
 
@@ -175,22 +210,38 @@ const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode)
 
 ## Routes
 
-### Petugas Route
+### Petugas Routes
 
-**Path**: `/petugas/lansia/[kode]`
+**Detail Path**: `/petugas/lansia/[kode]`
 
 **Features**:
 - Display lansia detail
 - Show "Input Pemeriksaan Baru" button
+- Show "Lihat Grafik Tren" button
 - Navigate to pemeriksaan form
 
-### Admin Route
+**Grafik Path**: `/petugas/lansia/[kode]/grafik`
 
-**Path**: `/admin/lansia/[kode]`
+**Features**:
+- Display health trend charts
+- Show back navigation
+- Responsive charts
+
+### Admin Routes
+
+**Detail Path**: `/admin/lansia/[kode]`
 
 **Features**:
 - Display lansia detail (read-only)
-- No action buttons
+- Show "Lihat Grafik Tren" button
+- No action buttons for input
+
+**Grafik Path**: `/admin/lansia/[kode]/grafik`
+
+**Features**:
+- Display health trend charts (read-only)
+- Show back navigation
+- Responsive charts
 
 ## Integration with Backend
 
@@ -252,16 +303,26 @@ LansiaDetailContent
 
 ## Testing Checklist
 
+### Detail Page
 - [ ] Fetch lansia data berhasil
 - [ ] Fetch pemeriksaan history berhasil
 - [ ] Display personal info correctly
 - [ ] Display pemeriksaan table correctly
+- [ ] Button "Lihat Grafik Tren" muncul jika ada data
+- [ ] Navigation ke pemeriksaan form (Petugas)
+- [ ] Navigation ke halaman grafik
+- [ ] Loading state
+- [ ] Error state dengan retry
+- [ ] Responsive design di berbagai device
+
+### Grafik Page
+- [ ] Fetch lansia data berhasil
 - [ ] Display charts correctly
 - [ ] Empty state untuk no pemeriksaan
 - [ ] Loading state
 - [ ] Error state dengan retry
-- [ ] Navigation ke pemeriksaan form (Petugas)
-- [ ] Responsive design di berbagai device
+- [ ] Back navigation berfungsi
+- [ ] Responsive charts di berbagai device
 - [ ] Accessibility compliance
 
 ## Future Enhancements (Optional)

@@ -3,27 +3,27 @@
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
 import { PetugasLayout } from '@/components/layout';
-import { LansiaDetailContent } from '@/components/lansia';
+import { GrafikTrenContent } from '@/components/lansia';
 import { Loading } from '@/components/ui';
 import { useLansiaDetail } from '@/lib/hooks';
 import { Button } from '@/components/ui/Button';
 
 /**
- * Halaman Detail Lansia untuk Petugas
+ * Halaman Grafik Tren Kesehatan Lansia (Petugas)
+ * 
+ * Route: /petugas/lansia/[kode]/grafik
  * 
  * Responsibilities (SRP):
- * - Display lansia detail with pemeriksaan history
- * - Show action button for input pemeriksaan
+ * - Display health trend charts for specific lansia
+ * - Fetch lansia and pemeriksaan data
  * - Handle loading and error states
- * 
- * Route: /petugas/lansia/[kode]
  */
 
 interface PageProps {
   params: Promise<{ kode: string }>;
 }
 
-export default function PetugasLansiaDetailPage({ params }: PageProps) {
+export default function GrafikTrenPage({ params }: PageProps) {
   const router = useRouter();
   const { kode } = use(params);
   const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode);
@@ -70,11 +70,12 @@ export default function PetugasLansiaDetailPage({ params }: PageProps) {
         </div>
 
         {/* Content */}
-        <LansiaDetailContent
-          lansia={lansia}
+        <GrafikTrenContent
+          lansiaKode={lansia.kode}
+          lansiaNama={lansia.nama}
           pemeriksaan={pemeriksaan}
-          showActions={true}
-          grafikUrl={`/petugas/lansia/${kode}/grafik`}
+          months={6}
+          backUrl={`/petugas/lansia/${kode}`}
         />
       </div>
     </PetugasLayout>

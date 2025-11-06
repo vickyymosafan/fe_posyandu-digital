@@ -2,45 +2,45 @@
 
 import { use } from 'react';
 import { useRouter } from 'next/navigation';
-import { PetugasLayout } from '@/components/layout';
-import { LansiaDetailContent } from '@/components/lansia';
+import { AdminLayout } from '@/components/layout';
+import { GrafikTrenContent } from '@/components/lansia';
 import { Loading } from '@/components/ui';
 import { useLansiaDetail } from '@/lib/hooks';
 import { Button } from '@/components/ui/Button';
 
 /**
- * Halaman Detail Lansia untuk Petugas
+ * Halaman Grafik Tren Kesehatan Lansia (Admin)
+ * 
+ * Route: /admin/lansia/[kode]/grafik
  * 
  * Responsibilities (SRP):
- * - Display lansia detail with pemeriksaan history
- * - Show action button for input pemeriksaan
+ * - Display health trend charts for specific lansia
+ * - Fetch lansia and pemeriksaan data
  * - Handle loading and error states
- * 
- * Route: /petugas/lansia/[kode]
  */
 
 interface PageProps {
   params: Promise<{ kode: string }>;
 }
 
-export default function PetugasLansiaDetailPage({ params }: PageProps) {
+export default function GrafikTrenPage({ params }: PageProps) {
   const router = useRouter();
   const { kode } = use(params);
   const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode);
 
   if (isLoading) {
     return (
-      <PetugasLayout>
+      <AdminLayout>
         <div className="flex items-center justify-center min-h-[400px]">
           <Loading />
         </div>
-      </PetugasLayout>
+      </AdminLayout>
     );
   }
 
   if (error || !lansia) {
     return (
-      <PetugasLayout>
+      <AdminLayout>
         <div className="max-w-screen-xl mx-auto px-4 py-8">
           <div className="text-center py-12">
             <p className="text-red-600 mb-4">{error || 'Data lansia tidak ditemukan'}</p>
@@ -52,12 +52,12 @@ export default function PetugasLansiaDetailPage({ params }: PageProps) {
             </div>
           </div>
         </div>
-      </PetugasLayout>
+      </AdminLayout>
     );
   }
 
   return (
-    <PetugasLayout>
+    <AdminLayout>
       <div className="max-w-screen-xl mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="mb-6">
@@ -70,13 +70,14 @@ export default function PetugasLansiaDetailPage({ params }: PageProps) {
         </div>
 
         {/* Content */}
-        <LansiaDetailContent
-          lansia={lansia}
+        <GrafikTrenContent
+          lansiaKode={lansia.kode}
+          lansiaNama={lansia.nama}
           pemeriksaan={pemeriksaan}
-          showActions={true}
-          grafikUrl={`/petugas/lansia/${kode}/grafik`}
+          months={6}
+          backUrl={`/admin/lansia/${kode}`}
         />
       </div>
-    </PetugasLayout>
+    </AdminLayout>
   );
 }

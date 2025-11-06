@@ -1,56 +1,51 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { Lansia, Pemeriksaan } from '@/types';
 import { Card, CardHeader, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Loading } from '@/components/ui/Loading';
 import { formatDate, formatUmur } from '@/lib/utils/formatters';
 import { PemeriksaanHistoryTable } from './PemeriksaanHistoryTable';
-
-// Dynamic import untuk HealthTrendCharts karena menggunakan recharts (browser-only library)
-const HealthTrendCharts = dynamic(
-  () => import('./HealthTrendCharts').then((mod) => mod.HealthTrendCharts),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="flex items-center justify-center py-12">
-        <Loading />
-      </div>
-    ),
-  }
-);
 
 /**
  * Component untuk menampilkan detail lengkap lansia
  * 
  * Responsibilities (SRP):
  * - Display personal information
- * - Compose PemeriksaanHistoryTable and HealthTrendCharts
+ * - Compose PemeriksaanHistoryTable
  * - Show action buttons based on role
+ * - Navigate to charts page
  * 
  * Props (ISP, OCP):
  * - lansia: lansia data
  * - pemeriksaan: array of pemeriksaan
  * - showActions: whether to show action buttons (extensible)
+ * - grafikUrl: URL untuk halaman grafik
  */
 
 interface LansiaDetailContentProps {
   lansia: Lansia;
   pemeriksaan: Pemeriksaan[];
   showActions?: boolean;
+  grafikUrl?: string;
 }
 
 export function LansiaDetailContent({
   lansia,
   pemeriksaan,
   showActions = false,
+  grafikUrl,
 }: LansiaDetailContentProps) {
   const router = useRouter();
 
   const handleInputPemeriksaan = () => {
     router.push(`/petugas/lansia/${lansia.kode}/pemeriksaan/tambah`);
+  };
+
+  const handleLihatGrafik = () => {
+    if (grafikUrl) {
+      router.push(grafikUrl);
+    }
   };
 
   return (
@@ -127,25 +122,22 @@ export function LansiaDetailContent({
 
       {/* Riwayat Pemeriksaan Section */}
       <div>
-        <h2 className="text-xl font-bold text-neutral-950 mb-4">
-          Riwayat Pemeriksaan
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold text-neutral-950">
+            Riwayat Pemeriksaan
+          </h2>
+          {grafikUrl && pemeriksaan.length > 0 && (
+            <Button variant="secondary" onClick={handleLihatGrafik}>
+              Lihat Grafik Tren
+            </Button>
+          )}
+        </div>
         <Card>
           <CardBody>
             <PemeriksaanHistoryTable pemeriksaan={pemeriksaan} />
           </CardBody>
         </Card>
       </div>
-
-      {/* Trend Charts Section */}
-      {pemeriksaan.length > 0 && (
-        <div>
-          <h2 className="text-xl font-bold text-neutral-950 mb-4">
-            Grafik Tren Kesehatan (6 Bulan Terakhir)
-          </h2>
-          <HealthTrendCharts pemeriksaan={pemeriksaan} months={6} />
-        </div>
-      )}
     </div>
   );
 }

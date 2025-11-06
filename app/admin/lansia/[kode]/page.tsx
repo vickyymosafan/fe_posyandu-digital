@@ -73,6 +73,7 @@ export default function AdminLansiaDetailPage({ params }: PageProps) {
           lansia={lansia}
           pemeriksaan={pemeriksaan}
           showActions={false}
+          grafikUrl={`/admin/lansia/${kode}/grafik`}
         />
       </div>
     </AdminLayout>
