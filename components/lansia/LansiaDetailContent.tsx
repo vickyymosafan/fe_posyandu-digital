@@ -1,12 +1,26 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import dynamic from 'next/dynamic';
 import { Lansia, Pemeriksaan } from '@/types';
-import { Card } from '@/components/ui/Card';
+import { Card, CardHeader, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
+import { Loading } from '@/components/ui/Loading';
 import { formatDate, formatUmur } from '@/lib/utils/formatters';
 import { PemeriksaanHistoryTable } from './PemeriksaanHistoryTable';
-import { HealthTrendCharts } from './HealthTrendCharts';
+
+// Dynamic import untuk HealthTrendCharts karena menggunakan recharts (browser-only library)
+const HealthTrendCharts = dynamic(
+  () => import('./HealthTrendCharts').then((mod) => mod.HealthTrendCharts),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center py-12">
+        <Loading />
+      </div>
+    ),
+  }
+);
 
 /**
  * Component untuk menampilkan detail lengkap lansia
@@ -43,7 +57,7 @@ export function LansiaDetailContent({
     <div className="space-y-8">
       {/* Personal Information Card */}
       <Card>
-        <Card.Header>
+        <CardHeader>
           <div className="flex items-start justify-between">
             <div>
               <h2 className="text-2xl font-bold text-neutral-950">
@@ -59,8 +73,8 @@ export function LansiaDetailContent({
               </Button>
             )}
           </div>
-        </Card.Header>
-        <Card.Body>
+        </CardHeader>
+        <CardBody>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="text-sm font-medium text-neutral-700">
@@ -108,7 +122,7 @@ export function LansiaDetailContent({
               </p>
             </div>
           </div>
-        </Card.Body>
+        </CardBody>
       </Card>
 
       {/* Riwayat Pemeriksaan Section */}
@@ -117,9 +131,9 @@ export function LansiaDetailContent({
           Riwayat Pemeriksaan
         </h2>
         <Card>
-          <Card.Body>
+          <CardBody>
             <PemeriksaanHistoryTable pemeriksaan={pemeriksaan} />
-          </Card.Body>
+          </CardBody>
         </Card>
       </div>
 
