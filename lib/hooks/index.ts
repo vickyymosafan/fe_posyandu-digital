@@ -9,6 +9,7 @@ export { useAuth } from './useAuth';
 export { useOffline } from './useOffline';
 export { useLoginForm } from './useLoginForm';
 export { useDashboardStats } from './useDashboardStats';
+export { usePetugasList } from './usePetugasList';
 export type {
   DashboardStats,
   TrendData,
