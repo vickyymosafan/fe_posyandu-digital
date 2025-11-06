@@ -29,7 +29,7 @@ const petugasNavigationItems: NavigationItem[] = [
   },
   {
     label: 'Pendaftaran Lansia',
-    href: '/petugas/lansia/daftar',
+    href: '/petugas/lansia/tambah',
     icon: (
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path
