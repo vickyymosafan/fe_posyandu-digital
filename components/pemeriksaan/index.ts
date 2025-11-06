@@ -5,3 +5,4 @@
  */
 
 export { PemeriksaanFisikForm } from './PemeriksaanFisikForm';
+export { PemeriksaanKesehatanForm } from './PemeriksaanKesehatanForm';

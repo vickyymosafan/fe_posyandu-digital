@@ -15,6 +15,7 @@ export { useLansiaList } from './useLansiaList';
 export { useLansiaForm } from './useLansiaForm';
 export { useLansiaDetail } from './useLansiaDetail';
 export { usePemeriksaanFisikForm } from './usePemeriksaanFisikForm';
+export { usePemeriksaanKesehatanForm } from './usePemeriksaanKesehatanForm';
 export type {
   DashboardStats,
   TrendData,
@@ -28,3 +29,8 @@ export type {
   BMIResult,
   TekananDarahResult,
 } from './usePemeriksaanFisikForm';
+export type {
+  UsePemeriksaanKesehatanFormReturn,
+  PemeriksaanKesehatanFormData,
+  PemeriksaanKesehatanFormErrors,
+} from './usePemeriksaanKesehatanForm';
