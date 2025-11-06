@@ -16,6 +16,7 @@ export { useLansiaForm } from './useLansiaForm';
 export { useLansiaDetail } from './useLansiaDetail';
 export { usePemeriksaanFisikForm } from './usePemeriksaanFisikForm';
 export { usePemeriksaanKesehatanForm } from './usePemeriksaanKesehatanForm';
+export { useRiwayatPemeriksaan } from './useRiwayatPemeriksaan';
 export type {
   DashboardStats,
   TrendData,
