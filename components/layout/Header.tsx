@@ -81,7 +81,7 @@ export const Header: React.FC<HeaderProps> = ({
           <OfflineIndicator />
 
           {/* User info */}
-          {user && (
+          {user && user.nama && (
             <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-neutral-50 rounded-lg">
               <div className="w-8 h-8 bg-neutral-900 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-medium">
@@ -90,7 +90,9 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
               <div className="text-sm">
                 <p className="font-medium text-neutral-900">{user.nama}</p>
-                <p className="text-xs text-neutral-600 capitalize">{user.role}</p>
+                <p className="text-xs text-neutral-600 capitalize">
+                  {user.role?.toLowerCase() || 'user'}
+                </p>
               </div>
             </div>
           )}

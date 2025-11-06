@@ -10,10 +10,12 @@
  * - Responsive: Adapt untuk mobile dan desktop
  */
 
+import { useEffect, useState } from 'react';
 import { useOffline } from '@/lib/hooks';
 import { syncManager } from '@/lib/utils';
 
 export function OfflineIndicator() {
+  const [mounted, setMounted] = useState(false);
   const { isOnline } = useOffline({
     onOnline: async () => {
       console.log('Back online! Triggering sync...');
@@ -24,8 +26,14 @@ export function OfflineIndicator() {
     },
   });
 
-  // Hanya tampilkan saat offline
-  if (isOnline) {
+  // Prevent hydration mismatch by only rendering after mount
+  // This is a standard pattern for client-only components
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render on server or if online
+  if (!mounted || isOnline) {
     return null;
   }
 

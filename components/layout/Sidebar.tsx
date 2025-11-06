@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
 
           {/* User info (mobile only) */}
-          {user && (
+          {user && user.nama && (
             <div className="flex items-center gap-3 p-4 border-b border-neutral-200 md:hidden">
               <div className="w-10 h-10 bg-neutral-900 rounded-full flex items-center justify-center">
                 <span className="text-white font-medium">
@@ -111,7 +111,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-medium text-neutral-900 truncate">{user.nama}</p>
-                <p className="text-sm text-neutral-600 capitalize">{user.role}</p>
+                <p className="text-sm text-neutral-600 capitalize">
+                  {user.role?.toLowerCase() || 'user'}
+                </p>
               </div>
             </div>
           )}

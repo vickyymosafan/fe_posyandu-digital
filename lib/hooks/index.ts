@@ -11,6 +11,7 @@ export { useLoginForm } from './useLoginForm';
 export { useDashboardStats } from './useDashboardStats';
 export { usePetugasList } from './usePetugasList';
 export { usePetugasForm } from './usePetugasForm';
+export { useLansiaList } from './useLansiaList';
 export type {
   DashboardStats,
   TrendData,
