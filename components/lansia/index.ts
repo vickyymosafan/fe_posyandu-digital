@@ -5,3 +5,4 @@
  */
 
 export { LansiaListContent } from './LansiaListContent';
+export { LansiaForm } from './LansiaForm';
