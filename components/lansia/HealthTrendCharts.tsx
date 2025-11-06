@@ -54,7 +54,7 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
     (d) => d.sistolik !== null || d.diastolik !== null
   );
   const hasGulaDarahData = gulaDarahData.some(
-    (d) => d.gdp !== null || d.gds !== null || d.duaJpp !== null
+    (d) => d.gdp !== undefined || d.gds !== undefined || d.duaJpp !== undefined
   );
 
   if (!hasBMIData && !hasTekananDarahData && !hasGulaDarahData) {
@@ -187,10 +187,10 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
                   }}
-                  formatter={(value: number) => [
-                    `${value.toFixed(0)} mg/dL`,
-                    '',
-                  ]}
+                  formatter={(value: unknown, name: string) => {
+                    if (typeof value !== 'number') return null;
+                    return [`${value.toFixed(0)} mg/dL`, name];
+                  }}
                 />
                 <Legend />
                 <Line
@@ -198,30 +198,30 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                   dataKey="gdp"
                   stroke="#10b981"
                   strokeWidth={2}
-                  dot={{ fill: '#10b981', r: 4 }}
-                  activeDot={{ r: 6 }}
-                  name="GDP"
-                  connectNulls
+                  dot={{ fill: '#10b981', r: 5 }}
+                  activeDot={{ r: 7 }}
+                  name="GDP (Puasa)"
+                  connectNulls={true}
                 />
                 <Line
                   type="monotone"
                   dataKey="gds"
                   stroke="#f59e0b"
                   strokeWidth={2}
-                  dot={{ fill: '#f59e0b', r: 4 }}
-                  activeDot={{ r: 6 }}
-                  name="GDS"
-                  connectNulls
+                  dot={{ fill: '#f59e0b', r: 5 }}
+                  activeDot={{ r: 7 }}
+                  name="GDS (Sewaktu)"
+                  connectNulls={true}
                 />
                 <Line
                   type="monotone"
                   dataKey="duaJpp"
                   stroke="#8b5cf6"
                   strokeWidth={2}
-                  dot={{ fill: '#8b5cf6', r: 4 }}
-                  activeDot={{ r: 6 }}
+                  dot={{ fill: '#8b5cf6', r: 5 }}
+                  activeDot={{ r: 7 }}
                   name="2JPP"
-                  connectNulls
+                  connectNulls={true}
                 />
               </LineChart>
             </ResponsiveContainer>

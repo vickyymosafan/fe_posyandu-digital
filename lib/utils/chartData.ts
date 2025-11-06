@@ -79,6 +79,9 @@ export function transformToTekananDarahChartData(
 /**
  * Transform pemeriksaan data ke gula darah chart data
  * 
+ * Catatan: Menggunakan undefined untuk nilai yang tidak ada agar recharts
+ * tidak menampilkan titik pada chart. Nilai 0 akan tetap ditampilkan.
+ * 
  * @param pemeriksaan - Array pemeriksaan
  * @returns Array data point untuk chart gula darah (GDP, GDS, 2JPP)
  */
@@ -86,15 +89,15 @@ export function transformToGulaDarahChartData(
   pemeriksaan: Pemeriksaan[]
 ): Array<{
   tanggal: string;
-  gdp: number | null;
-  gds: number | null;
-  duaJpp: number | null;
+  gdp: number | undefined;
+  gds: number | undefined;
+  duaJpp: number | undefined;
 }> {
   return pemeriksaan.map((p) => ({
     tanggal: format(new Date(p.tanggal), 'dd MMM', { locale: id }),
-    gdp: p.gulaPuasa || null,
-    gds: p.gulaSewaktu || null,
-    duaJpp: p.gula2Jpp || null,
+    gdp: p.gulaPuasa ?? undefined,
+    gds: p.gulaSewaktu ?? undefined,
+    duaJpp: p.gula2Jpp ?? undefined,
   }));
 }
 
