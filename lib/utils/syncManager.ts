@@ -188,8 +188,11 @@ export class SyncManager {
       const lansiaResponse = await lansiaAPI.getAll();
 
       if (lansiaResponse.data) {
+        // Convert string dates dari API response ke Date objects
         const lansiaList = lansiaResponse.data.map((lansia) => ({
           ...lansia,
+          tanggalLahir: new Date(lansia.tanggalLahir),
+          createdAt: new Date(lansia.createdAt),
           syncedAt: new Date(),
         }));
 

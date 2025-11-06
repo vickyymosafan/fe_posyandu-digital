@@ -198,8 +198,11 @@ export function usePemeriksaanKesehatanForm(
 
           // Save to IndexedDB for offline access
           if (response.data) {
+            // Convert string dates dari API response ke Date objects
             await pemeriksaanRepository.create({
               ...response.data,
+              tanggal: new Date(response.data.tanggal),
+              createdAt: new Date(response.data.createdAt),
               syncedAt: new Date(),
             });
           }

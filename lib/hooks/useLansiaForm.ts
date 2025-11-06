@@ -186,8 +186,11 @@ export function useLansiaForm(): UseLansiaFormReturn {
 
           if (response.data) {
             // Save ke IndexedDB dengan syncedAt
+            // Convert string dates dari API response ke Date objects
             const lansiaDB = {
               ...response.data,
+              tanggalLahir: new Date(response.data.tanggalLahir),
+              createdAt: new Date(response.data.createdAt),
               syncedAt: new Date(),
             };
             await lansiaRepository.create(lansiaDB);
