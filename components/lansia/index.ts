@@ -12,3 +12,4 @@ export { LansiaDetailContent } from './LansiaDetailContent';
 export { PemeriksaanHistoryTable } from './PemeriksaanHistoryTable';
 export { HealthTrendCharts } from './HealthTrendCharts';
 export { GrafikTrenContent } from './GrafikTrenContent';
+export { InfoRow } from './InfoRow';

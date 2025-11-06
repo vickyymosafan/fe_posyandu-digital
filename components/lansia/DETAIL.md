@@ -11,7 +11,10 @@ Fitur detail lansia menampilkan informasi lengkap lansia beserta riwayat pemerik
 ```
 LansiaDetailContent (Composition Root)
 ├── Card (Personal Info)
+│   └── InfoRow (Label-Value Display) [NEW]
 └── PemeriksaanHistoryTable (History Display)
+    ├── Desktop: Table View
+    └── Mobile: Card View [IMPROVED]
 
 GrafikTrenContent (Separate Page)
 └── HealthTrendCharts (Trend Visualization)
@@ -20,7 +23,10 @@ GrafikTrenContent (Separate Page)
     └── Gula Darah Chart
 ```
 
-**Note**: Grafik tren kesehatan telah dipisahkan ke halaman terpisah untuk meningkatkan maintainability dan mengurangi kompleksitas halaman detail.
+**Note**: 
+- Grafik tren kesehatan telah dipisahkan ke halaman terpisah untuk meningkatkan maintainability
+- InfoRow component ditambahkan untuk DRY principle
+- PemeriksaanHistoryTable sekarang adaptive (table di desktop, card di mobile)
 
 ### Data Flow
 
@@ -104,21 +110,79 @@ Sub-components (Specialized Display)
 const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode);
 ```
 
+### InfoRow Component
+
+**Location**: `components/lansia/InfoRow.tsx`
+
+**Responsibilities**:
+- Display label-value pair dalam format konsisten
+- Support custom value (ReactNode)
+- Support full width layout
+- Responsive typography
+
+**Principles Applied**:
+- **SRP**: Hanya bertanggung jawab untuk display label-value pair
+- **OCP**: Extensible via props tanpa modifikasi internal
+- **DRY**: Menghindari duplikasi pattern label-value
+- **KISS**: Implementasi sederhana dan mudah dipahami
+
+**Props**:
+- `label`: Label yang ditampilkan (string)
+- `value`: Value yang ditampilkan (ReactNode)
+- `fullWidth`: Span full width di grid (boolean, default: false)
+- `className`: Custom className untuk styling tambahan (string, optional)
+
+**Usage**:
+```tsx
+// Basic
+<InfoRow label="NIK" value={lansia.nik} />
+
+// With complex value
+<InfoRow 
+  label="Tanggal Lahir" 
+  value={
+    <>
+      {formatDate(lansia.tanggalLahir)}
+      <span className="text-neutral-600 ml-2">
+        ({formatUmur(lansia.tanggalLahir)})
+      </span>
+    </>
+  } 
+/>
+
+// Full width
+<InfoRow label="Alamat" value={lansia.alamat} fullWidth />
+```
+
+**Documentation**: See `INFO_ROW.md` for detailed documentation.
+
 ### LansiaDetailContent Component
 
 **Location**: `components/lansia/LansiaDetailContent.tsx`
 
 **Responsibilities**:
-- Display personal information card
-- Compose PemeriksaanHistoryTable
-- Show action buttons based on role
-- Navigate to grafik page
+- Orchestrate layout dan composition dari sub-komponen
+- Handle navigation actions
+- Compose InfoRow dan PemeriksaanHistoryTable
+- Responsive layout untuk semua device
+
+**Principles Applied**:
+- **SRP**: Fokus pada orchestration, detail rendering di-delegate ke InfoRow
+- **OCP**: Extensible via props (showActions, grafikUrl)
+- **DRY**: Menggunakan InfoRow untuk menghindari duplikasi pattern
+- **Composition**: Build UI dari komponen kecil yang reusable
 
 **Props**:
 - `lansia`: Lansia data
 - `pemeriksaan`: Array of pemeriksaan
 - `showActions`: Boolean untuk show/hide action buttons
 - `grafikUrl`: URL untuk halaman grafik (optional)
+
+**Responsive Features**:
+- Header: Stack di mobile, horizontal di tablet+
+- Grid: 1 column mobile, 2 columns tablet+
+- Buttons: Full width mobile, auto width tablet+
+- Spacing: Adaptive spacing untuk berbagai device
 
 **Usage**:
 ```tsx
@@ -162,17 +226,32 @@ const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode)
 **Location**: `components/lansia/PemeriksaanHistoryTable.tsx`
 
 **Responsibilities**:
-- Display pemeriksaan data in table format
-- Responsive table with horizontal scroll on mobile
+- Display pemeriksaan data dengan format yang sesuai per device
+- Table view untuk desktop/tablet
+- Card view untuk mobile
 - Show empty state when no data
+
+**Principles Applied**:
+- **SRP**: Fokus pada display pemeriksaan data
+- **Responsive Design**: Adaptive layout (table vs card)
+- **DRY**: Reuse formatting utilities
+- **KISS**: Simple conditional rendering
 
 **Props**:
 - `pemeriksaan`: Array of pemeriksaan data
 
 **Features**:
-- Responsive design (horizontal scroll on mobile)
-- Color-coded categories (Krisis Hipertensi = red)
+- **Desktop/Tablet (≥768px)**: Table view dengan horizontal scroll
+- **Mobile (<768px)**: Card view dengan grid layout
+- Color-coded categories (Krisis Hipertensi = red, Hipertensi = orange)
 - Empty state handling
+- Responsive typography dan spacing
+
+**Mobile Card Layout**:
+- Tanggal di header
+- BMI dan Tekanan Darah dalam 2-column grid
+- Kolesterol dan Asam Urat dalam 2-column grid
+- Gula Darah full width di bawah (jika ada data)
 
 ### HealthTrendCharts Component
 
@@ -271,20 +350,36 @@ LansiaDetailContent
 
 ## Responsive Design
 
-### Mobile (<768px)
+### Mobile (<640px)
 - Personal info: 1 column grid
-- Table: Horizontal scroll
+- Header: Stacked layout (nama + button vertical)
+- Buttons: Full width
+- Table: Card view dengan grid layout
+- Typography: Smaller font sizes (text-xl, text-xs)
+- Spacing: Tighter spacing (space-y-6, gap-4)
 - Charts: Full width, stacked vertically
 
-### Tablet (768px - 1024px)
+### Tablet (640px - 768px)
 - Personal info: 2 column grid
-- Table: Full width
+- Header: Horizontal layout (nama + button side-by-side)
+- Buttons: Auto width
+- Table: Transition to table view
+- Typography: Standard font sizes (text-2xl, text-sm)
+- Spacing: Standard spacing (space-y-8, gap-6)
 - Charts: Full width, stacked vertically
 
-### Desktop (>1024px)
+### Desktop (>768px)
 - Personal info: 2 column grid
-- Table: Full width
+- Header: Horizontal layout with proper spacing
+- Buttons: Auto width
+- Table: Full table view
+- Typography: Standard font sizes
+- Spacing: Standard spacing
 - Charts: Full width, stacked vertically
+
+### Breakpoints Used
+- `sm:` - 640px (mobile to tablet)
+- `md:` - 768px (tablet to desktop)
 
 ## Accessibility
 
@@ -306,14 +401,22 @@ LansiaDetailContent
 ### Detail Page
 - [ ] Fetch lansia data berhasil
 - [ ] Fetch pemeriksaan history berhasil
-- [ ] Display personal info correctly
-- [ ] Display pemeriksaan table correctly
+- [ ] Display personal info correctly dengan InfoRow
+- [ ] Display pemeriksaan table correctly (desktop)
+- [ ] Display pemeriksaan card correctly (mobile)
 - [ ] Button "Lihat Grafik Tren" muncul jika ada data
 - [ ] Navigation ke pemeriksaan form (Petugas)
 - [ ] Navigation ke halaman grafik
 - [ ] Loading state
 - [ ] Error state dengan retry
-- [ ] Responsive design di berbagai device
+- [ ] Responsive design di berbagai device:
+  - [ ] Mobile (<640px): Card view, stacked buttons, 1 col grid
+  - [ ] Tablet (640-768px): Table view, horizontal buttons, 2 col grid
+  - [ ] Desktop (>768px): Table view, optimal spacing
+- [ ] Typography responsive (text sizes adjust per breakpoint)
+- [ ] Spacing responsive (gaps adjust per breakpoint)
+- [ ] Buttons full width di mobile, auto width di tablet+
+- [ ] Long text breaks properly (alamat, nama)
 
 ### Grafik Page
 - [ ] Fetch lansia data berhasil

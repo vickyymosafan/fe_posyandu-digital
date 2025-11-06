@@ -39,12 +39,12 @@ export const Card = React.forwardRef<HTMLDivElement, CardProps>(
       elevated: 'shadow-lg',
     };
 
-    // Padding classes
+    // Padding classes - responsive padding untuk mobile
     const paddingClasses = {
       none: '',
-      sm: 'p-4',
-      md: 'p-6',
-      lg: 'p-8',
+      sm: 'p-3 sm:p-4',
+      md: 'p-4 sm:p-6',
+      lg: 'p-6 sm:p-8',
     };
 
     // Hover classes
@@ -82,9 +82,9 @@ export const CardHeader: React.FC<CardHeaderProps> = ({
   ...props
 }) => {
   return (
-    <div className={`mb-4 ${className}`.trim()} {...props}>
-      {title && <h3 className="text-xl font-semibold text-neutral-900">{title}</h3>}
-      {subtitle && <p className="text-sm text-neutral-600 mt-1">{subtitle}</p>}
+    <div className={`mb-3 sm:mb-4 ${className}`.trim()} {...props}>
+      {title && <h3 className="text-lg sm:text-xl font-semibold text-neutral-900">{title}</h3>}
+      {subtitle && <p className="text-xs sm:text-sm text-neutral-600 mt-1">{subtitle}</p>}
       {children}
     </div>
   );

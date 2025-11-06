@@ -78,23 +78,26 @@ export function hitungBMI(berat: number, tinggi: number): number {
 }
 
 /**
- * Klasifikasi BMI berdasarkan standar Asia Pasifik (safe version)
+ * Klasifikasi BMI berdasarkan standar Asia Pasifik (WHO Asia-Pacific)
  * Tidak throw error, return null jika input invalid
+ * 
+ * SINKRONISASI DENGAN BACKEND: Menggunakan threshold yang sama dengan backend
  *
  * @param bmi - Body Mass Index
  * @returns Kategori BMI atau null jika invalid
  *
- * Kategori:
+ * Kategori BMI Asia Pasifik (WHO):
  * - < 17.0: Berat Badan Sangat Kurang
- * - 17.0-18.4: Berat Badan Kurang
- * - 18.5-25.0: Berat Badan Normal
- * - 25.1-27.0: Kelebihan Berat Badan (Overweight)
- * - 27.1-30.0: Obesitas Tingkat I
- * - ≥ 30.0: Obesitas Tingkat II
+ * - 17.0 - 18.4: Berat Badan Kurang
+ * - 18.5 - 22.9: Normal
+ * - 23.0 - 24.9: Kelebihan Berat Badan
+ * - 25.0 - 29.9: Obesitas I
+ * - 30.0 - 34.9: Obesitas II
+ * - ≥ 35.0: Obesitas III
  *
  * @example
  * const kategori = klasifikasiBMISafe(24.22);
- * // Output: "Berat Badan Normal"
+ * // Output: "Kelebihan Berat Badan"
  */
 export function klasifikasiBMISafe(bmi: number | null): string | null {
   if (bmi === null || typeof bmi !== 'number' || isNaN(bmi) || bmi <= 0) {
@@ -103,31 +106,35 @@ export function klasifikasiBMISafe(bmi: number | null): string | null {
 
   if (bmi < 17.0) return 'Berat Badan Sangat Kurang';
   if (bmi < 18.5) return 'Berat Badan Kurang';
-  if (bmi <= 25.0) return 'Berat Badan Normal';
-  if (bmi <= 27.0) return 'Kelebihan Berat Badan (Overweight)';
-  if (bmi <= 30.0) return 'Obesitas Tingkat I';
-  return 'Obesitas Tingkat II';
+  if (bmi < 23.0) return 'Normal';
+  if (bmi < 25.0) return 'Kelebihan Berat Badan';
+  if (bmi < 30.0) return 'Obesitas I';
+  if (bmi < 35.0) return 'Obesitas II';
+  return 'Obesitas III';
 }
 
 /**
- * Klasifikasi BMI berdasarkan standar Asia Pasifik (strict version)
+ * Klasifikasi BMI berdasarkan standar Asia Pasifik (WHO Asia-Pacific)
  * FAIL FAST: Validate input immediately dan throw error jika invalid
+ * 
+ * SINKRONISASI DENGAN BACKEND: Menggunakan threshold yang sama dengan backend
  *
  * @param bmi - Body Mass Index
  * @returns Kategori BMI
  * @throws Error if BMI is invalid
  *
- * Kategori:
+ * Kategori BMI Asia Pasifik (WHO):
  * - < 17.0: Berat Badan Sangat Kurang
- * - 17.0-18.4: Berat Badan Kurang
- * - 18.5-25.0: Berat Badan Normal
- * - 25.1-27.0: Kelebihan Berat Badan (Overweight)
- * - 27.1-30.0: Obesitas Tingkat I
- * - ≥ 30.0: Obesitas Tingkat II
+ * - 17.0 - 18.4: Berat Badan Kurang
+ * - 18.5 - 22.9: Normal
+ * - 23.0 - 24.9: Kelebihan Berat Badan
+ * - 25.0 - 29.9: Obesitas I
+ * - 30.0 - 34.9: Obesitas II
+ * - ≥ 35.0: Obesitas III
  *
  * @example
  * const kategori = klasifikasiBMI(24.22);
- * // Output: "Berat Badan Normal"
+ * // Output: "Kelebihan Berat Badan"
  */
 export function klasifikasiBMI(bmi: number): string {
   // FAIL FAST: Validate input
@@ -136,8 +143,9 @@ export function klasifikasiBMI(bmi: number): string {
 
   if (bmi < 17.0) return 'Berat Badan Sangat Kurang';
   if (bmi < 18.5) return 'Berat Badan Kurang';
-  if (bmi <= 25.0) return 'Berat Badan Normal';
-  if (bmi <= 27.0) return 'Kelebihan Berat Badan (Overweight)';
-  if (bmi <= 30.0) return 'Obesitas Tingkat I';
-  return 'Obesitas Tingkat II';
+  if (bmi < 23.0) return 'Normal';
+  if (bmi < 25.0) return 'Kelebihan Berat Badan';
+  if (bmi < 30.0) return 'Obesitas I';
+  if (bmi < 35.0) return 'Obesitas II';
+  return 'Obesitas III';
 }
