@@ -20,15 +20,10 @@
 // Health Metrics Service
 export {
   calculateBMI,
-  calculateBMIFromStrings,
   classifyBloodPressure,
-  classifyBloodPressureFromStrings,
   classifyBloodGlucose,
-  classifyBloodGlucoseFromStrings,
   classifyCholesterol,
-  classifyCholesterolFromString,
   classifyUricAcid,
-  classifyUricAcidFromString,
   calculateAllHealthMetrics,
 } from './healthMetricsService';
 

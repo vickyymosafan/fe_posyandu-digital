@@ -2,13 +2,15 @@
  * Health Metrics Service
  *
  * Business logic layer for health metric calculations and classifications.
- * Follows Separation of Concerns - isolates business logic from UI/hooks.
+ * Follows KISS principle - simple, focused functions without duplication.
  *
  * Responsibilities:
  * - Calculate health metrics (BMI, etc.)
  * - Classify health values
  * - Aggregate multiple classifications
- * - Transform raw data to domain models
+ *
+ * Note: This service works with numbers only. Use parseNumber() utility
+ * to convert string inputs before calling these functions.
  */
 
 import { hitungBMISafe, klasifikasiBMISafe } from '@/lib/utils/bmi';
@@ -16,6 +18,7 @@ import { klasifikasiTekananDarahSafe } from '@/lib/utils/tekananDarah';
 import { klasifikasiGulaDarah } from '@/lib/utils/gulaDarah';
 import { klasifikasiKolesterol } from '@/lib/utils/kolesterol';
 import { klasifikasiAsamUrat } from '@/lib/utils/asamUrat';
+import { parseNumber } from '@/lib/utils/numberParser';
 import type { Gender } from '@/types';
 
 // ============================================
@@ -65,39 +68,22 @@ export interface HealthMetricsResult {
 /**
  * Calculate and classify BMI
  *
- * @param berat - Weight in kg
- * @param tinggi - Height in cm
+ * @param berat - Weight in kg (or undefined)
+ * @param tinggi - Height in cm (or undefined)
  * @returns BMI value and category
  */
-export function calculateBMI(berat: number, tinggi: number): BMIResult {
-  const bmi = hitungBMISafe(berat, tinggi);
-  const kategori = klasifikasiBMISafe(bmi);
-
-  return {
-    nilai: bmi,
-    kategori,
-  };
-}
-
-/**
- * Calculate BMI from string inputs (for forms)
- *
- * @param beratStr - Weight as string
- * @param tinggiStr - Height as string
- * @returns BMI result or null if invalid
- */
-export function calculateBMIFromStrings(
-  beratStr: string,
-  tinggiStr: string
+export function calculateBMI(
+  berat: number | undefined,
+  tinggi: number | undefined
 ): BMIResult {
-  const berat = parseFloat(beratStr);
-  const tinggi = parseFloat(tinggiStr);
-
-  if (isNaN(berat) || isNaN(tinggi) || berat <= 0 || tinggi <= 0) {
+  if (!berat || !tinggi) {
     return { nilai: null, kategori: null };
   }
 
-  return calculateBMI(berat, tinggi);
+  const bmi = hitungBMISafe(berat, tinggi);
+  const kategori = klasifikasiBMISafe(bmi);
+
+  return { nilai: bmi, kategori };
 }
 
 // ============================================
@@ -107,47 +93,20 @@ export function calculateBMIFromStrings(
 /**
  * Classify blood pressure
  *
- * @param sistolik - Systolic pressure in mmHg
- * @param diastolik - Diastolic pressure in mmHg
+ * @param sistolik - Systolic pressure in mmHg (or undefined)
+ * @param diastolik - Diastolic pressure in mmHg (or undefined)
  * @returns Classification result
  */
 export function classifyBloodPressure(
-  sistolik: number,
-  diastolik: number
+  sistolik: number | undefined,
+  diastolik: number | undefined
 ): TekananDarahResult {
+  if (!sistolik || !diastolik) {
+    return { kategori: null, emergency: false };
+  }
+
   const result = klasifikasiTekananDarahSafe(sistolik, diastolik);
-
-  if (!result) {
-    return { kategori: null, emergency: false };
-  }
-
-  return result;
-}
-
-/**
- * Classify blood pressure from string inputs (for forms)
- *
- * @param sistolikStr - Systolic as string
- * @param diastolikStr - Diastolic as string
- * @returns Classification result
- */
-export function classifyBloodPressureFromStrings(
-  sistolikStr: string,
-  diastolikStr: string
-): TekananDarahResult {
-  const sistolik = parseFloat(sistolikStr);
-  const diastolik = parseFloat(diastolikStr);
-
-  if (
-    isNaN(sistolik) ||
-    isNaN(diastolik) ||
-    sistolik <= 0 ||
-    diastolik <= 0
-  ) {
-    return { kategori: null, emergency: false };
-  }
-
-  return classifyBloodPressure(sistolik, diastolik);
+  return result || { kategori: null, emergency: false };
 }
 
 // ============================================
@@ -170,26 +129,6 @@ export function classifyBloodGlucose(
   return klasifikasiGulaDarah(gulaPuasa, gulaSewaktu, gula2Jpp);
 }
 
-/**
- * Classify blood glucose from string inputs (for forms)
- *
- * @param gulaPuasaStr - Fasting glucose as string
- * @param gulaSewaktuStr - Random glucose as string
- * @param gula2JppStr - 2HPP glucose as string
- * @returns Classification result
- */
-export function classifyBloodGlucoseFromStrings(
-  gulaPuasaStr: string,
-  gulaSewaktuStr: string,
-  gula2JppStr: string
-): KlasifikasiGulaDarah {
-  const gulaPuasa = gulaPuasaStr ? parseFloat(gulaPuasaStr) : undefined;
-  const gulaSewaktu = gulaSewaktuStr ? parseFloat(gulaSewaktuStr) : undefined;
-  const gula2Jpp = gula2JppStr ? parseFloat(gula2JppStr) : undefined;
-
-  return classifyBloodGlucose(gulaPuasa, gulaSewaktu, gula2Jpp);
-}
-
 // ============================================
 // Cholesterol Service
 // ============================================
@@ -197,28 +136,12 @@ export function classifyBloodGlucoseFromStrings(
 /**
  * Classify cholesterol
  *
- * @param kolesterol - Cholesterol value in mg/dL
- * @returns Classification
- */
-export function classifyCholesterol(kolesterol: number): string {
-  return klasifikasiKolesterol(kolesterol);
-}
-
-/**
- * Classify cholesterol from string input (for forms)
- *
- * @param kolesterolStr - Cholesterol as string
+ * @param kolesterol - Cholesterol value in mg/dL (or undefined)
  * @returns Classification or null if invalid
  */
-export function classifyCholesterolFromString(
-  kolesterolStr: string
-): string | null {
-  if (!kolesterolStr) return null;
-
-  const kolesterol = parseFloat(kolesterolStr);
-  if (isNaN(kolesterol) || kolesterol <= 0) return null;
-
-  return classifyCholesterol(kolesterol);
+export function classifyCholesterol(kolesterol: number | undefined): string | null {
+  if (!kolesterol) return null;
+  return klasifikasiKolesterol(kolesterol);
 }
 
 // ============================================
@@ -228,31 +151,16 @@ export function classifyCholesterolFromString(
 /**
  * Classify uric acid based on gender
  *
- * @param asamUrat - Uric acid value in mg/dL
+ * @param asamUrat - Uric acid value in mg/dL (or undefined)
  * @param gender - Gender ('L' or 'P')
- * @returns Classification
- */
-export function classifyUricAcid(asamUrat: number, gender: Gender): string {
-  return klasifikasiAsamUrat(asamUrat, gender);
-}
-
-/**
- * Classify uric acid from string input (for forms)
- *
- * @param asamUratStr - Uric acid as string
- * @param gender - Gender
  * @returns Classification or null if invalid
  */
-export function classifyUricAcidFromString(
-  asamUratStr: string,
+export function classifyUricAcid(
+  asamUrat: number | undefined,
   gender: Gender
 ): string | null {
-  if (!asamUratStr) return null;
-
-  const asamUrat = parseFloat(asamUratStr);
-  if (isNaN(asamUrat) || asamUrat <= 0) return null;
-
-  return classifyUricAcid(asamUrat, gender);
+  if (!asamUrat) return null;
+  return klasifikasiAsamUrat(asamUrat, gender);
 }
 
 // ============================================
@@ -261,8 +169,10 @@ export function classifyUricAcidFromString(
 
 /**
  * Calculate and classify all health metrics at once
+ * 
+ * Note: Pass string values directly - they will be parsed automatically
  *
- * @param data - Health metric values
+ * @param data - Health metric values as strings
  * @param gender - Gender for uric acid classification
  * @returns Complete health metrics result
  */
@@ -280,22 +190,22 @@ export function calculateAllHealthMetrics(
   },
   gender: Gender
 ): HealthMetricsResult {
+  // Parse all values once
+  const berat = parseNumber(data.berat);
+  const tinggi = parseNumber(data.tinggi);
+  const sistolik = parseNumber(data.sistolik);
+  const diastolik = parseNumber(data.diastolik);
+  const gulaPuasa = parseNumber(data.gulaPuasa);
+  const gulaSewaktu = parseNumber(data.gulaSewaktu);
+  const gula2Jpp = parseNumber(data.gula2Jpp);
+  const kolesterol = parseNumber(data.kolesterol);
+  const asamUrat = parseNumber(data.asamUrat);
+
   return {
-    bmi: calculateBMIFromStrings(data.berat, data.tinggi),
-    tekananDarah: classifyBloodPressureFromStrings(
-      data.sistolik,
-      data.diastolik
-    ),
-    gulaDarah: classifyBloodGlucoseFromStrings(
-      data.gulaPuasa || '',
-      data.gulaSewaktu || '',
-      data.gula2Jpp || ''
-    ),
-    kolesterol: data.kolesterol
-      ? classifyCholesterolFromString(data.kolesterol)
-      : null,
-    asamUrat: data.asamUrat
-      ? classifyUricAcidFromString(data.asamUrat, gender)
-      : null,
+    bmi: calculateBMI(berat, tinggi),
+    tekananDarah: classifyBloodPressure(sistolik, diastolik),
+    gulaDarah: classifyBloodGlucose(gulaPuasa, gulaSewaktu, gula2Jpp),
+    kolesterol: classifyCholesterol(kolesterol),
+    asamUrat: classifyUricAcid(asamUrat, gender),
   };
 }

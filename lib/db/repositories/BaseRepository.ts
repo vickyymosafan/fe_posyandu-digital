@@ -153,7 +153,7 @@ export abstract class BaseRepository<T extends BaseEntity> {
    * Bulk upsert (insert or update) entities
    * Subclasses should override this with specific logic
    */
-  async bulkUpsert(_entities: T[]): Promise<void> {
+  async bulkUpsert(): Promise<void> {
     throw new Error('bulkUpsert must be implemented by subclass');
   }
 }

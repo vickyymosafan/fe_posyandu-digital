@@ -141,3 +141,6 @@ export {
   assertValidContext,
   unreachable,
 } from './failFast';
+
+// Number Parser (KISS utility)
+export { parseNumber, parseNumbers } from './numberParser';
