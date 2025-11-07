@@ -10,6 +10,32 @@
 // ID Generator
 export { generateIdPasien } from './generateIdPasien';
 
+// Health Classifier (OCP-compliant generic classifier)
+export {
+  classifyHealthMetric,
+  classifyHealthMetricSafe,
+  classifyBMI as classifyBMIWithStandard,
+  classifyBMISafe as classifyBMISafeWithStandard,
+  classifyCholesterol as classifyCholesterolWithStandard,
+  classifyUricAcid as classifyUricAcidWithStandard,
+  classifyGlucoseFasting,
+  classifyGlucoseRandom,
+  classifyGlucose2HPP,
+  BMI_STANDARD_ASIA_PACIFIC,
+  BLOOD_PRESSURE_STANDARD_AHA,
+  GLUCOSE_FASTING_STANDARD,
+  GLUCOSE_RANDOM_STANDARD,
+  GLUCOSE_2HPP_STANDARD,
+  CHOLESTEROL_STANDARD,
+  URIC_ACID_STANDARD_MALE,
+  URIC_ACID_STANDARD_FEMALE,
+} from './healthClassifier';
+export type {
+  ClassificationRange,
+  ClassificationStandard,
+  ClassificationResult,
+} from './healthClassifier';
+
 // BMI
 export { hitungBMI, hitungBMISafe, klasifikasiBMI, klasifikasiBMISafe } from './bmi';
 

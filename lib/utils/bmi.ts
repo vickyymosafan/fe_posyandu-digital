@@ -5,12 +5,14 @@
  *
  * Mengikuti prinsip:
  * - SRP: Hanya handle BMI calculation dan classification
+ * - OCP: Uses healthClassifier for extensible classification
  * - KISS: Implementasi sederhana dan straightforward
  * - Fail Fast: Validate input immediately dan throw pada invalid input (untuk submit)
  * - Graceful: Fungsi safe untuk real-time calculation tanpa throw error
  */
 
 import { assertValidNumber, assertInRange } from './failFast';
+import { classifyBMI as classifyBMIGeneric, classifyBMISafe as classifyBMISafeGeneric } from './healthClassifier';
 
 /**
  * Hitung BMI berdasarkan berat dan tinggi (safe version untuk real-time calculation)
@@ -82,6 +84,8 @@ export function hitungBMI(berat: number, tinggi: number): number {
  * Tidak throw error, return null jika input invalid
  * 
  * SINKRONISASI DENGAN BACKEND: Menggunakan threshold yang sama dengan backend
+ * 
+ * OCP: Uses healthClassifier for extensibility
  *
  * @param bmi - Body Mass Index
  * @returns Kategori BMI atau null jika invalid
@@ -104,13 +108,9 @@ export function klasifikasiBMISafe(bmi: number | null): string | null {
     return null;
   }
 
-  if (bmi < 17.0) return 'Berat Badan Sangat Kurang';
-  if (bmi < 18.5) return 'Berat Badan Kurang';
-  if (bmi < 23.0) return 'Normal';
-  if (bmi < 25.0) return 'Kelebihan Berat Badan';
-  if (bmi < 30.0) return 'Obesitas I';
-  if (bmi < 35.0) return 'Obesitas II';
-  return 'Obesitas III';
+  // Use healthClassifier for OCP compliance
+  // Can easily switch to different standards without modifying this code
+  return classifyBMISafeGeneric(bmi);
 }
 
 /**
@@ -118,6 +118,8 @@ export function klasifikasiBMISafe(bmi: number | null): string | null {
  * FAIL FAST: Validate input immediately dan throw error jika invalid
  * 
  * SINKRONISASI DENGAN BACKEND: Menggunakan threshold yang sama dengan backend
+ * 
+ * OCP: Uses healthClassifier for extensibility
  *
  * @param bmi - Body Mass Index
  * @returns Kategori BMI
@@ -141,11 +143,6 @@ export function klasifikasiBMI(bmi: number): string {
   assertValidNumber(bmi, 'BMI');
   assertInRange(bmi, 5, 100, 'BMI');
 
-  if (bmi < 17.0) return 'Berat Badan Sangat Kurang';
-  if (bmi < 18.5) return 'Berat Badan Kurang';
-  if (bmi < 23.0) return 'Normal';
-  if (bmi < 25.0) return 'Kelebihan Berat Badan';
-  if (bmi < 30.0) return 'Obesitas I';
-  if (bmi < 35.0) return 'Obesitas II';
-  return 'Obesitas III';
+  // Use healthClassifier for OCP compliance
+  return classifyBMIGeneric(bmi);
 }
