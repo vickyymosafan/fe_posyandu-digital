@@ -25,7 +25,7 @@ import type { APIResponse } from '@/types';
 /**
  * Base URL dari environment variable
  */
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-posyandu-digital.vercel.app';
 
 // Log BASE_URL saat module dimuat
 console.log('[API Client] Initialized with BASE_URL:', BASE_URL);

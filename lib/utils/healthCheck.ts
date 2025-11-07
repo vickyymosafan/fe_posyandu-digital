@@ -5,7 +5,7 @@
  * Berguna untuk debugging dan error handling.
  */
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-posyandu-digital.vercel.app';
 const BACKEND_BASE_URL = API_URL.replace('/api', '');
 
 /**
