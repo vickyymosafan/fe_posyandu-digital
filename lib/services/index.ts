@@ -65,3 +65,18 @@ export type {
   PemeriksaanGabunganFormData as PemeriksaanGabunganFormDataService,
   PemeriksaanKesehatanFormData as PemeriksaanKesehatanFormDataService,
 } from './pemeriksaanService';
+
+// Base Entity Service (for DRY)
+export {
+  createEntity,
+  createEntityOnline,
+  createEntityOffline,
+} from './baseEntityService';
+
+export type {
+  CreateEntityResult,
+  EntityRepository,
+  SyncQueueRepository as SyncQueueRepositoryInterface,
+  EntityAPIClient,
+  CreateEntityServiceOptions,
+} from './baseEntityService';

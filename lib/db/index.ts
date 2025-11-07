@@ -15,3 +15,5 @@ export type { LansiaDB, PemeriksaanDB, SyncQueueDB } from './schema';
 export { lansiaRepository } from './repositories/lansiaRepository';
 export { pemeriksaanRepository } from './repositories/pemeriksaanRepository';
 export { syncQueueRepository } from './repositories/syncQueueRepository';
+export { BaseRepository } from './repositories/BaseRepository';
+export type { BaseEntity } from './repositories/BaseRepository';
