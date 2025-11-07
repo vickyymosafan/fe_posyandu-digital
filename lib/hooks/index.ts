@@ -14,9 +14,8 @@ export { usePetugasForm } from './usePetugasForm';
 export { useLansiaList } from './useLansiaList';
 export { useLansiaForm } from './useLansiaForm';
 export { useLansiaDetail } from './useLansiaDetail';
-export { usePemeriksaanFisikForm } from './usePemeriksaanFisikForm';
 export { usePemeriksaanKesehatanForm } from './usePemeriksaanKesehatanForm';
-export { useRiwayatPemeriksaan } from './useRiwayatPemeriksaan';
+export { usePemeriksaanGabunganForm } from './usePemeriksaanGabunganForm';
 export { useProfileForm } from './useProfileForm';
 export { usePasswordForm } from './usePasswordForm';
 export type {
@@ -25,13 +24,6 @@ export type {
   UseDashboardStatsReturn,
 } from './useDashboardStats';
 export type { UseLansiaDetailReturn } from './useLansiaDetail';
-export type {
-  UsePemeriksaanFisikFormReturn,
-  PemeriksaanFisikFormData,
-  PemeriksaanFisikFormErrors,
-  BMIResult,
-  TekananDarahResult,
-} from './usePemeriksaanFisikForm';
 export type {
   UsePemeriksaanKesehatanFormReturn,
   PemeriksaanKesehatanFormData,

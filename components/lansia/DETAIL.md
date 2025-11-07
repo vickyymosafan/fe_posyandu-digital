@@ -154,8 +154,6 @@ const { lansia, pemeriksaan, isLoading, error, refetch } = useLansiaDetail(kode)
 <InfoRow label="Alamat" value={lansia.alamat} fullWidth />
 ```
 
-**Documentation**: See `INFO_ROW.md` for detailed documentation.
-
 ### LansiaDetailContent Component
 
 **Location**: `components/lansia/LansiaDetailContent.tsx`

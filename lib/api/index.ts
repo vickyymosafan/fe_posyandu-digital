@@ -7,7 +7,7 @@
  * import { authAPI, lansiaAPI, pemeriksaanAPI } from '@/lib/api';
  */
 
-export { apiClient, setToken, removeToken } from './client';
+export { apiClient } from './client';
 export { authAPI } from './auth';
 export { lansiaAPI } from './lansia';
 export { pemeriksaanAPI } from './pemeriksaan';
