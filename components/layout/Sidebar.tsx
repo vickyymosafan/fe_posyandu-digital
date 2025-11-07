@@ -75,8 +75,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {/* Header sidebar (mobile only) */}
           <div className="flex items-center justify-between p-4 border-b border-neutral-200 md:hidden">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center">
-                <span className="text-white font-bold text-sm">P</span>
+              <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+                <img 
+                  src="/logo.webp" 
+                  alt="Posyandu Logo" 
+                  className="w-full h-full object-contain"
+                />
               </div>
               <h2 className="font-bold text-neutral-900">Menu</h2>
             </div>

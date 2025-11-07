@@ -66,8 +66,12 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Logo dan nama aplikasi */}
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-neutral-900 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
+            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+              <img 
+                src="/logo.webp" 
+                alt="Posyandu Logo" 
+                className="w-full h-full object-contain"
+              />
             </div>
             <div className="hidden sm:block">
               <h1 className="text-lg font-bold text-neutral-900">Posyandu Lansia</h1>

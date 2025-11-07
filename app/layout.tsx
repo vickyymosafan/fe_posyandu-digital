@@ -13,6 +13,10 @@ const montserrat = Montserrat({
 export const metadata: Metadata = {
   title: 'Posyandu Lansia',
   description: 'Aplikasi Posyandu untuk Lansia',
+  icons: {
+    icon: '/favicon.ico',
+    apple: '/apple-touch-icon.png',
+  },
 };
 
 export default function RootLayout({
