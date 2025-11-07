@@ -5,11 +5,7 @@ import { useRouter } from 'next/navigation';
 import { pemeriksaanAPI } from '@/lib/api';
 import { useNotification } from '@/components/ui';
 import { handleAPIError } from '@/lib/utils/errors';
-import { hitungBMISafe, klasifikasiBMISafe } from '@/lib/utils/bmi';
-import { klasifikasiTekananDarahSafe } from '@/lib/utils/tekananDarah';
-import { klasifikasiGulaDarah } from '@/lib/utils/gulaDarah';
-import { klasifikasiKolesterol } from '@/lib/utils/kolesterol';
-import { klasifikasiAsamUrat } from '@/lib/utils/asamUrat';
+import { calculateAllHealthMetrics } from '@/lib/services/healthMetricsService';
 import type { Gender, PemeriksaanGabunganData } from '@/types';
 
 /**
@@ -92,15 +88,13 @@ export interface UsePemeriksaanGabunganFormReturn {
  * Responsibilities (SRP):
  * - Manage form state
  * - Validate input
- * - Calculate BMI realtime
- * - Classify blood pressure realtime
- * - Classify lab values realtime
  * - Submit data to API
  * 
  * Design Principles:
- * - DIP: Depends on pemeriksaanAPI abstraction
- * - SoC: Separates form logic from UI
- * - KISS: Simple validation and calculation
+ * - High Cohesion: Focused on form management only
+ * - Low Coupling: Uses service layer for calculations (no direct util imports)
+ * - DIP: Depends on abstractions (pemeriksaanAPI, healthMetricsService)
+ * - SoC: Separates form logic from business logic
  */
 export function usePemeriksaanGabunganForm(
   kode: string,
@@ -126,7 +120,7 @@ export function usePemeriksaanGabunganForm(
   const [errors, setErrors] = useState<PemeriksaanGabunganFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Calculated values
+  // Calculated values - using service layer for high cohesion, low coupling
   const [bmiResult, setBmiResult] = useState<BMIResult>({
     nilai: null,
     kategori: null,
@@ -142,85 +136,18 @@ export function usePemeriksaanGabunganForm(
   const [klasifikasiAsamUratValue, setKlasifikasiAsamUratValue] = useState<string | null>(null);
 
   /**
-   * Calculate BMI when tinggi or berat changes
+   * Calculate all health metrics when form data changes
+   * Uses service layer to reduce coupling and improve cohesion
    */
   useEffect(() => {
-    const berat = parseFloat(formData.berat);
-    const tinggi = parseFloat(formData.tinggi);
-
-    if (!isNaN(berat) && !isNaN(tinggi) && berat > 0 && tinggi > 0) {
-      const bmi = hitungBMISafe(berat, tinggi);
-      const kategori = klasifikasiBMISafe(bmi);
-      setBmiResult({ nilai: bmi, kategori });
-    } else {
-      setBmiResult({ nilai: null, kategori: null });
-    }
-  }, [formData.berat, formData.tinggi]);
-
-  /**
-   * Classify blood pressure when sistolik or diastolik changes
-   */
-  useEffect(() => {
-    const sistolik = parseFloat(formData.sistolik);
-    const diastolik = parseFloat(formData.diastolik);
-
-    if (!isNaN(sistolik) && !isNaN(diastolik) && sistolik > 0 && diastolik > 0) {
-      const result = klasifikasiTekananDarahSafe(sistolik, diastolik);
-      if (result) {
-        setTekananDarahResult(result);
-      } else {
-        setTekananDarahResult({ kategori: null, emergency: false });
-      }
-    } else {
-      setTekananDarahResult({ kategori: null, emergency: false });
-    }
-  }, [formData.sistolik, formData.diastolik]);
-
-  /**
-   * Classify gula darah when values change
-   */
-  useEffect(() => {
-    const gulaPuasa = formData.gulaPuasa ? parseFloat(formData.gulaPuasa) : undefined;
-    const gulaSewaktu = formData.gulaSewaktu ? parseFloat(formData.gulaSewaktu) : undefined;
-    const gula2Jpp = formData.gula2Jpp ? parseFloat(formData.gula2Jpp) : undefined;
-
-    const klasifikasi = klasifikasiGulaDarah(gulaPuasa, gulaSewaktu, gula2Jpp);
-    setKlasifikasiGula(klasifikasi);
-  }, [formData.gulaPuasa, formData.gulaSewaktu, formData.gula2Jpp]);
-
-  /**
-   * Classify kolesterol when value changes
-   */
-  useEffect(() => {
-    if (formData.kolesterol) {
-      const kolesterol = parseFloat(formData.kolesterol);
-      if (!isNaN(kolesterol) && kolesterol > 0) {
-        const klasifikasi = klasifikasiKolesterol(kolesterol);
-        setKlasifikasiKolesterolValue(klasifikasi);
-      } else {
-        setKlasifikasiKolesterolValue(null);
-      }
-    } else {
-      setKlasifikasiKolesterolValue(null);
-    }
-  }, [formData.kolesterol]);
-
-  /**
-   * Classify asam urat when value changes
-   */
-  useEffect(() => {
-    if (formData.asamUrat) {
-      const asamUrat = parseFloat(formData.asamUrat);
-      if (!isNaN(asamUrat) && asamUrat > 0) {
-        const klasifikasi = klasifikasiAsamUrat(asamUrat, gender);
-        setKlasifikasiAsamUratValue(klasifikasi);
-      } else {
-        setKlasifikasiAsamUratValue(null);
-      }
-    } else {
-      setKlasifikasiAsamUratValue(null);
-    }
-  }, [formData.asamUrat, gender]);
+    const metrics = calculateAllHealthMetrics(formData, gender);
+    
+    setBmiResult(metrics.bmi);
+    setTekananDarahResult(metrics.tekananDarah);
+    setKlasifikasiGula(metrics.gulaDarah);
+    setKlasifikasiKolesterolValue(metrics.kolesterol);
+    setKlasifikasiAsamUratValue(metrics.asamUrat);
+  }, [formData, gender]);
 
   /**
    * Handle field change
@@ -393,11 +320,7 @@ export function usePemeriksaanGabunganForm(
       asamUrat: '',
     });
     setErrors({});
-    setBmiResult({ nilai: null, kategori: null });
-    setTekananDarahResult({ kategori: null, emergency: false });
-    setKlasifikasiGula({});
-    setKlasifikasiKolesterolValue(null);
-    setKlasifikasiAsamUratValue(null);
+    // Metrics will be recalculated by useEffect
   }, []);
 
   return {

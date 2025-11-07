@@ -6,9 +6,8 @@ import { pemeriksaanAPI } from '@/lib/api';
 import { pemeriksaanRepository, syncQueueRepository } from '@/lib/db';
 import { useOffline } from './useOffline';
 import { useNotification } from '@/components/ui';
-import { klasifikasiGulaDarah } from '@/lib/utils/gulaDarah';
-import { klasifikasiKolesterol } from '@/lib/utils/kolesterol';
-import { klasifikasiAsamUrat } from '@/lib/utils/asamUrat';
+import { classifyBloodGlucose, classifyCholesterol, classifyUricAcid } from '@/lib/services/healthMetricsService';
+import { parseNumber } from '@/lib/utils/numberParser';
 import { pemeriksaanKesehatanSchema } from '@/lib/utils/validators';
 import { handleAPIError } from '@/lib/utils/errors';
 import type { PemeriksaanKesehatanData, Gender, KlasifikasiGulaDarah } from '@/types';
@@ -18,10 +17,14 @@ import type { PemeriksaanKesehatanData, Gender, KlasifikasiGulaDarah } from '@/t
  * 
  * Responsibilities (SRP):
  * - Manage form state (gdp, gds, duaJpp, kolesterol, asamUrat - all optional)
- * - Classify lab values realtime
  * - Handle form validation
  * - Submit data (online/offline)
  * - Save to IndexedDB and sync queue
+ * 
+ * Design Principles:
+ * - High Cohesion: Focused on form management only
+ * - Low Coupling: Uses service layer for classifications
+ * - DIP: Depends on abstractions (API, services)
  * 
  * @param kode - Kode unik lansia
  * @param lansiaId - ID lansia untuk IndexedDB
@@ -80,42 +83,29 @@ export function usePemeriksaanKesehatanForm(
   const [klasifikasiAsamUratValue, setKlasifikasiAsamUratValue] = useState<string | null>(null);
 
   /**
-   * Classify gula darah realtime
+   * Classify all lab values realtime using service layer
+   * Reduces coupling by using service abstractions
    */
   useEffect(() => {
-    const gdp = formData.gulaPuasa ? parseFloat(formData.gulaPuasa) : undefined;
-    const gds = formData.gulaSewaktu ? parseFloat(formData.gulaSewaktu) : undefined;
-    const duaJpp = formData.gula2Jpp ? parseFloat(formData.gula2Jpp) : undefined;
+    const gdp = parseNumber(formData.gulaPuasa);
+    const gds = parseNumber(formData.gulaSewaktu);
+    const duaJpp = parseNumber(formData.gula2Jpp);
+    const kolesterol = parseNumber(formData.kolesterol);
+    const asamUrat = parseNumber(formData.asamUrat);
 
-    const result = klasifikasiGulaDarah(gdp, gds, duaJpp);
-    setKlasifikasiGula(result);
-  }, [formData.gulaPuasa, formData.gulaSewaktu, formData.gula2Jpp]);
+    setKlasifikasiGula(classifyBloodGlucose(gdp, gds, duaJpp));
+    setKlasifikasiKolesterolValue(classifyCholesterol(kolesterol));
+    setKlasifikasiAsamUratValue(classifyUricAcid(asamUrat, gender));
+  }, [
+    formData.gulaPuasa,
+    formData.gulaSewaktu,
+    formData.gula2Jpp,
+    formData.kolesterol,
+    formData.asamUrat,
+    gender,
+  ]);
 
-  /**
-   * Classify kolesterol realtime
-   */
-  useEffect(() => {
-    const kolesterol = parseFloat(formData.kolesterol);
-    if (!isNaN(kolesterol) && kolesterol > 0) {
-      const result = klasifikasiKolesterol(kolesterol);
-      setKlasifikasiKolesterolValue(result);
-    } else {
-      setKlasifikasiKolesterolValue(null);
-    }
-  }, [formData.kolesterol]);
 
-  /**
-   * Classify asam urat realtime
-   */
-  useEffect(() => {
-    const asamUrat = parseFloat(formData.asamUrat);
-    if (!isNaN(asamUrat) && asamUrat > 0) {
-      const result = klasifikasiAsamUrat(asamUrat, gender);
-      setKlasifikasiAsamUratValue(result);
-    } else {
-      setKlasifikasiAsamUratValue(null);
-    }
-  }, [formData.asamUrat, gender]);
 
   /**
    * Handle field change
