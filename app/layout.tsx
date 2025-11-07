@@ -14,6 +14,13 @@ export const metadata: Metadata = {
   title: 'Posyandu Lansia',
   description: 'Aplikasi Posyandu untuk manajemen data lansia dan pemeriksaan kesehatan',
   metadataBase: new URL('https://posyandu-digital.vercel.app'),
+  icons: {
+    icon: [
+      { url: '/favicon.ico', sizes: '32x32' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+    ],
+    apple: '/apple-touch-icon.png',
+  },
   openGraph: {
     title: 'Posyandu Lansia',
     description: 'Aplikasi Posyandu untuk manajemen data lansia dan pemeriksaan kesehatan',
