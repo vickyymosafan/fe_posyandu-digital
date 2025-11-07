@@ -3,56 +3,73 @@
  *
  * File ini berisi Zod schemas untuk validasi form.
  *
+ * SSOT Principle:
+ * - All validation rules imported from ValidationRules (SSOT)
+ * - No duplication of validation logic
+ * - Zod schemas are adapters that use domain validation rules
+ *
  * Mengikuti prinsip:
  * - SRP: Hanya handle form validation
  * - DRY: Reusable schemas with constants
- * - Maintainability: Validation rules defined in one place
+ * - SSOT: Single source of truth for validation rules
  */
 
 import { z } from 'zod';
-import { HEALTH_LIMITS, ID_LENGTHS, PASSWORD_REQUIREMENTS } from '@/lib/constants';
+import { ValidationRules } from '@/lib/domain/validation/ValidationRules';
 
 /**
  * Schema untuk NIK (16 digit numerik)
+ * Uses ValidationRules as SSOT
  */
 export const nikSchema = z
   .string()
-  .length(ID_LENGTHS.NIK, `NIK harus ${ID_LENGTHS.NIK} digit`)
-  .regex(/^\d+$/, 'NIK harus berisi angka saja');
+  .length(ValidationRules.NIK.LENGTH, ValidationRules.NIK.ERROR_MESSAGES.INVALID_LENGTH)
+  .regex(ValidationRules.NIK.PATTERN, ValidationRules.NIK.ERROR_MESSAGES.INVALID_FORMAT);
 
 /**
  * Schema untuk KK (16 digit numerik)
+ * Uses ValidationRules as SSOT
  */
 export const kkSchema = z
   .string()
-  .length(ID_LENGTHS.KK, `KK harus ${ID_LENGTHS.KK} digit`)
-  .regex(/^\d+$/, 'KK harus berisi angka saja');
+  .length(ValidationRules.KK.LENGTH, ValidationRules.KK.ERROR_MESSAGES.INVALID_LENGTH)
+  .regex(ValidationRules.KK.PATTERN, ValidationRules.KK.ERROR_MESSAGES.INVALID_FORMAT);
 
 /**
  * Schema untuk email
+ * Uses ValidationRules as SSOT
  */
-export const emailSchema = z.string().email('Format email tidak valid');
+export const emailSchema = z.string().email(ValidationRules.EMAIL.ERROR_MESSAGES.INVALID);
 
 /**
  * Schema untuk password
- * Requirements defined in PASSWORD_REQUIREMENTS constant
+ * Uses ValidationRules as SSOT
  */
 export const passwordSchema = z
   .string()
-  .min(PASSWORD_REQUIREMENTS.MIN_LENGTH, `Password minimal ${PASSWORD_REQUIREMENTS.MIN_LENGTH} karakter`)
-  .regex(/[a-zA-Z]/, 'Password harus mengandung huruf')
-  .regex(/\d/, 'Password harus mengandung angka')
-  .regex(/[^a-zA-Z0-9]/, 'Password harus mengandung simbol');
+  .min(
+    ValidationRules.PASSWORD.MIN_LENGTH,
+    ValidationRules.PASSWORD.ERROR_MESSAGES.TOO_SHORT
+  )
+  .regex(ValidationRules.PASSWORD.PATTERNS.LETTER, ValidationRules.PASSWORD.ERROR_MESSAGES.NO_LETTER)
+  .regex(ValidationRules.PASSWORD.PATTERNS.NUMBER, ValidationRules.PASSWORD.ERROR_MESSAGES.NO_NUMBER)
+  .regex(ValidationRules.PASSWORD.PATTERNS.SYMBOL, ValidationRules.PASSWORD.ERROR_MESSAGES.NO_SYMBOL);
 
 /**
  * Schema untuk nama (tidak boleh kosong)
+ * Uses ValidationRules as SSOT
  */
-export const namaSchema = z.string().min(1, 'Nama tidak boleh kosong');
+export const namaSchema = z
+  .string()
+  .min(ValidationRules.NAME.MIN_LENGTH, ValidationRules.NAME.ERROR_MESSAGES.REQUIRED);
 
 /**
  * Schema untuk alamat (tidak boleh kosong)
+ * Uses ValidationRules as SSOT
  */
-export const alamatSchema = z.string().min(1, 'Alamat tidak boleh kosong');
+export const alamatSchema = z
+  .string()
+  .min(ValidationRules.ADDRESS.MIN_LENGTH, ValidationRules.ADDRESS.ERROR_MESSAGES.REQUIRED);
 
 /**
  * Schema untuk tanggal lahir
@@ -67,75 +84,118 @@ export const tanggalLahirSchema = z.string().refine(
 
 /**
  * Schema untuk jenis kelamin
+ * Uses ValidationRules as SSOT
  */
-export const genderSchema = z.enum(['L', 'P'], {
-  message: 'Jenis kelamin harus L atau P',
+export const genderSchema = z.enum(ValidationRules.GENDER.ALLOWED_VALUES, {
+  message: ValidationRules.GENDER.ERROR_MESSAGES.INVALID,
 });
 
 /**
  * Schema untuk tinggi badan (cm)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const tinggiSchema = z
   .number()
-  .min(HEALTH_LIMITS.HEIGHT.MIN, `Tinggi badan minimal ${HEALTH_LIMITS.HEIGHT.MIN} ${HEALTH_LIMITS.HEIGHT.UNIT}`)
-  .max(HEALTH_LIMITS.HEIGHT.MAX, `Tinggi badan maksimal ${HEALTH_LIMITS.HEIGHT.MAX} ${HEALTH_LIMITS.HEIGHT.UNIT}`);
+  .min(
+    ValidationRules.HEALTH.HEIGHT.MIN,
+    ValidationRules.HEALTH.HEIGHT.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.HEIGHT.MAX,
+    ValidationRules.HEALTH.HEIGHT.ERROR_MESSAGES.OUT_OF_RANGE
+  );
 
 /**
  * Schema untuk berat badan (kg)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const beratSchema = z
   .number()
-  .min(HEALTH_LIMITS.WEIGHT.MIN, `Berat badan minimal ${HEALTH_LIMITS.WEIGHT.MIN} ${HEALTH_LIMITS.WEIGHT.UNIT}`)
-  .max(HEALTH_LIMITS.WEIGHT.MAX, `Berat badan maksimal ${HEALTH_LIMITS.WEIGHT.MAX} ${HEALTH_LIMITS.WEIGHT.UNIT}`);
+  .min(
+    ValidationRules.HEALTH.WEIGHT.MIN,
+    ValidationRules.HEALTH.WEIGHT.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.WEIGHT.MAX,
+    ValidationRules.HEALTH.WEIGHT.ERROR_MESSAGES.OUT_OF_RANGE
+  );
 
 /**
  * Schema untuk tekanan darah sistolik (mmHg)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const sistolikSchema = z
   .number()
-  .min(HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MIN, `Tekanan darah sistolik minimal ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MIN} ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.UNIT}`)
-  .max(HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MAX, `Tekanan darah sistolik maksimal ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MAX} ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.UNIT}`);
+  .min(
+    ValidationRules.HEALTH.BLOOD_PRESSURE_SYSTOLIC.MIN,
+    ValidationRules.HEALTH.BLOOD_PRESSURE_SYSTOLIC.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.BLOOD_PRESSURE_SYSTOLIC.MAX,
+    ValidationRules.HEALTH.BLOOD_PRESSURE_SYSTOLIC.ERROR_MESSAGES.OUT_OF_RANGE
+  );
 
 /**
  * Schema untuk tekanan darah diastolik (mmHg)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const diastolikSchema = z
   .number()
-  .min(HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MIN, `Tekanan darah diastolik minimal ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MIN} ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.UNIT}`)
-  .max(HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MAX, `Tekanan darah diastolik maksimal ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MAX} ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.UNIT}`);
+  .min(
+    ValidationRules.HEALTH.BLOOD_PRESSURE_DIASTOLIC.MIN,
+    ValidationRules.HEALTH.BLOOD_PRESSURE_DIASTOLIC.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.BLOOD_PRESSURE_DIASTOLIC.MAX,
+    ValidationRules.HEALTH.BLOOD_PRESSURE_DIASTOLIC.ERROR_MESSAGES.OUT_OF_RANGE
+  );
 
 /**
  * Schema untuk gula darah (mg/dL)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const gulaDarahSchema = z
   .number()
-  .min(HEALTH_LIMITS.BLOOD_GLUCOSE.MIN, `Gula darah minimal ${HEALTH_LIMITS.BLOOD_GLUCOSE.MIN} ${HEALTH_LIMITS.BLOOD_GLUCOSE.UNIT}`)
-  .max(HEALTH_LIMITS.BLOOD_GLUCOSE.MAX, `Gula darah maksimal ${HEALTH_LIMITS.BLOOD_GLUCOSE.MAX} ${HEALTH_LIMITS.BLOOD_GLUCOSE.UNIT}`)
+  .min(
+    ValidationRules.HEALTH.BLOOD_GLUCOSE.MIN,
+    ValidationRules.HEALTH.BLOOD_GLUCOSE.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.BLOOD_GLUCOSE.MAX,
+    ValidationRules.HEALTH.BLOOD_GLUCOSE.ERROR_MESSAGES.OUT_OF_RANGE
+  )
   .optional();
 
 /**
  * Schema untuk kolesterol (mg/dL)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const kolesterolSchema = z
   .number()
-  .min(HEALTH_LIMITS.CHOLESTEROL.MIN, `Kolesterol minimal ${HEALTH_LIMITS.CHOLESTEROL.MIN} ${HEALTH_LIMITS.CHOLESTEROL.UNIT}`)
-  .max(HEALTH_LIMITS.CHOLESTEROL.MAX, `Kolesterol maksimal ${HEALTH_LIMITS.CHOLESTEROL.MAX} ${HEALTH_LIMITS.CHOLESTEROL.UNIT}`)
+  .min(
+    ValidationRules.HEALTH.CHOLESTEROL.MIN,
+    ValidationRules.HEALTH.CHOLESTEROL.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.CHOLESTEROL.MAX,
+    ValidationRules.HEALTH.CHOLESTEROL.ERROR_MESSAGES.OUT_OF_RANGE
+  )
   .optional();
 
 /**
  * Schema untuk asam urat (mg/dL)
- * Limits defined in HEALTH_LIMITS constant
+ * Uses ValidationRules as SSOT
  */
 export const asamUratSchema = z
   .number()
-  .min(HEALTH_LIMITS.URIC_ACID.MIN, `Asam urat minimal ${HEALTH_LIMITS.URIC_ACID.MIN} ${HEALTH_LIMITS.URIC_ACID.UNIT}`)
-  .max(HEALTH_LIMITS.URIC_ACID.MAX, `Asam urat maksimal ${HEALTH_LIMITS.URIC_ACID.MAX} ${HEALTH_LIMITS.URIC_ACID.UNIT}`)
+  .min(
+    ValidationRules.HEALTH.URIC_ACID.MIN,
+    ValidationRules.HEALTH.URIC_ACID.ERROR_MESSAGES.OUT_OF_RANGE
+  )
+  .max(
+    ValidationRules.HEALTH.URIC_ACID.MAX,
+    ValidationRules.HEALTH.URIC_ACID.ERROR_MESSAGES.OUT_OF_RANGE
+  )
   .optional();
 
 /**

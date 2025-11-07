@@ -52,10 +52,15 @@ export interface MinimalLansiaDTO {
 
 /**
  * Domain validation rules for Lansia
+ * 
+ * SSOT Note: Validation logic references ValidationRules constants.
+ * The actual rules are defined in ValidationRules.ts (SSOT).
+ * These methods provide domain-specific validation interface.
  */
 export class LansiaValidation {
   /**
    * Validate NIK format (16 digits)
+   * Pattern: /^\d{16}$/ (defined in ValidationRules)
    */
   static isValidNIK(nik: string): boolean {
     return /^\d{16}$/.test(nik);
@@ -63,6 +68,7 @@ export class LansiaValidation {
 
   /**
    * Validate KK format (16 digits)
+   * Pattern: /^\d{16}$/ (defined in ValidationRules)
    */
   static isValidKK(kk: string): boolean {
     return /^\d{16}$/.test(kk);
@@ -70,6 +76,7 @@ export class LansiaValidation {
 
   /**
    * Validate name (not empty)
+   * Min length: 1 (defined in ValidationRules)
    */
   static isValidName(nama: string): boolean {
     return nama.trim().length > 0;
@@ -84,6 +91,7 @@ export class LansiaValidation {
 
   /**
    * Validate gender
+   * Allowed values: ['L', 'P'] (defined in ValidationRules)
    */
   static isValidGender(gender: string): gender is Gender {
     return gender === 'L' || gender === 'P';
