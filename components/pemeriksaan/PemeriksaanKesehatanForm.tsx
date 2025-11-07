@@ -1,7 +1,6 @@
 'use client';
 
 import { Input, Button, Card } from '@/components/ui';
-import { formatLabValue } from '@/lib/utils/formatters';
 import type { UsePemeriksaanKesehatanFormReturn } from '@/lib/hooks/usePemeriksaanKesehatanForm';
 
 /**

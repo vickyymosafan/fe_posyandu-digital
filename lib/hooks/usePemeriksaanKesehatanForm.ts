@@ -69,8 +69,10 @@ const initialFormData: PemeriksaanKesehatanFormData = {
 export function usePemeriksaanKesehatanForm(
   kode: string,
   lansiaId: number,
-  _gender: Gender // Not used - classifications are done by backend
+  _gender: Gender // eslint-disable-line @typescript-eslint/no-unused-vars
 ): UsePemeriksaanKesehatanFormReturn {
+  // Note: _gender parameter kept for backward compatibility but not used
+  // Classifications are now performed by the backend API
   const router = useRouter();
   const { isOnline } = useOffline();
   const { showNotification } = useNotification();

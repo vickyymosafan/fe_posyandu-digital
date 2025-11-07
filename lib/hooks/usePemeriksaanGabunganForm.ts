@@ -68,11 +68,15 @@ export interface UsePemeriksaanGabunganFormReturn {
  * Note: Health metrics (BMI, blood pressure classifications, etc.) are calculated
  * by the backend API using WHO standards. The frontend only collects and validates
  * input data, then displays the calculated results from the API response.
+ * 
+ * @param kode - Patient code for API submission
+ * @param _lansiaId - Lansia ID (not used - kept for backward compatibility)
+ * @param _gender - Gender (not used - classifications done by backend)
  */
 export function usePemeriksaanGabunganForm(
   kode: string,
-  lansiaId: number,
-  gender: Gender
+  _lansiaId: number, // eslint-disable-line @typescript-eslint/no-unused-vars
+  _gender: Gender // eslint-disable-line @typescript-eslint/no-unused-vars
 ): UsePemeriksaanGabunganFormReturn {
   const router = useRouter();
   const { showNotification } = useNotification();
