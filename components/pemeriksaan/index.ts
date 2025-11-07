@@ -6,3 +6,4 @@
 
 export { PemeriksaanKesehatanForm } from './PemeriksaanKesehatanForm';
 export { PemeriksaanGabunganForm } from './PemeriksaanGabunganForm';
+export { RiwayatPemeriksaanContent } from './RiwayatPemeriksaanContent';
