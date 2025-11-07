@@ -33,14 +33,14 @@ export default function LoginPage() {
         <CardHeader>
           {/* Logo dan title */}
           <div className="flex flex-col items-center gap-4 mb-2">
-            <div className="w-20 h-20 relative">
+            <div className="relative w-20 h-20">
               <Image
                 src="/logo.webp"
                 alt="Logo Posyandu Lansia"
-                width={80}
-                height={80}
+                fill
                 className="object-contain"
                 priority
+                unoptimized
               />
             </div>
             <div className="text-center">
