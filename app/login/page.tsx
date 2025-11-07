@@ -13,6 +13,7 @@
 
 import { useLoginForm } from '@/lib/hooks';
 import { Input, Button, Card, CardHeader, CardBody } from '@/components/ui';
+import Image from 'next/image';
 
 export default function LoginPage() {
   const {
@@ -32,11 +33,14 @@ export default function LoginPage() {
         <CardHeader>
           {/* Logo dan title */}
           <div className="flex flex-col items-center gap-4 mb-2">
-            <div className="w-20 h-20 flex items-center justify-center">
-              <img
+            <div className="w-20 h-20 relative">
+              <Image
                 src="/logo.webp"
                 alt="Logo Posyandu Lansia"
-                className="w-full h-full object-contain"
+                width={80}
+                height={80}
+                className="object-contain"
+                priority
               />
             </div>
             <div className="text-center">
