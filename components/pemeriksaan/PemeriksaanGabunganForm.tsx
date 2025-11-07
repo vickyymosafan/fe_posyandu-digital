@@ -1,7 +1,13 @@
 'use client';
 
+import { useMemo } from 'react';
 import { Input, Button, Card } from '@/components/ui';
 import type { UsePemeriksaanGabunganFormReturn } from '@/lib/hooks/usePemeriksaanGabunganForm';
+import { hitungBMI } from '@/lib/utils/bmi';
+import { klasifikasiTekananDarah } from '@/lib/utils/tekananDarah';
+import { klasifikasiGDP, klasifikasiGDS, klasifikasiDuaJPP } from '@/lib/utils/gulaDarah';
+import { klasifikasiKolesterol } from '@/lib/utils/kolesterol';
+import { klasifikasiAsamUrat } from '@/lib/utils/asamUrat';
 
 /**
  * Component untuk form pemeriksaan gabungan (fisik + kesehatan)
@@ -34,6 +40,49 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
     handleChange,
     handleSubmit,
   } = formState;
+
+  // Real-time calculations
+  const bmiResult = useMemo(() => {
+    const tinggi = parseFloat(formData.tinggi);
+    const berat = parseFloat(formData.berat);
+    return hitungBMI(berat, tinggi);
+  }, [formData.tinggi, formData.berat]);
+
+  const tekananDarahResult = useMemo(() => {
+    const sistolik = parseFloat(formData.sistolik);
+    const diastolik = parseFloat(formData.diastolik);
+    return klasifikasiTekananDarah(sistolik, diastolik);
+  }, [formData.sistolik, formData.diastolik]);
+
+  const gulaPuasaKlasifikasi = useMemo(() => {
+    const nilai = parseFloat(formData.gulaPuasa);
+    return klasifikasiGDP(nilai);
+  }, [formData.gulaPuasa]);
+
+  const gulaSewaktuKlasifikasi = useMemo(() => {
+    const nilai = parseFloat(formData.gulaSewaktu);
+    return klasifikasiGDS(nilai);
+  }, [formData.gulaSewaktu]);
+
+  const gula2JppKlasifikasi = useMemo(() => {
+    const nilai = parseFloat(formData.gula2Jpp);
+    return klasifikasiDuaJPP(nilai);
+  }, [formData.gula2Jpp]);
+
+  const kolesterolKlasifikasi = useMemo(() => {
+    const nilai = parseFloat(formData.kolesterol);
+    return klasifikasiKolesterol(nilai);
+  }, [formData.kolesterol]);
+
+  const asamUratKlasifikasi = useMemo(() => {
+    const nilai = parseFloat(formData.asamUrat);
+    // Note: Gender should be passed from parent component
+    // For now, we'll show both classifications
+    return nilai > 0 ? {
+      laki: klasifikasiAsamUrat(nilai, 'L'),
+      perempuan: klasifikasiAsamUrat(nilai, 'P'),
+    } : null;
+  }, [formData.asamUrat]);
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -103,6 +152,32 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               )}
             </div>
           </div>
+
+          {/* BMI Result */}
+          {bmiResult && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-blue-900">
+                    Body Mass Index (BMI)
+                  </p>
+                  <p className="text-2xl font-bold text-blue-700 mt-1">
+                    {bmiResult.nilai}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-blue-700">Kategori:</p>
+                  <p className={`text-lg font-semibold mt-1 ${
+                    bmiResult.kategori === 'Normal' ? 'text-green-600' :
+                    bmiResult.kategori.includes('Obesitas') ? 'text-red-600' :
+                    'text-orange-600'
+                  }`}>
+                    {bmiResult.kategori}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -170,6 +245,44 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               )}
             </div>
           </div>
+
+          {/* Tekanan Darah Result */}
+          {tekananDarahResult && (
+            <div className={`mt-4 p-4 rounded-lg border ${
+              tekananDarahResult.emergency 
+                ? 'bg-red-50 border-red-200' 
+                : tekananDarahResult.kategori === 'Normal'
+                ? 'bg-green-50 border-green-200'
+                : 'bg-orange-50 border-orange-200'
+            }`}>
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className={`text-sm font-medium ${
+                    tekananDarahResult.emergency ? 'text-red-900' :
+                    tekananDarahResult.kategori === 'Normal' ? 'text-green-900' :
+                    'text-orange-900'
+                  }`}>
+                    Klasifikasi Tekanan Darah
+                  </p>
+                  <p className={`text-lg font-bold mt-1 ${
+                    tekananDarahResult.emergency ? 'text-red-700' :
+                    tekananDarahResult.kategori === 'Normal' ? 'text-green-700' :
+                    'text-orange-700'
+                  }`}>
+                    {tekananDarahResult.kategori}
+                  </p>
+                </div>
+                {tekananDarahResult.emergency && (
+                  <div className="flex items-center gap-2 text-red-600">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm font-semibold">EMERGENCY!</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </Card>
 
@@ -212,6 +325,15 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                   {errors.gulaPuasa}
                 </p>
               )}
+              {gulaPuasaKlasifikasi && (
+                <p className={`mt-2 text-sm font-medium ${
+                  gulaPuasaKlasifikasi === 'Normal' ? 'text-green-600' :
+                  gulaPuasaKlasifikasi === 'Diabetes' ? 'text-red-600' :
+                  'text-orange-600'
+                }`}>
+                  {gulaPuasaKlasifikasi}
+                </p>
+              )}
             </div>
 
             {/* Gula Darah Sewaktu (GDS) */}
@@ -238,6 +360,13 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                   {errors.gulaSewaktu}
                 </p>
               )}
+              {gulaSewaktuKlasifikasi && (
+                <p className={`mt-2 text-sm font-medium ${
+                  gulaSewaktuKlasifikasi === 'Normal' ? 'text-green-600' : 'text-red-600'
+                }`}>
+                  {gulaSewaktuKlasifikasi}
+                </p>
+              )}
             </div>
 
             {/* Gula Darah 2 Jam Post Prandial (2JPP) */}
@@ -262,6 +391,15 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               {errors.gula2Jpp && (
                 <p className="mt-1 text-sm text-red-600" role="alert">
                   {errors.gula2Jpp}
+                </p>
+              )}
+              {gula2JppKlasifikasi && (
+                <p className={`mt-2 text-sm font-medium ${
+                  gula2JppKlasifikasi === 'Normal' ? 'text-green-600' :
+                  gula2JppKlasifikasi === 'Diabetes' ? 'text-red-600' :
+                  'text-orange-600'
+                }`}>
+                  {gula2JppKlasifikasi}
                 </p>
               )}
             </div>
@@ -294,6 +432,15 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                 {errors.kolesterol}
               </p>
             )}
+            {kolesterolKlasifikasi && (
+              <p className={`mt-2 text-sm font-medium ${
+                kolesterolKlasifikasi === 'Normal' ? 'text-green-600' :
+                kolesterolKlasifikasi === 'Tinggi' ? 'text-red-600' :
+                'text-orange-600'
+              }`}>
+                {kolesterolKlasifikasi}
+              </p>
+            )}
           </div>
 
           {/* Asam Urat */}
@@ -320,6 +467,27 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               <p className="mt-1 text-sm text-red-600" role="alert">
                 {errors.asamUrat}
               </p>
+            )}
+            {asamUratKlasifikasi && (
+              <div className="mt-2 text-sm">
+                <p className="text-neutral-600 mb-1">Klasifikasi:</p>
+                <div className="flex gap-4">
+                  <span className={`font-medium ${
+                    asamUratKlasifikasi.laki === 'Normal' ? 'text-green-600' :
+                    asamUratKlasifikasi.laki === 'Tinggi' ? 'text-red-600' :
+                    'text-orange-600'
+                  }`}>
+                    L: {asamUratKlasifikasi.laki}
+                  </span>
+                  <span className={`font-medium ${
+                    asamUratKlasifikasi.perempuan === 'Normal' ? 'text-green-600' :
+                    asamUratKlasifikasi.perempuan === 'Tinggi' ? 'text-red-600' :
+                    'text-orange-600'
+                  }`}>
+                    P: {asamUratKlasifikasi.perempuan}
+                  </span>
+                </div>
+              </div>
             )}
           </div>
         </div>
