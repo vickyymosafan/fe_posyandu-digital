@@ -5,18 +5,18 @@
  *
  * Custom hook untuk mengelola form pendaftaran lansia.
  * Mengikuti prinsip:
- * - SRP: Hanya handle form state dan submission logic
- * - DIP: Depend on abstractions (lansiaAPI, repositories)
+ * - SRP: Hanya handle form state dan validation
+ * - DIP: Depend on abstractions (submission service)
  * - SoC: Memisahkan business logic dari UI
  */
 
 import { useState, useCallback } from 'react';
-import { lansiaAPI } from '@/lib/api';
-import { lansiaRepository, syncQueueRepository } from '@/lib/db';
 import { generateIdPasien } from '@/lib/utils/generateIdPasien';
 import { lansiaFormSchema } from '@/lib/utils/validators';
+import { submitLansiaOnline, submitLansiaOffline } from '@/lib/services/lansiaSubmissionService';
 import { useOffline } from './useOffline';
 import { useNotification } from '@/components/ui/Notification';
+import { NOTIFICATION_DURATION_MS } from '@/lib/constants';
 import type { Gender } from '@/types';
 
 // ============================================
@@ -153,6 +153,7 @@ export function useLansiaForm(): UseLansiaFormReturn {
 
   /**
    * Handle form submission
+   * Delegates to appropriate submission service based on online status
    */
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -167,11 +168,8 @@ export function useLansiaForm(): UseLansiaFormReturn {
       setIsSubmitting(true);
 
       try {
-        // Generate unique ID
-        const kode = await generateIdPasien();
-
-        // Prepare data untuk API
-        const lansiaData = {
+        // Prepare submission data
+        const submissionData = {
           nik: formData.nik,
           kk: formData.kk,
           nama: formData.nama,
@@ -180,59 +178,30 @@ export function useLansiaForm(): UseLansiaFormReturn {
           alamat: formData.alamat,
         };
 
+        // Submit based on online status
+        let result;
         if (isOnline) {
-          // Online: Submit ke API
-          const response = await lansiaAPI.create(lansiaData);
-
-          if (response.data) {
-            // Save ke IndexedDB dengan syncedAt
-            // Convert string dates dari API response ke Date objects
-            const lansiaDB = {
-              ...response.data,
-              tanggalLahir: new Date(response.data.tanggalLahir),
-              createdAt: new Date(response.data.createdAt),
-              syncedAt: new Date(),
-            };
-            await lansiaRepository.create(lansiaDB);
-
-            setGeneratedKode(response.data.kode);
-            showNotification('success', 'Lansia berhasil didaftarkan', 5000);
-          }
+          result = await submitLansiaOnline(submissionData);
         } else {
-          // Offline: Save ke IndexedDB dan sync queue
-          const lansiaDB = {
-            id: Date.now(), // Temporary ID
-            kode,
-            nik: lansiaData.nik,
-            kk: lansiaData.kk,
-            nama: lansiaData.nama,
-            tanggalLahir: new Date(lansiaData.tanggalLahir),
-            gender: lansiaData.gender,
-            alamat: lansiaData.alamat,
-            createdAt: new Date(),
-          };
+          const kode = await generateIdPasien();
+          result = await submitLansiaOffline(submissionData, kode);
+        }
 
-          await lansiaRepository.create(lansiaDB);
-
-          // Add ke sync queue
-          await syncQueueRepository.add({
-            entity: 'LANSIA',
-            type: 'CREATE',
-            data: lansiaData,
-          });
-
-          setGeneratedKode(kode);
-          showNotification(
-            'success',
-            'Lansia berhasil didaftarkan (offline). Data akan disinkronkan saat online.',
-            5000
-          );
+        // Handle result
+        if (result.success) {
+          setGeneratedKode(result.kode || null);
+          const message = isOnline
+            ? 'Lansia berhasil didaftarkan'
+            : 'Lansia berhasil didaftarkan (offline). Data akan disinkronkan saat online.';
+          showNotification('success', message, NOTIFICATION_DURATION_MS);
+        } else {
+          showNotification('error', result.error || 'Gagal mendaftarkan lansia', NOTIFICATION_DURATION_MS);
         }
       } catch (error) {
-        console.error('Error submitting lansia form:', error);
+        console.error('[useLansiaForm] Submission error:', error);
         const errorMessage =
           error instanceof Error ? error.message : 'Gagal mendaftarkan lansia';
-        showNotification('error', errorMessage, 5000);
+        showNotification('error', errorMessage, NOTIFICATION_DURATION_MS);
       } finally {
         setIsSubmitting(false);
       }

@@ -2,15 +2,32 @@
  * Health Metrics Service
  *
  * Business logic layer for health metric calculations and classifications.
- * Follows KISS principle - simple, focused functions without duplication.
+ *
+ * Design Principles Applied:
+ * - SRP: Each function has one clear responsibility
+ * - DRY: Reuses utility functions instead of duplicating logic
+ * - KISS: Simple, straightforward implementations
+ * - Type Safety: Strong TypeScript types for all inputs/outputs
+ * - Composability: Small functions that can be combined
  *
  * Responsibilities:
- * - Calculate health metrics (BMI, etc.)
- * - Classify health values
- * - Aggregate multiple classifications
+ * - Calculate health metrics (BMI, blood pressure, etc.)
+ * - Classify health values based on medical standards
+ * - Aggregate multiple classifications into comprehensive results
  *
- * Note: This service works with numbers only. Use parseNumber() utility
- * to convert string inputs before calling these functions.
+ * Usage Pattern:
+ * 1. Parse string inputs to numbers using parseNumber()
+ * 2. Call individual classification functions
+ * 3. Or use calculateAllHealthMetrics() for complete analysis
+ *
+ * @example
+ * ```typescript
+ * // Individual metric
+ * const bmi = calculateBMI(70, 170);
+ * 
+ * // Complete analysis
+ * const metrics = calculateAllHealthMetrics(formData, 'L');
+ * ```
  */
 
 import { hitungBMISafe, klasifikasiBMISafe } from '@/lib/utils/bmi';

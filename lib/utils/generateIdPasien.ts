@@ -10,9 +10,15 @@
  */
 
 import { lansiaRepository } from '../db';
+import {
+  PATIENT_ID_MAX_RETRIES,
+  PATIENT_ID_SUFFIX_LENGTH,
+  PATIENT_ID_PREFIX,
+} from '@/lib/constants';
 
 /**
  * Karakter base62 (0-9, A-Z, a-z)
+ * Provides 62 possible characters for ID generation
  */
 const BASE62_CHARS = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
@@ -32,7 +38,7 @@ function generateBase62(length: number): string {
  * Generate ID pasien unik dengan format: pasien + YYYYMMDD + 2 karakter base62
  * Total 16 karakter
  *
- * @param maxRetries - Maksimal percobaan untuk generate ID unik (default: 10)
+ * @param maxRetries - Maksimal percobaan untuk generate ID unik
  * @returns ID pasien unik
  * @throws Error jika gagal generate ID unik setelah maxRetries
  *
@@ -40,7 +46,9 @@ function generateBase62(length: number): string {
  * const id = await generateIdPasien();
  * // Output: pasien202501055A
  */
-export async function generateIdPasien(maxRetries: number = 10): Promise<string> {
+export async function generateIdPasien(
+  maxRetries: number = PATIENT_ID_MAX_RETRIES
+): Promise<string> {
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, '0');
@@ -48,8 +56,8 @@ export async function generateIdPasien(maxRetries: number = 10): Promise<string>
   const dateStr = `${year}${month}${day}`;
 
   for (let i = 0; i < maxRetries; i++) {
-    const suffix = generateBase62(2);
-    const kode = `pasien${dateStr}${suffix}`;
+    const suffix = generateBase62(PATIENT_ID_SUFFIX_LENGTH);
+    const kode = `${PATIENT_ID_PREFIX}${dateStr}${suffix}`;
 
     // Check uniqueness in IndexedDB
     const existing = await lansiaRepository.getByKode(kode);

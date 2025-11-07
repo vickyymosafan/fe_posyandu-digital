@@ -77,9 +77,12 @@ class SyncQueueRepository {
 
   /**
    * Delete items dengan retry count > maxRetries
+   * Default uses SYNC_MAX_RETRIES from config
    */
   async deleteFailedItems(maxRetries: number = 3): Promise<void> {
-    const items = await db.syncQueue.filter((item) => item.retryCount > maxRetries).toArray();
+    const items = await db.syncQueue
+      .filter((item) => item.retryCount > maxRetries)
+      .toArray();
 
     for (const item of items) {
       if (item.id) {

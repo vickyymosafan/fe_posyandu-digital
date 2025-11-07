@@ -11,6 +11,7 @@
 import { syncQueueRepository, lansiaRepository } from '@/lib/db';
 // import { pemeriksaanRepository } from '@/lib/db'; // TODO: Will be used when pemeriksaan sync is implemented
 import { lansiaAPI, pemeriksaanAPI } from '@/lib/api';
+import { SYNC_MAX_RETRIES } from '@/lib/constants';
 import type { SyncQueueDB } from '@/lib/db/schema';
 import type { CreateLansiaData, PemeriksaanGabunganData } from '@/types';
 
@@ -20,7 +21,7 @@ import type { CreateLansiaData, PemeriksaanGabunganData } from '@/types';
 
 export class SyncManager {
   private isSyncing: boolean = false;
-  private readonly MAX_RETRIES = 3;
+  private readonly MAX_RETRIES = SYNC_MAX_RETRIES;
 
   /**
    * Sync semua data dari queue ke server dan fetch latest data

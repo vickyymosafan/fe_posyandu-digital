@@ -5,6 +5,12 @@
  * Berguna untuk debugging dan error handling.
  */
 
+import {
+  HEALTH_CHECK_TIMEOUT_MS,
+  CONSOLE_SEPARATOR,
+  CONSOLE_SUB_SEPARATOR,
+} from '@/lib/constants';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-posyandu-digital.vercel.app';
 const BACKEND_BASE_URL = API_URL.replace('/api', '');
 
@@ -22,8 +28,7 @@ export async function checkBackendHealth(): Promise<boolean> {
       headers: {
         'Content-Type': 'application/json',
       },
-      // Timeout 5 detik
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(HEALTH_CHECK_TIMEOUT_MS),
     });
 
     const isHealthy = response.ok;
@@ -47,13 +52,13 @@ export async function checkBackendHealth(): Promise<boolean> {
  * Check backend health and log detailed information
  */
 export async function checkBackendHealthVerbose(): Promise<void> {
-  console.log('='.repeat(80));
+  console.log(CONSOLE_SEPARATOR);
   console.log('🏥 BACKEND HEALTH CHECK');
-  console.log('='.repeat(80));
+  console.log(CONSOLE_SEPARATOR);
   console.log('Backend URL:', BACKEND_BASE_URL);
   console.log('API URL:', API_URL);
   console.log('Health endpoint:', `${BACKEND_BASE_URL}/health`);
-  console.log('-'.repeat(80));
+  console.log(CONSOLE_SUB_SEPARATOR);
 
   const isHealthy = await checkBackendHealth();
 
@@ -70,5 +75,5 @@ export async function checkBackendHealthVerbose(): Promise<void> {
     console.error('5. Try accessing health endpoint directly:', `${BACKEND_BASE_URL}/health`);
   }
 
-  console.log('='.repeat(80));
+  console.log(CONSOLE_SEPARATOR);
 }

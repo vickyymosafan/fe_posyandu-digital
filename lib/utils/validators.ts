@@ -5,17 +5,19 @@
  *
  * Mengikuti prinsip:
  * - SRP: Hanya handle form validation
- * - DRY: Reusable schemas
+ * - DRY: Reusable schemas with constants
+ * - Maintainability: Validation rules defined in one place
  */
 
 import { z } from 'zod';
+import { HEALTH_LIMITS, ID_LENGTHS, PASSWORD_REQUIREMENTS } from '@/lib/constants';
 
 /**
  * Schema untuk NIK (16 digit numerik)
  */
 export const nikSchema = z
   .string()
-  .length(16, 'NIK harus 16 digit')
+  .length(ID_LENGTHS.NIK, `NIK harus ${ID_LENGTHS.NIK} digit`)
   .regex(/^\d+$/, 'NIK harus berisi angka saja');
 
 /**
@@ -23,7 +25,7 @@ export const nikSchema = z
  */
 export const kkSchema = z
   .string()
-  .length(16, 'KK harus 16 digit')
+  .length(ID_LENGTHS.KK, `KK harus ${ID_LENGTHS.KK} digit`)
   .regex(/^\d+$/, 'KK harus berisi angka saja');
 
 /**
@@ -33,11 +35,11 @@ export const emailSchema = z.string().email('Format email tidak valid');
 
 /**
  * Schema untuk password
- * Minimal 8 karakter dengan kombinasi huruf, angka, dan simbol
+ * Requirements defined in PASSWORD_REQUIREMENTS constant
  */
 export const passwordSchema = z
   .string()
-  .min(8, 'Password minimal 8 karakter')
+  .min(PASSWORD_REQUIREMENTS.MIN_LENGTH, `Password minimal ${PASSWORD_REQUIREMENTS.MIN_LENGTH} karakter`)
   .regex(/[a-zA-Z]/, 'Password harus mengandung huruf')
   .regex(/\d/, 'Password harus mengandung angka')
   .regex(/[^a-zA-Z0-9]/, 'Password harus mengandung simbol');
@@ -72,61 +74,68 @@ export const genderSchema = z.enum(['L', 'P'], {
 
 /**
  * Schema untuk tinggi badan (cm)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const tinggiSchema = z
   .number()
-  .min(50, 'Tinggi badan minimal 50 cm')
-  .max(250, 'Tinggi badan maksimal 250 cm');
+  .min(HEALTH_LIMITS.HEIGHT.MIN, `Tinggi badan minimal ${HEALTH_LIMITS.HEIGHT.MIN} ${HEALTH_LIMITS.HEIGHT.UNIT}`)
+  .max(HEALTH_LIMITS.HEIGHT.MAX, `Tinggi badan maksimal ${HEALTH_LIMITS.HEIGHT.MAX} ${HEALTH_LIMITS.HEIGHT.UNIT}`);
 
 /**
  * Schema untuk berat badan (kg)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const beratSchema = z
   .number()
-  .min(20, 'Berat badan minimal 20 kg')
-  .max(300, 'Berat badan maksimal 300 kg');
+  .min(HEALTH_LIMITS.WEIGHT.MIN, `Berat badan minimal ${HEALTH_LIMITS.WEIGHT.MIN} ${HEALTH_LIMITS.WEIGHT.UNIT}`)
+  .max(HEALTH_LIMITS.WEIGHT.MAX, `Berat badan maksimal ${HEALTH_LIMITS.WEIGHT.MAX} ${HEALTH_LIMITS.WEIGHT.UNIT}`);
 
 /**
  * Schema untuk tekanan darah sistolik (mmHg)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const sistolikSchema = z
   .number()
-  .min(50, 'Tekanan darah sistolik minimal 50 mmHg')
-  .max(300, 'Tekanan darah sistolik maksimal 300 mmHg');
+  .min(HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MIN, `Tekanan darah sistolik minimal ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MIN} ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.UNIT}`)
+  .max(HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MAX, `Tekanan darah sistolik maksimal ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.MAX} ${HEALTH_LIMITS.BLOOD_PRESSURE_SYSTOLIC.UNIT}`);
 
 /**
  * Schema untuk tekanan darah diastolik (mmHg)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const diastolikSchema = z
   .number()
-  .min(30, 'Tekanan darah diastolik minimal 30 mmHg')
-  .max(200, 'Tekanan darah diastolik maksimal 200 mmHg');
+  .min(HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MIN, `Tekanan darah diastolik minimal ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MIN} ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.UNIT}`)
+  .max(HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MAX, `Tekanan darah diastolik maksimal ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.MAX} ${HEALTH_LIMITS.BLOOD_PRESSURE_DIASTOLIC.UNIT}`);
 
 /**
  * Schema untuk gula darah (mg/dL)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const gulaDarahSchema = z
   .number()
-  .min(20, 'Gula darah minimal 20 mg/dL')
-  .max(600, 'Gula darah maksimal 600 mg/dL')
+  .min(HEALTH_LIMITS.BLOOD_GLUCOSE.MIN, `Gula darah minimal ${HEALTH_LIMITS.BLOOD_GLUCOSE.MIN} ${HEALTH_LIMITS.BLOOD_GLUCOSE.UNIT}`)
+  .max(HEALTH_LIMITS.BLOOD_GLUCOSE.MAX, `Gula darah maksimal ${HEALTH_LIMITS.BLOOD_GLUCOSE.MAX} ${HEALTH_LIMITS.BLOOD_GLUCOSE.UNIT}`)
   .optional();
 
 /**
  * Schema untuk kolesterol (mg/dL)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const kolesterolSchema = z
   .number()
-  .min(50, 'Kolesterol minimal 50 mg/dL')
-  .max(500, 'Kolesterol maksimal 500 mg/dL')
+  .min(HEALTH_LIMITS.CHOLESTEROL.MIN, `Kolesterol minimal ${HEALTH_LIMITS.CHOLESTEROL.MIN} ${HEALTH_LIMITS.CHOLESTEROL.UNIT}`)
+  .max(HEALTH_LIMITS.CHOLESTEROL.MAX, `Kolesterol maksimal ${HEALTH_LIMITS.CHOLESTEROL.MAX} ${HEALTH_LIMITS.CHOLESTEROL.UNIT}`)
   .optional();
 
 /**
  * Schema untuk asam urat (mg/dL)
+ * Limits defined in HEALTH_LIMITS constant
  */
 export const asamUratSchema = z
   .number()
-  .min(1, 'Asam urat minimal 1 mg/dL')
-  .max(20, 'Asam urat maksimal 20 mg/dL')
+  .min(HEALTH_LIMITS.URIC_ACID.MIN, `Asam urat minimal ${HEALTH_LIMITS.URIC_ACID.MIN} ${HEALTH_LIMITS.URIC_ACID.UNIT}`)
+  .max(HEALTH_LIMITS.URIC_ACID.MAX, `Asam urat maksimal ${HEALTH_LIMITS.URIC_ACID.MAX} ${HEALTH_LIMITS.URIC_ACID.UNIT}`)
   .optional();
 
 /**

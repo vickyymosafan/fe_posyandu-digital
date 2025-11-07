@@ -8,6 +8,7 @@
  * - SRP: Hanya handle HTTP communication (token management di tokenStorage.ts)
  * - OCP: Mudah diperluas dengan method baru
  * - DIP: High-level modules depend on abstraction ini
+ * - DRY: Extracted common logic to helper functions
  */
 
 import {
@@ -21,6 +22,7 @@ import {
   ValidationError,
 } from '../utils/errors';
 import { getToken, removeToken } from '../utils/tokenStorage';
+import { API_REQUEST_TIMEOUT_MS } from '@/lib/constants';
 import type { APIResponse } from '@/types';
 
 /**
@@ -32,16 +34,30 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://be-posyandu-digital
 console.log('[API Client] Initialized with BASE_URL:', BASE_URL);
 
 /**
- * Timeout untuk setiap request (30 detik)
- */
-const REQUEST_TIMEOUT = 30000;
-
-/**
  * Interface untuk request options
  */
 interface RequestOptions extends RequestInit {
   timeout?: number;
   skipAuth?: boolean;
+}
+
+/**
+ * Build request headers with optional authentication
+ * Extracted to reduce duplication across HTTP methods
+ */
+function buildHeaders(skipAuth: boolean): Record<string, string> {
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (!skipAuth) {
+    const token = getToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+  }
+
+  return headers;
 }
 
 /**
@@ -51,7 +67,7 @@ async function fetchWithTimeout(
   url: string,
   options: RequestOptions = {}
 ): Promise<Response> {
-  const { timeout = REQUEST_TIMEOUT, ...fetchOptions } = options;
+  const { timeout = API_REQUEST_TIMEOUT_MS, ...fetchOptions } = options;
 
   console.log('[API Client] Request:', {
     url,
@@ -196,21 +212,9 @@ class APIClient {
   async get<T>(endpoint: string, options: RequestOptions = {}): Promise<APIResponse<T>> {
     const { skipAuth = false, ...restOptions } = options;
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Attach token jika tidak skip auth
-    if (!skipAuth) {
-      const token = getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
     const response = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
       method: 'GET',
-      headers,
+      headers: buildHeaders(skipAuth),
       ...restOptions,
     });
 
@@ -227,21 +231,9 @@ class APIClient {
   ): Promise<APIResponse<T>> {
     const { skipAuth = false, ...restOptions } = options;
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Attach token jika tidak skip auth
-    if (!skipAuth) {
-      const token = getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
     const response = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
       method: 'POST',
-      headers,
+      headers: buildHeaders(skipAuth),
       body: body ? JSON.stringify(body) : undefined,
       ...restOptions,
     });
@@ -259,21 +251,9 @@ class APIClient {
   ): Promise<APIResponse<T>> {
     const { skipAuth = false, ...restOptions } = options;
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Attach token jika tidak skip auth
-    if (!skipAuth) {
-      const token = getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
     const response = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
       method: 'PATCH',
-      headers,
+      headers: buildHeaders(skipAuth),
       body: body ? JSON.stringify(body) : undefined,
       ...restOptions,
     });
@@ -287,21 +267,9 @@ class APIClient {
   async delete<T>(endpoint: string, options: RequestOptions = {}): Promise<APIResponse<T>> {
     const { skipAuth = false, ...restOptions } = options;
 
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    // Attach token jika tidak skip auth
-    if (!skipAuth) {
-      const token = getToken();
-      if (token) {
-        headers['Authorization'] = `Bearer ${token}`;
-      }
-    }
-
     const response = await fetchWithTimeout(`${BASE_URL}${endpoint}`, {
       method: 'DELETE',
-      headers,
+      headers: buildHeaders(skipAuth),
       ...restOptions,
     });
 
