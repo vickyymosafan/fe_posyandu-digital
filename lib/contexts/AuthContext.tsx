@@ -16,6 +16,7 @@ import type { User, UserRole } from '@/types';
 import { authAPI } from '@/lib/api';
 import { profileAPI } from '@/lib/api';
 import { setCookie, removeCookie } from '@/lib/utils/cookies';
+import { getToken, setToken as saveTokenToStorage, removeToken as removeTokenFromStorage } from '@/lib/utils/tokenStorage';
 import { AuthenticationError } from '@/lib/utils/errors';
 
 // ============================================
@@ -98,7 +99,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    */
   const saveToken = useCallback((token: string) => {
     // Save to localStorage untuk APIClient
-    localStorage.setItem(TOKEN_KEY, token);
+    saveTokenToStorage(token);
 
     // Save to cookie untuk middleware
     setCookie(TOKEN_COOKIE_NAME, token, {
@@ -112,7 +113,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
    * Remove token dari localStorage dan cookie
    */
   const clearToken = useCallback(() => {
-    localStorage.removeItem(TOKEN_KEY);
+    removeTokenFromStorage();
     removeCookie(TOKEN_COOKIE_NAME, { path: '/' });
   }, []);
 
@@ -122,7 +123,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initAuth = () => {
       try {
-        const token = localStorage.getItem(TOKEN_KEY);
+        const token = getToken();
 
         if (token) {
           const userData = decodeToken(token);

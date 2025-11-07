@@ -92,6 +92,12 @@ export {
 export { setCookie, getCookie, removeCookie, hasCookie } from './cookies';
 export type { CookieOptions } from './cookies';
 
+// Token Storage
+export { getToken, setToken, removeToken, hasToken } from './tokenStorage';
+
+// Route Guards
+export { isPublicRoute, isStaticAsset, hasAccess, getDashboardUrl, requiresAuth } from './routeGuards';
+
 // Sync Manager
 export { syncManager, SyncManager } from './syncManager';
 

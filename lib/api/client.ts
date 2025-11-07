@@ -5,7 +5,7 @@
  * Mengimplementasikan fetch wrapper dengan error handling dan timeout.
  *
  * Mengikuti prinsip:
- * - SRP: Hanya handle HTTP communication
+ * - SRP: Hanya handle HTTP communication (token management di tokenStorage.ts)
  * - OCP: Mudah diperluas dengan method baru
  * - DIP: High-level modules depend on abstraction ini
  */
@@ -20,6 +20,7 @@ import {
   TimeoutError,
   ValidationError,
 } from '../utils/errors';
+import { getToken, removeToken } from '../utils/tokenStorage';
 import type { APIResponse } from '@/types';
 
 /**
@@ -41,35 +42,6 @@ const REQUEST_TIMEOUT = 30000;
 interface RequestOptions extends RequestInit {
   timeout?: number;
   skipAuth?: boolean;
-}
-
-/**
- * Token key - harus sama dengan AuthContext
- */
-const TOKEN_KEY = 'auth_token';
-
-/**
- * Get JWT token dari localStorage
- */
-function getToken(): string | null {
-  if (typeof window === 'undefined') return null;
-  return localStorage.getItem(TOKEN_KEY);
-}
-
-/**
- * Set JWT token ke localStorage
- */
-export function setToken(token: string): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(TOKEN_KEY, token);
-}
-
-/**
- * Remove JWT token dari localStorage
- */
-export function removeToken(): void {
-  if (typeof window === 'undefined') return;
-  localStorage.removeItem(TOKEN_KEY);
 }
 
 /**

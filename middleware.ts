@@ -7,13 +7,14 @@
  * - Redirect ke halaman yang sesuai
  *
  * Mengikuti prinsip:
- * - SRP: Hanya handle route protection
+ * - SRP: Hanya handle request/response flow (route logic di routeGuards.ts)
  * - Security: First line of defense (bukan security layer utama)
  */
 
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { jwtDecode } from 'jwt-decode';
+import { isPublicRoute, isStaticAsset, hasAccess, getDashboardUrl } from '@/lib/utils/routeGuards';
 
 // ============================================
 // Types
@@ -36,35 +37,9 @@ interface JWTPayload {
 
 const TOKEN_COOKIE_NAME = 'auth_token';
 
-// Public routes yang tidak perlu authentication
-const PUBLIC_ROUTES = ['/login', '/offline'];
-
-// Route patterns untuk role-based access
-const ADMIN_ROUTES = ['/admin'];
-const PETUGAS_ROUTES = ['/petugas'];
-
 // ============================================
 // Helper Functions
 // ============================================
-
-/**
- * Check if route is public
- */
-function isPublicRoute(pathname: string): boolean {
-  return PUBLIC_ROUTES.some((route) => pathname.startsWith(route));
-}
-
-/**
- * Check if route is static asset
- */
-function isStaticAsset(pathname: string): boolean {
-  return (
-    pathname.startsWith('/_next') ||
-    pathname.startsWith('/icons') ||
-    pathname.startsWith('/manifest.json') ||
-    pathname.startsWith('/favicon.ico')
-  );
-}
 
 /**
  * Decode dan validate JWT token
@@ -84,31 +59,6 @@ function decodeToken(token: string): JWTPayload | null {
     console.error('Error decoding token:', error);
     return null;
   }
-}
-
-/**
- * Get dashboard URL based on user role
- */
-function getDashboardUrl(role: UserRole): string {
-  return role === 'ADMIN' ? '/admin/dashboard' : '/petugas/dashboard';
-}
-
-/**
- * Check if user has access to route
- */
-function hasAccess(pathname: string, role: UserRole): boolean {
-  // Check admin routes
-  if (ADMIN_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === 'ADMIN';
-  }
-
-  // Check petugas routes
-  if (PETUGAS_ROUTES.some((route) => pathname.startsWith(route))) {
-    return role === 'PETUGAS';
-  }
-
-  // Other protected routes accessible by all authenticated users
-  return true;
 }
 
 // ============================================

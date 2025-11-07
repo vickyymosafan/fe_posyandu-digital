@@ -4,9 +4,8 @@ import { useRouter } from 'next/navigation';
 import { Lansia, Pemeriksaan } from '@/types';
 import { Card, CardHeader, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { formatDate, formatUmur } from '@/lib/utils/formatters';
+import { formatDate, formatUmur } from '@/lib/utils/formatters'
 import { PemeriksaanHistoryTable } from './PemeriksaanHistoryTable';
-import { InfoRow } from './InfoRow';
 
 /**
  * Component untuk menampilkan detail lengkap lansia
@@ -77,44 +76,42 @@ export function LansiaDetailContent({
         <CardBody>
           {/* Grid responsive: 1 col mobile, 2 col tablet+ */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
-            <InfoRow 
-              label="NIK" 
-              value={lansia.nik} 
-            />
+            <div>
+              <p className="text-sm text-neutral-600 mb-1">NIK</p>
+              <p className="text-base font-medium text-neutral-900">{lansia.nik}</p>
+            </div>
             
-            <InfoRow 
-              label="Nomor KK" 
-              value={lansia.kk} 
-            />
+            <div>
+              <p className="text-sm text-neutral-600 mb-1">Nomor KK</p>
+              <p className="text-base font-medium text-neutral-900">{lansia.kk}</p>
+            </div>
             
-            <InfoRow 
-              label="Tanggal Lahir" 
-              value={
-                <>
-                  {formatDate(lansia.tanggalLahir)}
-                  <span className="text-neutral-600 ml-2 text-sm">
-                    ({formatUmur(lansia.tanggalLahir)})
-                  </span>
-                </>
-              } 
-            />
+            <div>
+              <p className="text-sm text-neutral-600 mb-1">Tanggal Lahir</p>
+              <p className="text-base font-medium text-neutral-900">
+                {formatDate(lansia.tanggalLahir)}
+                <span className="text-neutral-600 ml-2 text-sm">
+                  ({formatUmur(lansia.tanggalLahir)})
+                </span>
+              </p>
+            </div>
             
-            <InfoRow 
-              label="Jenis Kelamin" 
-              value={lansia.gender === 'L' ? 'Laki-laki' : 'Perempuan'} 
-            />
+            <div>
+              <p className="text-sm text-neutral-600 mb-1">Jenis Kelamin</p>
+              <p className="text-base font-medium text-neutral-900">
+                {lansia.gender === 'L' ? 'Laki-laki' : 'Perempuan'}
+              </p>
+            </div>
             
-            <InfoRow 
-              label="Alamat" 
-              value={lansia.alamat}
-              fullWidth 
-            />
+            <div className="sm:col-span-2">
+              <p className="text-sm text-neutral-600 mb-1">Alamat</p>
+              <p className="text-base font-medium text-neutral-900">{lansia.alamat}</p>
+            </div>
             
-            <InfoRow 
-              label="Terdaftar Sejak" 
-              value={formatDate(lansia.createdAt)}
-              fullWidth 
-            />
+            <div className="sm:col-span-2">
+              <p className="text-sm text-neutral-600 mb-1">Terdaftar Sejak</p>
+              <p className="text-base font-medium text-neutral-900">{formatDate(lansia.createdAt)}</p>
+            </div>
           </div>
         </CardBody>
       </Card>
