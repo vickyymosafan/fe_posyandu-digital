@@ -8,7 +8,8 @@
  * - ISP: Hanya expose method yang relevan untuk auth
  */
 
-import { apiClient, setToken, removeToken } from './client';
+import { apiClient } from './client';
+import { setToken, removeToken } from '../utils/tokenStorage';
 import type { APIResponse, User } from '@/types';
 
 /**

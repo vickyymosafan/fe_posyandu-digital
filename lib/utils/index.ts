@@ -36,22 +36,9 @@ export type {
   ClassificationResult,
 } from './healthClassifier';
 
-// BMI
-export { hitungBMI, hitungBMISafe, klasifikasiBMI, klasifikasiBMISafe } from './bmi';
-
-// Tekanan Darah
-export { klasifikasiTekananDarah, klasifikasiTekananDarahSafe } from './tekananDarah';
-export type { TekananDarahResult } from './tekananDarah';
-
-// Gula Darah
-export { klasifikasiGulaDarah } from './gulaDarah';
-export type { KlasifikasiGulaDarah } from './gulaDarah';
-
-// Kolesterol
-export { klasifikasiKolesterol } from './kolesterol';
-
-// Asam Urat
-export { klasifikasiAsamUrat } from './asamUrat';
+// Note: BMI, Blood Pressure, Blood Glucose, Cholesterol, and Uric Acid
+// calculations are now handled by the backend API using WHO standards.
+// The frontend receives calculated values from the API response.
 
 // Validators
 export {

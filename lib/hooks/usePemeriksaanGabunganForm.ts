@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { pemeriksaanAPI } from '@/lib/api';
 import { useNotification } from '@/components/ui';
 import { handleAPIError } from '@/lib/utils/errors';
-import { calculateAllHealthMetrics } from '@/lib/services/healthMetricsService';
 import type { Gender, PemeriksaanGabunganData } from '@/types';
 
 /**
@@ -41,42 +40,12 @@ export interface PemeriksaanGabunganFormErrors {
 }
 
 /**
- * Interface untuk BMI result
- */
-export interface BMIResult {
-  nilai: number | null;
-  kategori: string | null;
-}
-
-/**
- * Interface untuk tekanan darah result
- */
-export interface TekananDarahResult {
-  kategori: string | null;
-  emergency: boolean;
-}
-
-/**
- * Interface untuk klasifikasi gula darah
- */
-export interface KlasifikasiGulaDarah {
-  gdp?: string;
-  gds?: string;
-  duaJpp?: string;
-}
-
-/**
  * Interface untuk return value hook
  */
 export interface UsePemeriksaanGabunganFormReturn {
   formData: PemeriksaanGabunganFormData;
   errors: PemeriksaanGabunganFormErrors;
   isSubmitting: boolean;
-  bmiResult: BMIResult;
-  tekananDarahResult: TekananDarahResult;
-  klasifikasiGula: KlasifikasiGulaDarah;
-  klasifikasiKolesterolValue: string | null;
-  klasifikasiAsamUratValue: string | null;
   handleChange: (field: keyof PemeriksaanGabunganFormData, value: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   resetForm: () => void;
@@ -92,9 +61,13 @@ export interface UsePemeriksaanGabunganFormReturn {
  * 
  * Design Principles:
  * - High Cohesion: Focused on form management only
- * - Low Coupling: Uses service layer for calculations (no direct util imports)
- * - DIP: Depends on abstractions (pemeriksaanAPI, healthMetricsService)
+ * - Low Coupling: Delegates calculations to backend API
+ * - DIP: Depends on abstractions (pemeriksaanAPI)
  * - SoC: Separates form logic from business logic
+ * 
+ * Note: Health metrics (BMI, blood pressure classifications, etc.) are calculated
+ * by the backend API using WHO standards. The frontend only collects and validates
+ * input data, then displays the calculated results from the API response.
  */
 export function usePemeriksaanGabunganForm(
   kode: string,
@@ -119,35 +92,6 @@ export function usePemeriksaanGabunganForm(
 
   const [errors, setErrors] = useState<PemeriksaanGabunganFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Calculated values - using service layer for high cohesion, low coupling
-  const [bmiResult, setBmiResult] = useState<BMIResult>({
-    nilai: null,
-    kategori: null,
-  });
-
-  const [tekananDarahResult, setTekananDarahResult] = useState<TekananDarahResult>({
-    kategori: null,
-    emergency: false,
-  });
-
-  const [klasifikasiGula, setKlasifikasiGula] = useState<KlasifikasiGulaDarah>({});
-  const [klasifikasiKolesterolValue, setKlasifikasiKolesterolValue] = useState<string | null>(null);
-  const [klasifikasiAsamUratValue, setKlasifikasiAsamUratValue] = useState<string | null>(null);
-
-  /**
-   * Calculate all health metrics when form data changes
-   * Uses service layer to reduce coupling and improve cohesion
-   */
-  useEffect(() => {
-    const metrics = calculateAllHealthMetrics(formData, gender);
-    
-    setBmiResult(metrics.bmi);
-    setTekananDarahResult(metrics.tekananDarah);
-    setKlasifikasiGula(metrics.gulaDarah);
-    setKlasifikasiKolesterolValue(metrics.kolesterol);
-    setKlasifikasiAsamUratValue(metrics.asamUrat);
-  }, [formData, gender]);
 
   /**
    * Handle field change
@@ -320,18 +264,12 @@ export function usePemeriksaanGabunganForm(
       asamUrat: '',
     });
     setErrors({});
-    // Metrics will be recalculated by useEffect
   }, []);
 
   return {
     formData,
     errors,
     isSubmitting,
-    bmiResult,
-    tekananDarahResult,
-    klasifikasiGula,
-    klasifikasiKolesterolValue,
-    klasifikasiAsamUratValue,
     handleChange,
     handleSubmit,
     resetForm,

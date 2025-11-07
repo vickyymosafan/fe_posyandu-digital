@@ -25,6 +25,7 @@ import {
  */
 class PemeriksaanRepository extends BaseRepository<PemeriksaanDB> {
   constructor() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     super(db.pemeriksaan as any, 'Pemeriksaan');
   }
 

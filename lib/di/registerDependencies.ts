@@ -14,15 +14,10 @@
 
 import { DIContainer, DependencyKeys } from './Container';
 import { IndexedDBLansiaRepository } from '../infrastructure/repositories/IndexedDBLansiaRepository';
-import { HealthMetricsDomainService } from '../domain/services/HealthMetricsService';
-import { HealthMetricsAdapter } from '../infrastructure/adapters/HealthMetricsAdapter';
 import { RegisterLansiaUseCase } from '../use-cases/RegisterLansiaUseCase';
-import { RecordPemeriksaanUseCase } from '../use-cases/RecordPemeriksaanUseCase';
 import { generateIdPasien } from '../utils/generateIdPasien';
-import { syncQueueRepository, pemeriksaanRepository } from '../db';
+import { syncQueueRepository } from '../db';
 import type { ILansiaRepository } from '../domain/repositories/ILansiaRepository';
-import type { IPemeriksaanRepository } from '../domain/repositories/IPemeriksaanRepository';
-import type { IHealthMetricsCalculator } from '../use-cases/RecordPemeriksaanUseCase';
 
 /**
  * Register all application dependencies
@@ -58,24 +53,9 @@ export function registerDependencies(container: DIContainer): void {
   // ============================================
   // Domain Services (Singleton)
   // ============================================
-
-  /**
-   * Health Metrics Domain Service
-   * Singleton: Stateless service, can be reused
-   */
-  container.registerSingleton(
-    DependencyKeys.HEALTH_METRICS_SERVICE,
-    () => new HealthMetricsDomainService()
-  );
-
-  /**
-   * Health Metrics Calculator (Adapter)
-   * Singleton: Adapts existing utilities to domain interface
-   */
-  container.registerSingleton(
-    DependencyKeys.HEALTH_METRICS_CALCULATOR,
-    () => new HealthMetricsAdapter()
-  );
+  
+  // Note: Health metrics calculations are now handled by the backend API
+  // using WHO standards. No client-side calculation services needed.
 
   // ============================================
   // Utilities (Singleton)
@@ -108,20 +88,7 @@ export function registerDependencies(container: DIContainer): void {
     }
   );
 
-  /**
-   * Record Pemeriksaan Use Case
-   * Transient: New instance for each operation
-   * Dependencies are resolved from container
-   */
-  container.registerTransient(
-    DependencyKeys.RECORD_PEMERIKSAAN_USE_CASE,
-    () => {
-      const pemeriksaanRepo = pemeriksaanRepository as unknown as IPemeriksaanRepository;
-      const lansiaRepo = container.resolve<ILansiaRepository>(DependencyKeys.LANSIA_REPOSITORY);
-      const healthCalculator = container.resolve<IHealthMetricsCalculator>(DependencyKeys.HEALTH_METRICS_CALCULATOR);
-      return new RecordPemeriksaanUseCase(pemeriksaanRepo, lansiaRepo, healthCalculator);
-    }
-  );
+  // Note: RecordPemeriksaanUseCase removed - health metrics are calculated by backend API
 }
 
 /**

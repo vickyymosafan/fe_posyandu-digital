@@ -1,7 +1,6 @@
 'use client';
 
 import { Input, Button, Card } from '@/components/ui';
-import { formatBMI, formatLabValue } from '@/lib/utils/formatters';
 import type { UsePemeriksaanGabunganFormReturn } from '@/lib/hooks/usePemeriksaanGabunganForm';
 
 /**
@@ -9,7 +8,6 @@ import type { UsePemeriksaanGabunganFormReturn } from '@/lib/hooks/usePemeriksaa
  * 
  * Responsibilities (SRP):
  * - Display form fields untuk data fisik dan kesehatan
- * - Show realtime calculations dan classifications
  * - Handle form submission
  * 
  * Props (ISP):
@@ -19,6 +17,9 @@ import type { UsePemeriksaanGabunganFormReturn } from '@/lib/hooks/usePemeriksaa
  * - Composition: Compose dari UI components yang sudah ada
  * - DRY: Reuse Input, Button, Card components
  * - KISS: Simple and straightforward UI
+ * 
+ * Note: Health metrics calculations (BMI, blood pressure, etc.) are performed
+ * by the backend API and will be displayed after the form is submitted.
  */
 
 interface PemeriksaanGabunganFormProps {
@@ -30,50 +31,12 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
     formData,
     errors,
     isSubmitting,
-    bmiResult,
-    tekananDarahResult,
-    klasifikasiGula,
-    klasifikasiKolesterolValue,
-    klasifikasiAsamUratValue,
     handleChange,
     handleSubmit,
   } = formState;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {/* Krisis Hipertensi Warning */}
-      {tekananDarahResult.emergency && (
-        <div
-          className="bg-red-50 border-2 border-red-500 rounded-xl p-4"
-          role="alert"
-          aria-live="assertive"
-        >
-          <div className="flex items-start gap-3">
-            <svg
-              className="w-6 h-6 text-red-600 flex-shrink-0 mt-0.5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <div>
-              <h3 className="text-lg font-bold text-red-900 mb-1">
-                ⚠️ PERHATIAN: Krisis Hipertensi
-              </h3>
-              <p className="text-red-800">
-                Rujuk ke Fasilitas Kesehatan Segera
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Pengukuran Fisik Section */}
       <Card>
         <div className="mb-4">
@@ -140,28 +103,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               )}
             </div>
           </div>
-
-          {/* BMI Result */}
-          {bmiResult.nilai !== null && (
-            <div className="mt-6 p-4 bg-blue-50 rounded-xl" role="status">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-neutral-600 mb-1">
-                    Body Mass Index (BMI)
-                  </p>
-                  <p className="text-2xl font-bold text-neutral-900">
-                    {formatBMI(bmiResult.nilai)}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-neutral-600 mb-1">Kategori</p>
-                  <p className="text-lg font-semibold text-blue-900">
-                    {bmiResult.kategori}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </Card>
 
@@ -229,52 +170,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               )}
             </div>
           </div>
-
-          {/* Tekanan Darah Result */}
-          {tekananDarahResult.kategori !== null && (
-            <div
-              className={`mt-6 p-4 rounded-xl ${
-                tekananDarahResult.emergency
-                  ? 'bg-red-50'
-                  : tekananDarahResult.kategori.includes('Hipertensi')
-                    ? 'bg-orange-50'
-                    : 'bg-green-50'
-              }`}
-              role="status"
-            >
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-neutral-600 mb-1">Kategori</p>
-                  <p
-                    className={`text-xl font-bold ${
-                      tekananDarahResult.emergency
-                        ? 'text-red-900'
-                        : tekananDarahResult.kategori.includes('Hipertensi')
-                          ? 'text-orange-900'
-                          : 'text-green-900'
-                    }`}
-                  >
-                    {tekananDarahResult.kategori}
-                  </p>
-                </div>
-                {tekananDarahResult.emergency && (
-                  <svg
-                    className="w-8 h-8 text-red-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                    />
-                  </svg>
-                )}
-              </div>
-            </div>
-          )}
         </div>
       </Card>
 
@@ -317,11 +212,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                   {errors.gulaPuasa}
                 </p>
               )}
-              {klasifikasiGula.gdp && (
-                <p className="mt-1 text-sm text-neutral-600">
-                  <span className="font-medium">{klasifikasiGula.gdp}</span>
-                </p>
-              )}
             </div>
 
             {/* Gula Darah Sewaktu (GDS) */}
@@ -348,11 +238,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                   {errors.gulaSewaktu}
                 </p>
               )}
-              {klasifikasiGula.gds && (
-                <p className="mt-1 text-sm text-neutral-600">
-                  <span className="font-medium">{klasifikasiGula.gds}</span>
-                </p>
-              )}
             </div>
 
             {/* Gula Darah 2 Jam Post Prandial (2JPP) */}
@@ -377,11 +262,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
               {errors.gula2Jpp && (
                 <p className="mt-1 text-sm text-red-600" role="alert">
                   {errors.gula2Jpp}
-                </p>
-              )}
-              {klasifikasiGula.duaJpp && (
-                <p className="mt-1 text-sm text-neutral-600">
-                  <span className="font-medium">{klasifikasiGula.duaJpp}</span>
                 </p>
               )}
             </div>
@@ -414,11 +294,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
                 {errors.kolesterol}
               </p>
             )}
-            {klasifikasiKolesterolValue && (
-              <p className="mt-1 text-sm text-neutral-600">
-                <span className="font-medium">{klasifikasiKolesterolValue}</span>
-              </p>
-            )}
           </div>
 
           {/* Asam Urat */}
@@ -444,11 +319,6 @@ export function PemeriksaanGabunganForm({ formState }: PemeriksaanGabunganFormPr
             {errors.asamUrat && (
               <p className="mt-1 text-sm text-red-600" role="alert">
                 {errors.asamUrat}
-              </p>
-            )}
-            {klasifikasiAsamUratValue && (
-              <p className="mt-1 text-sm text-neutral-600">
-                <span className="font-medium">{klasifikasiAsamUratValue}</span>
               </p>
             )}
           </div>

@@ -6,7 +6,6 @@ import { pemeriksaanRepository, lansiaRepository } from '@/lib/db';
 import { startOfDay, endOfDay, subDays, format } from 'date-fns';
 import { checkBackendHealthVerbose } from '@/lib/utils/healthCheck';
 import { useAuth } from './useAuth';
-import type { UserRole } from '@/types';
 
 /**
  * Interface untuk statistik dashboard
@@ -114,7 +113,7 @@ export function useDashboardStats(): UseDashboardStatsReturn {
         try {
           const lansiaResponse = await lansiaAPI.getAll();
           totalLansia = lansiaResponse.data ? lansiaResponse.data.length : 0;
-        } catch (apiError) {
+        } catch {
           console.warn('[useDashboardStats] API fetch failed, using IndexedDB fallback');
           const lansiaFromDB = await lansiaRepository.getAll();
           totalLansia = lansiaFromDB.length;

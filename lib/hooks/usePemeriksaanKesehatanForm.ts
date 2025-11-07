@@ -1,16 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { pemeriksaanAPI } from '@/lib/api';
 import { pemeriksaanRepository, syncQueueRepository } from '@/lib/db';
 import { useOffline } from './useOffline';
 import { useNotification } from '@/components/ui';
-import { classifyBloodGlucose, classifyCholesterol, classifyUricAcid } from '@/lib/services/healthMetricsService';
-import { parseNumber } from '@/lib/utils/numberParser';
 import { pemeriksaanKesehatanSchema } from '@/lib/utils/validators';
 import { handleAPIError } from '@/lib/utils/errors';
-import type { PemeriksaanKesehatanData, Gender, KlasifikasiGulaDarah } from '@/types';
+import type { PemeriksaanKesehatanData, Gender } from '@/types';
 
 /**
  * Hook untuk form pemeriksaan kesehatan
@@ -23,12 +21,16 @@ import type { PemeriksaanKesehatanData, Gender, KlasifikasiGulaDarah } from '@/t
  * 
  * Design Principles:
  * - High Cohesion: Focused on form management only
- * - Low Coupling: Uses service layer for classifications
- * - DIP: Depends on abstractions (API, services)
+ * - Low Coupling: Delegates calculations to backend API
+ * - DIP: Depends on abstractions (API)
+ * 
+ * Note: Health metrics classifications (blood glucose, cholesterol, uric acid) are
+ * calculated by the backend API using WHO standards. The frontend only collects and
+ * validates input data, then displays the calculated results from the API response.
  * 
  * @param kode - Kode unik lansia
  * @param lansiaId - ID lansia untuk IndexedDB
- * @param gender - Jenis kelamin lansia untuk klasifikasi asam urat
+ * @param gender - Jenis kelamin lansia (not used for client-side calculations)
  */
 
 export interface PemeriksaanKesehatanFormData {
@@ -51,9 +53,6 @@ export interface UsePemeriksaanKesehatanFormReturn {
   formData: PemeriksaanKesehatanFormData;
   errors: PemeriksaanKesehatanFormErrors;
   isSubmitting: boolean;
-  klasifikasiGula: KlasifikasiGulaDarah;
-  klasifikasiKolesterolValue: string | null;
-  klasifikasiAsamUratValue: string | null;
   handleChange: (field: keyof PemeriksaanKesehatanFormData, value: string) => void;
   handleSubmit: (e: React.FormEvent) => Promise<void>;
   resetForm: () => void;
@@ -70,7 +69,7 @@ const initialFormData: PemeriksaanKesehatanFormData = {
 export function usePemeriksaanKesehatanForm(
   kode: string,
   lansiaId: number,
-  gender: Gender
+  _gender: Gender // Not used - classifications are done by backend
 ): UsePemeriksaanKesehatanFormReturn {
   const router = useRouter();
   const { isOnline } = useOffline();
@@ -78,32 +77,6 @@ export function usePemeriksaanKesehatanForm(
   const [formData, setFormData] = useState<PemeriksaanKesehatanFormData>(initialFormData);
   const [errors, setErrors] = useState<PemeriksaanKesehatanFormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [klasifikasiGula, setKlasifikasiGula] = useState<KlasifikasiGulaDarah>({});
-  const [klasifikasiKolesterolValue, setKlasifikasiKolesterolValue] = useState<string | null>(null);
-  const [klasifikasiAsamUratValue, setKlasifikasiAsamUratValue] = useState<string | null>(null);
-
-  /**
-   * Classify all lab values realtime using service layer
-   * Reduces coupling by using service abstractions
-   */
-  useEffect(() => {
-    const gdp = parseNumber(formData.gulaPuasa);
-    const gds = parseNumber(formData.gulaSewaktu);
-    const duaJpp = parseNumber(formData.gula2Jpp);
-    const kolesterol = parseNumber(formData.kolesterol);
-    const asamUrat = parseNumber(formData.asamUrat);
-
-    setKlasifikasiGula(classifyBloodGlucose(gdp, gds, duaJpp));
-    setKlasifikasiKolesterolValue(classifyCholesterol(kolesterol));
-    setKlasifikasiAsamUratValue(classifyUricAcid(asamUrat, gender));
-  }, [
-    formData.gulaPuasa,
-    formData.gulaSewaktu,
-    formData.gula2Jpp,
-    formData.kolesterol,
-    formData.asamUrat,
-    gender,
-  ]);
 
 
 
@@ -204,6 +177,7 @@ export function usePemeriksaanKesehatanForm(
           router.push(`/petugas/lansia/${kode}`);
         } else {
           // Offline: save to IndexedDB and sync queue
+          // Note: Classifications will be calculated by backend when synced
           const pemeriksaan = {
             id: Date.now(), // Temporary ID
             lansiaId,
@@ -212,9 +186,7 @@ export function usePemeriksaanKesehatanForm(
             gulaPuasa: data.gulaPuasa,
             gulaSewaktu: data.gulaSewaktu,
             gula2Jpp: data.gula2Jpp,
-            klasifikasiGula: klasifikasiGula,
             kolesterol: data.kolesterol,
-            klasifikasiKolesterol: klasifikasiKolesterolValue || undefined,
             createdAt: new Date(),
           };
 
@@ -246,8 +218,6 @@ export function usePemeriksaanKesehatanForm(
       kode,
       lansiaId,
       isOnline,
-      klasifikasiGula,
-      klasifikasiKolesterolValue,
       validateForm,
       router,
       showNotification,
@@ -260,18 +230,12 @@ export function usePemeriksaanKesehatanForm(
   const resetForm = useCallback(() => {
     setFormData(initialFormData);
     setErrors({});
-    setKlasifikasiGula({});
-    setKlasifikasiKolesterolValue(null);
-    setKlasifikasiAsamUratValue(null);
   }, []);
 
   return {
     formData,
     errors,
     isSubmitting,
-    klasifikasiGula,
-    klasifikasiKolesterolValue,
-    klasifikasiAsamUratValue,
     handleChange,
     handleSubmit,
     resetForm,
