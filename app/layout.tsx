@@ -12,10 +12,18 @@ const montserrat = Montserrat({
 
 export const metadata: Metadata = {
   title: 'Posyandu Lansia',
-  description: 'Aplikasi Posyandu untuk Lansia',
-  icons: {
-    icon: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+  description: 'Aplikasi Posyandu untuk manajemen data lansia dan pemeriksaan kesehatan',
+  metadataBase: new URL('https://posyandu-digital.vercel.app'),
+  openGraph: {
+    title: 'Posyandu Lansia',
+    description: 'Aplikasi Posyandu untuk manajemen data lansia dan pemeriksaan kesehatan',
+    type: 'website',
+    locale: 'id_ID',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Posyandu Lansia',
+    description: 'Aplikasi Posyandu untuk manajemen data lansia dan pemeriksaan kesehatan',
   },
 };
 
