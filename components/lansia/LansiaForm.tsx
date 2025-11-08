@@ -75,7 +75,7 @@ export function LansiaForm() {
               maxLength={16}
               required
               disabled={isSubmitting}
-              helperText="NIK harus 16 digit angka"
+              helperText={`${formData.nik.length}/16 karakter`}
             />
 
             {/* KK */}
@@ -90,7 +90,7 @@ export function LansiaForm() {
               maxLength={16}
               required
               disabled={isSubmitting}
-              helperText="Nomor KK harus 16 digit angka"
+              helperText={`${formData.kk.length}/16 karakter`}
             />
 
             {/* Nama */}
