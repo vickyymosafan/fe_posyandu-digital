@@ -45,12 +45,20 @@ export interface TrendChartProps {
 }
 
 /**
+ * Interface untuk CustomTooltip props
+ * Menggantikan 'any' type untuk type safety
+ */
+interface TooltipProps {
+  active?: boolean;
+  payload?: Array<{ payload: ChartData }>;
+}
+
+/**
  * Custom Tooltip Component
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function CustomTooltip({ active, payload }: any) {
+function CustomTooltip({ active, payload }: TooltipProps) {
   if (active && payload && payload.length > 0) {
-    const data = payload[0].payload as ChartData;
+    const data = payload[0].payload;
     return (
       <div className="bg-white p-4 rounded-xl shadow-lg border border-neutral-200">
         <p className="text-base text-neutral-600 mb-1">{data.tanggal}</p>
