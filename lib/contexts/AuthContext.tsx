@@ -195,10 +195,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const { token, user: userData } = response.data;
 
+        // Ensure email is present - backend might not return it in user object
+        // Fallback chain: API response -> JWT decode -> login input
+        let completeUser: User = userData;
+        if (!userData.email) {
+          const decodedUser = decodeToken(token);
+          completeUser = {
+            ...userData,
+            email: decodedUser?.email || email,
+          };
+        }
+
         console.log('[AuthContext] Login successful:', {
-          userId: userData.id,
-          userName: userData.nama,
-          userRole: userData.role,
+          userId: completeUser.id,
+          userName: completeUser.nama,
+          userEmail: completeUser.email,
+          userRole: completeUser.role,
           hasToken: !!token,
           timestamp: new Date().toISOString(),
         });
@@ -208,11 +220,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
         console.log('[AuthContext] Token saved to localStorage and cookie');
 
         // Set user state
-        setUser(userData);
+        setUser(completeUser);
         console.log('[AuthContext] User state updated');
 
         // Return user data untuk immediate use
-        return userData;
+        return completeUser;
       } catch (error) {
         console.error('[AuthContext] Login error:', {
           error: error instanceof Error ? error.message : 'Unknown error',
