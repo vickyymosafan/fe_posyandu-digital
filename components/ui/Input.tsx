@@ -51,7 +51,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const state = error ? 'error' : validationState;
 
     // Base classes
-    const baseClasses = 'px-4 py-3 border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
+    // Base classes
+    const baseClasses = 'px-4 py-3.5 text-base border rounded-xl focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed';
 
     // State classes
     const stateClasses = {
@@ -75,7 +76,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-sm font-medium text-neutral-900 mb-2"
+            className="block text-base font-semibold text-neutral-900 mb-2"
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}

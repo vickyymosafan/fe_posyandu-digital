@@ -152,7 +152,7 @@ export const TableHeader = React.forwardRef<HTMLTableCellElement, TableHeaderPro
     },
     ref
   ) => {
-    const baseClasses = 'px-6 py-3 text-xs font-semibold text-neutral-900 uppercase tracking-wider';
+    const baseClasses = 'px-6 py-4 text-sm font-bold text-neutral-900 uppercase tracking-wider bg-neutral-100';
     const sortableClasses = sortable ? 'cursor-pointer select-none hover:bg-neutral-200' : '';
 
     return (
@@ -189,7 +189,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     return (
       <td
         ref={ref}
-        className={`px-6 py-4 text-sm text-neutral-700 ${className}`.trim()}
+        className={`px-6 py-5 text-base text-neutral-800 ${className}`.trim()}
         {...props}
       >
         {children}

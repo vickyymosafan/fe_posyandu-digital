@@ -162,7 +162,7 @@ function PetugasDashboardContent() {
             <h3 className="text-lg font-semibold text-blue-900 mb-2">
               Tips Penggunaan
             </h3>
-            <ul className="text-sm text-blue-800 space-y-1">
+            <ul className="text-base text-blue-900 space-y-2 mt-2">
               <li>• Gunakan <strong>Pencarian Lansia</strong> untuk menemukan data dengan cepat</li>
               <li>• Setelah menemukan lansia, Anda dapat langsung input pemeriksaan dari halaman detail</li>
               <li>• Data akan tersimpan secara otomatis dan dapat diakses kapan saja</li>
