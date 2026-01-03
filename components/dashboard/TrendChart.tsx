@@ -52,9 +52,9 @@ function CustomTooltip({ active, payload }: any) {
   if (active && payload && payload.length > 0) {
     const data = payload[0].payload as ChartData;
     return (
-      <div className="bg-white p-3 rounded-xl shadow-lg border border-neutral-200">
-        <p className="text-sm text-neutral-600 mb-1">{data.tanggal}</p>
-        <p className="text-lg font-bold text-neutral-900">
+      <div className="bg-white p-4 rounded-xl shadow-lg border border-neutral-200">
+        <p className="text-base text-neutral-600 mb-1">{data.tanggal}</p>
+        <p className="text-xl font-bold text-neutral-900">
           {data.jumlah} pemeriksaan
         </p>
       </div>
@@ -97,9 +97,9 @@ export function TrendChart({
   if (!data || data.length === 0) {
     return (
       <Card>
-        <h3 className="text-lg font-semibold text-neutral-900 mb-4">{title}</h3>
-        <div className="h-64 flex items-center justify-center">
-          <p className="text-neutral-500">Tidak ada data untuk ditampilkan</p>
+        <h3 className="text-xl font-bold text-neutral-900 mb-6">{title}</h3>
+        <div className="h-80 flex items-center justify-center">
+          <p className="text-lg text-neutral-500">Tidak ada data untuk ditampilkan</p>
         </div>
       </Card>
     );
@@ -107,27 +107,29 @@ export function TrendChart({
 
   return (
     <Card>
-      <h3 className="text-lg font-semibold text-neutral-900 mb-4">{title}</h3>
-      <div className="h-64">
+      <h3 className="text-xl font-bold text-neutral-900 mb-6">{title}</h3>
+      <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart
             data={data}
-            margin={{ top: 5, right: 20, left: 0, bottom: 5 }}
+            margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
           >
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis
               dataKey="tanggal"
               stroke="#737373"
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '14px' }}
+              dy={10}
             />
             <YAxis
               stroke="#737373"
-              style={{ fontSize: '12px' }}
+              style={{ fontSize: '14px' }}
+              dx={-10}
               label={{
                 value: yAxisLabel,
                 angle: -90,
                 position: 'insideLeft',
-                style: { fontSize: '12px', fill: '#737373' },
+                style: { fontSize: '14px', fill: '#525252', fontWeight: 500 },
               }}
             />
             <Tooltip content={<CustomTooltip />} />
@@ -135,9 +137,9 @@ export function TrendChart({
               type="monotone"
               dataKey="jumlah"
               stroke={lineColor}
-              strokeWidth={2}
-              dot={{ fill: lineColor, r: 4 }}
-              activeDot={{ r: 6 }}
+              strokeWidth={3}
+              dot={{ fill: lineColor, r: 6 }}
+              activeDot={{ r: 8 }}
             />
           </LineChart>
         </ResponsiveContainer>
