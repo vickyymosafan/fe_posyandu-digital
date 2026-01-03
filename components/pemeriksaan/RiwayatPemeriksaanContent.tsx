@@ -81,16 +81,16 @@ export function RiwayatPemeriksaanContent({ kode }: RiwayatPemeriksaanContentPro
     <div className="space-y-6">
       {/* Header - Info Lansia */}
       <div className="bg-white rounded-xl p-6 shadow-sm">
-        <div className="flex items-start justify-between">
+        <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-neutral-900 mb-2">
+            <h1 className="text-3xl font-bold text-neutral-900 mb-2">
               Riwayat Pemeriksaan
             </h1>
-            <div className="space-y-1">
-              <p className="text-lg font-medium text-neutral-700">
+            <div className="space-y-2">
+              <p className="text-xl font-semibold text-neutral-800">
                 {lansia.nama}
               </p>
-              <div className="flex items-center gap-4 text-sm text-neutral-600">
+              <div className="flex items-center gap-4 text-base text-neutral-600">
                 <span>Kode: {lansia.kode}</span>
                 <span>•</span>
                 <span>Umur: {formatUmur(lansia.tanggalLahir)}</span>
@@ -106,7 +106,7 @@ export function RiwayatPemeriksaanContent({ kode }: RiwayatPemeriksaanContentPro
           {pemeriksaan.length > 0 && (
             <button
               onClick={() => setShowCharts(!showCharts)}
-              className="px-4 py-2 text-sm font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
+              className="px-6 py-3 text-base font-medium text-neutral-700 bg-neutral-100 hover:bg-neutral-200 rounded-lg transition-colors"
             >
               {showCharts ? 'Sembunyikan Grafik' : 'Tampilkan Grafik'}
             </button>

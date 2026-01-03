@@ -42,22 +42,22 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
         <table className="w-full min-w-[800px]">
           <thead>
             <tr className="border-b border-neutral-200">
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 Tanggal
               </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 BMI
               </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 Tekanan Darah
               </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 Gula Darah
               </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 Kolesterol
               </th>
-              <th className="text-left py-3 px-4 text-sm font-medium text-neutral-700">
+              <th className="text-left py-4 px-6 text-base font-bold text-neutral-800">
                 Asam Urat
               </th>
             </tr>
@@ -68,17 +68,17 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                 key={p.id}
                 className="border-b border-neutral-100 hover:bg-neutral-50 transition-colors"
               >
-                <td className="py-3 px-4 text-sm text-neutral-900">
+                <td className="py-4 px-6 text-base text-neutral-900">
                   {formatDate(p.tanggal)}
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-4 px-6 text-base">
                   {p.bmi ? (
                     <div>
                       <div className="font-medium text-neutral-900">
                         {formatBMI(p.bmi)}
                       </div>
                       {p.kategoriBmi && (
-                        <div className="text-xs text-neutral-600 mt-0.5">
+                        <div className="text-sm text-neutral-600 mt-1">
                           {p.kategoriBmi}
                         </div>
                       )}
@@ -87,7 +87,7 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                     <span className="text-neutral-400">-</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-4 px-6 text-base">
                   {p.sistolik && p.diastolik ? (
                     <div>
                       <div className="font-medium text-neutral-900">
@@ -95,13 +95,12 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                       </div>
                       {p.tekananDarah && (
                         <div
-                          className={`text-xs mt-0.5 ${
-                            p.tekananDarah.includes('Krisis')
-                              ? 'text-red-600 font-medium'
+                          className={`text-sm mt-1 ${p.tekananDarah.includes('Krisis')
+                              ? 'text-red-600 font-bold'
                               : p.tekananDarah.includes('Hipertensi')
-                                ? 'text-orange-600'
+                                ? 'text-orange-600 font-medium'
                                 : 'text-neutral-600'
-                          }`}
+                            }`}
                         >
                           {p.tekananDarah}
                         </div>
@@ -111,11 +110,11 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                     <span className="text-neutral-400">-</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-4 px-6 text-base">
                   {p.gulaPuasa || p.gulaSewaktu || p.gula2Jpp ? (
-                    <div className="space-y-1">
+                    <div className="space-y-2">
                       {p.gulaPuasa && (
-                        <div className="text-xs">
+                        <div className="text-sm">
                           <span className="text-neutral-600">GDP: </span>
                           <span className="font-medium text-neutral-900">
                             {formatLabValue(p.gulaPuasa)}
@@ -128,7 +127,7 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                         </div>
                       )}
                       {p.gulaSewaktu && (
-                        <div className="text-xs">
+                        <div className="text-sm">
                           <span className="text-neutral-600">GDS: </span>
                           <span className="font-medium text-neutral-900">
                             {formatLabValue(p.gulaSewaktu)}
@@ -141,7 +140,7 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                         </div>
                       )}
                       {p.gula2Jpp && (
-                        <div className="text-xs">
+                        <div className="text-sm">
                           <span className="text-neutral-600">2JPP: </span>
                           <span className="font-medium text-neutral-900">
                             {formatLabValue(p.gula2Jpp)}
@@ -158,14 +157,14 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                     <span className="text-neutral-400">-</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-4 px-6 text-base">
                   {p.kolesterol ? (
                     <div>
                       <div className="font-medium text-neutral-900">
                         {formatLabValue(p.kolesterol)}
                       </div>
                       {p.klasifikasiKolesterol && (
-                        <div className="text-xs text-neutral-600 mt-0.5">
+                        <div className="text-sm text-neutral-600 mt-1">
                           {p.klasifikasiKolesterol}
                         </div>
                       )}
@@ -174,7 +173,7 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                     <span className="text-neutral-400">-</span>
                   )}
                 </td>
-                <td className="py-3 px-4 text-sm">
+                <td className="py-4 px-6 text-base">
                   {p.asamUrat ? (
                     <div className="font-medium text-neutral-900">
                       {formatLabValue(p.asamUrat)}
@@ -235,13 +234,12 @@ export function PemeriksaanHistoryTable({ pemeriksaan }: PemeriksaanHistoryTable
                     </div>
                     {p.tekananDarah && (
                       <div
-                        className={`text-xs mt-0.5 ${
-                          p.tekananDarah.includes('Krisis')
+                        className={`text-xs mt-0.5 ${p.tekananDarah.includes('Krisis')
                             ? 'text-red-600 font-medium'
                             : p.tekananDarah.includes('Hipertensi')
                               ? 'text-orange-600'
                               : 'text-neutral-600'
-                        }`}
+                          }`}
                       >
                         {p.tekananDarah}
                       </div>

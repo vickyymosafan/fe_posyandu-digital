@@ -68,30 +68,33 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-12">
       {/* BMI Chart */}
       {hasBMIData && (
         <div>
-          <h3 className="text-lg font-medium text-neutral-900 mb-4">Tren BMI</h3>
+          <h3 className="text-xl font-semibold text-neutral-900 mb-6">Tren BMI</h3>
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
               <LineChart data={bmiData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
                 <XAxis
                   dataKey="tanggal"
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
+                  dy={10}
                 />
                 <YAxis
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
                   domain={[15, 35]}
+                  dx={-10}
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#fff',
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
+                    fontSize: '14px',
                   }}
                   formatter={(value: number) => [value.toFixed(1), 'BMI']}
                 />
@@ -99,9 +102,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                   type="monotone"
                   dataKey="nilai"
                   stroke="#0ea5e9"
-                  strokeWidth={2}
-                  dot={{ fill: '#0ea5e9', r: 4 }}
-                  activeDot={{ r: 6 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#0ea5e9', r: 6 }}
+                  activeDot={{ r: 8 }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -112,47 +115,50 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
       {/* Tekanan Darah Chart */}
       {hasTekananDarahData && (
         <div>
-          <h3 className="text-lg font-medium text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-900 mb-6">
             Tren Tekanan Darah
           </h3>
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
               <LineChart data={tekananDarahData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
                 <XAxis
                   dataKey="tanggal"
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
+                  dy={10}
                 />
                 <YAxis
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
                   domain={[60, 200]}
+                  dx={-10}
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#fff',
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
+                    fontSize: '14px',
                   }}
                 />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }} />
                 <Line
                   type="monotone"
                   dataKey="sistolik"
                   stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ fill: '#ef4444', r: 4 }}
-                  activeDot={{ r: 6 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#ef4444', r: 6 }}
+                  activeDot={{ r: 8 }}
                   name="Sistolik"
                 />
                 <Line
                   type="monotone"
                   dataKey="diastolik"
                   stroke="#3b82f6"
-                  strokeWidth={2}
-                  dot={{ fill: '#3b82f6', r: 4 }}
-                  activeDot={{ r: 6 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#3b82f6', r: 6 }}
+                  activeDot={{ r: 8 }}
                   name="Diastolik"
                 />
               </LineChart>
@@ -164,42 +170,45 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
       {/* Gula Darah Chart */}
       {hasGulaDarahData && (
         <div>
-          <h3 className="text-lg font-medium text-neutral-900 mb-4">
+          <h3 className="text-xl font-semibold text-neutral-900 mb-6">
             Tren Gula Darah
           </h3>
           <div className="bg-white rounded-xl p-6 shadow-sm">
-            <ResponsiveContainer width="100%" height={300}>
+            <ResponsiveContainer width="100%" height={350}>
               <LineChart data={gulaDarahData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
                 <XAxis
                   dataKey="tanggal"
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
+                  dy={10}
                 />
                 <YAxis
-                  tick={{ fontSize: 12 }}
+                  tick={{ fontSize: 14 }}
                   stroke="#737373"
                   domain={[60, 250]}
+                  dx={-10}
                 />
                 <Tooltip
                   contentStyle={{
                     backgroundColor: '#fff',
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
+                    fontSize: '14px',
                   }}
                   formatter={(value: unknown, name: string) => {
                     if (typeof value !== 'number') return null;
                     return [`${value.toFixed(0)} mg/dL`, name];
                   }}
                 />
-                <Legend />
+                <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }} />
                 <Line
                   type="monotone"
                   dataKey="gdp"
                   stroke="#10b981"
-                  strokeWidth={2}
-                  dot={{ fill: '#10b981', r: 5 }}
-                  activeDot={{ r: 7 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#10b981', r: 6 }}
+                  activeDot={{ r: 8 }}
                   name="GDP (Puasa)"
                   connectNulls={true}
                 />
@@ -207,9 +216,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                   type="monotone"
                   dataKey="gds"
                   stroke="#f59e0b"
-                  strokeWidth={2}
-                  dot={{ fill: '#f59e0b', r: 5 }}
-                  activeDot={{ r: 7 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#f59e0b', r: 6 }}
+                  activeDot={{ r: 8 }}
                   name="GDS (Sewaktu)"
                   connectNulls={true}
                 />
@@ -217,9 +226,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                   type="monotone"
                   dataKey="duaJpp"
                   stroke="#8b5cf6"
-                  strokeWidth={2}
-                  dot={{ fill: '#8b5cf6', r: 5 }}
-                  activeDot={{ r: 7 }}
+                  strokeWidth={3}
+                  dot={{ fill: '#8b5cf6', r: 6 }}
+                  activeDot={{ r: 8 }}
                   name="2JPP"
                   connectNulls={true}
                 />
