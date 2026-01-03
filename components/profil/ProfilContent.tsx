@@ -10,27 +10,11 @@ import { Button } from '@/components/ui/Button';
  * ProfilContent Component
  * 
  * Komponen untuk menampilkan dan mengedit profil pengguna.
- * 
- * Features:
- * - Display user information (nama, email, role)
- * - Form update nama
- * - Form update password
- * - Real-time validation
- * - Success/error messages
- * - Password visibility toggle
- * 
- * Follows SoC principle:
- * - Hook layer: useProfileForm, usePasswordForm (logic)
- * - Component layer: ProfilContent (UI)
- * 
- * @example
- * ```tsx
- * <ProfilContent />
- * ```
+ * Updated for accessibility: larger fonts, better spacing, and standard card styling.
  */
 export function ProfilContent() {
   const { user } = useAuth();
-  
+
   const {
     formData: profileFormData,
     errors: profileErrors,
@@ -38,7 +22,7 @@ export function ProfilContent() {
     handleChange: handleProfileChange,
     handleSubmit: handleProfileSubmit,
   } = useProfileForm();
-  
+
   const {
     formData: passwordFormData,
     errors: passwordErrors,
@@ -55,41 +39,41 @@ export function ProfilContent() {
 
   if (!user) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <p className="text-neutral-600">Loading...</p>
+      <div className="card">
+        <p className="text-neutral-600 text-lg">Loading...</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-2xl font-bold text-neutral-950 mb-2">
+      <div className="card">
+        <h2 className="text-3xl font-bold text-neutral-950 mb-3">
           Profil Pengguna
         </h2>
-        <p className="text-neutral-600">
+        <p className="text-lg text-neutral-600">
           Kelola informasi profil dan keamanan akun Anda
         </p>
       </div>
 
       {/* Informasi Akun */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+      <div className="card">
+        <h3 className="text-2xl font-bold text-neutral-900 mb-6">
           Informasi Akun
         </h3>
-        <div className="space-y-4">
+        <div className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">
+            <label className="block text-lg font-semibold text-neutral-700 mb-2">
               Email
             </label>
-            <p className="text-base text-neutral-900">{user.email}</p>
+            <p className="text-xl text-neutral-900">{user.email}</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 mb-1">
+            <label className="block text-lg font-semibold text-neutral-700 mb-2">
               Role
             </label>
-            <p className="text-base text-neutral-900">
+            <p className="text-xl text-neutral-900">
               {user.role === 'ADMIN' ? 'Administrator' : 'Petugas'}
             </p>
           </div>
@@ -97,15 +81,15 @@ export function ProfilContent() {
       </div>
 
       {/* Form Update Nama */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+      <div className="card">
+        <h3 className="text-2xl font-bold text-neutral-900 mb-6">
           Ubah Nama
         </h3>
-        <form onSubmit={handleProfileSubmit} className="space-y-4">
+        <form onSubmit={handleProfileSubmit} className="space-y-6">
           <div>
             <label
               htmlFor="nama"
-              className="block text-sm font-medium text-neutral-700 mb-2"
+              className="block text-lg font-semibold text-neutral-700 mb-2"
             >
               Nama Lengkap
             </label>
@@ -117,12 +101,14 @@ export function ProfilContent() {
               error={profileErrors.nama}
               disabled={isProfileSubmitting}
               placeholder="Masukkan nama lengkap"
+              className="text-lg"
             />
           </div>
 
           <Button
             type="submit"
             variant="primary"
+            size="lg"
             disabled={isProfileSubmitting || !!profileErrors.nama}
             className="w-full sm:w-auto"
           >
@@ -132,16 +118,16 @@ export function ProfilContent() {
       </div>
 
       {/* Form Update Password */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h3 className="text-xl font-semibold text-neutral-900 mb-4">
+      <div className="card">
+        <h3 className="text-2xl font-bold text-neutral-900 mb-6">
           Ubah Password
         </h3>
-        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+        <form onSubmit={handlePasswordSubmit} className="space-y-6">
           {/* Password Lama */}
           <div>
             <label
               htmlFor="kataSandiLama"
-              className="block text-sm font-medium text-neutral-700 mb-2"
+              className="block text-lg font-semibold text-neutral-700 mb-2"
             >
               Password Lama
             </label>
@@ -156,13 +142,15 @@ export function ProfilContent() {
                 error={passwordErrors.kataSandiLama}
                 disabled={isPasswordSubmitting}
                 placeholder="Masukkan password lama"
+                className="text-lg pr-12"
               />
               <button
                 type="button"
                 onClick={toggleOldPasswordVisibility}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 p-2"
+                aria-label={showOldPassword ? 'Sembunyikan password' : 'Lihat password'}
               >
-                {showOldPassword ? '👁️' : '👁️‍🗨️'}
+                <span className="text-xl">{showOldPassword ? '👁️' : '👁️‍🗨️'}</span>
               </button>
             </div>
           </div>
@@ -171,7 +159,7 @@ export function ProfilContent() {
           <div>
             <label
               htmlFor="kataSandiBaru"
-              className="block text-sm font-medium text-neutral-700 mb-2"
+              className="block text-lg font-semibold text-neutral-700 mb-2"
             >
               Password Baru
             </label>
@@ -186,16 +174,18 @@ export function ProfilContent() {
                 error={passwordErrors.kataSandiBaru}
                 disabled={isPasswordSubmitting}
                 placeholder="Masukkan password baru"
+                className="text-lg pr-12"
               />
               <button
                 type="button"
                 onClick={toggleNewPasswordVisibility}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 p-2"
+                aria-label={showNewPassword ? 'Sembunyikan password' : 'Lihat password'}
               >
-                {showNewPassword ? '👁️' : '👁️‍🗨️'}
+                <span className="text-xl">{showNewPassword ? '👁️' : '👁️‍🗨️'}</span>
               </button>
             </div>
-            <p className="mt-1 text-xs text-neutral-600">
+            <p className="mt-2 text-sm text-neutral-600 pl-1">
               Minimal 8 karakter dengan kombinasi huruf, angka, dan simbol
             </p>
           </div>
@@ -204,7 +194,7 @@ export function ProfilContent() {
           <div>
             <label
               htmlFor="konfirmasiKataSandi"
-              className="block text-sm font-medium text-neutral-700 mb-2"
+              className="block text-lg font-semibold text-neutral-700 mb-2"
             >
               Konfirmasi Password Baru
             </label>
@@ -219,13 +209,15 @@ export function ProfilContent() {
                 error={passwordErrors.konfirmasiKataSandi}
                 disabled={isPasswordSubmitting}
                 placeholder="Konfirmasi password baru"
+                className="text-lg pr-12"
               />
               <button
                 type="button"
                 onClick={toggleConfirmPasswordVisibility}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-500 hover:text-neutral-700 p-2"
+                aria-label={showConfirmPassword ? 'Sembunyikan password' : 'Lihat password'}
               >
-                {showConfirmPassword ? '👁️' : '👁️‍🗨️'}
+                <span className="text-xl">{showConfirmPassword ? '👁️' : '👁️‍🗨️'}</span>
               </button>
             </div>
           </div>
@@ -233,13 +225,14 @@ export function ProfilContent() {
           <Button
             type="submit"
             variant="primary"
+            size="lg"
             disabled={
               isPasswordSubmitting ||
               !!passwordErrors.kataSandiLama ||
               !!passwordErrors.kataSandiBaru ||
               !!passwordErrors.konfirmasiKataSandi
             }
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto mt-4"
           >
             {isPasswordSubmitting ? 'Menyimpan...' : 'Ubah Password'}
           </Button>
