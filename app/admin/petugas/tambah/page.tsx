@@ -74,7 +74,7 @@ export default function TambahPetugasPage() {
             <div>
               <label
                 htmlFor="nama"
-                className="block text-sm font-medium text-neutral-900 mb-2"
+                className="block text-lg font-semibold text-neutral-900 mb-2"
               >
                 Nama Lengkap <span className="text-red-500">*</span>
               </label>
@@ -105,7 +105,7 @@ export default function TambahPetugasPage() {
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-neutral-900 mb-2"
+                className="block text-lg font-semibold text-neutral-900 mb-2"
               >
                 Email <span className="text-red-500">*</span>
               </label>
@@ -136,7 +136,7 @@ export default function TambahPetugasPage() {
             <div>
               <label
                 htmlFor="kataSandi"
-                className="block text-sm font-medium text-neutral-900 mb-2"
+                className="block text-lg font-semibold text-neutral-900 mb-2"
               >
                 Password <span className="text-red-500">*</span>
               </label>
@@ -233,9 +233,9 @@ export default function TambahPetugasPage() {
                     clipRule="evenodd"
                   />
                 </svg>
-                <div className="text-sm text-blue-800">
-                  <p className="font-medium mb-1">Informasi Penting</p>
-                  <ul className="list-disc list-inside space-y-1">
+                <div className="text-base text-blue-800">
+                  <p className="font-bold mb-2 text-lg">Informasi Penting</p>
+                  <ul className="list-disc list-inside space-y-2">
                     <li>Petugas akan menerima email dengan kredensial login</li>
                     <li>
                       Petugas dapat mengubah password setelah login pertama kali

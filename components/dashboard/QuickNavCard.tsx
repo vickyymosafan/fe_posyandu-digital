@@ -84,13 +84,13 @@ export function QuickNavCard({
             </div>
           )}
           <div className="flex-1">
-            <h4 className="text-lg font-semibold text-neutral-900 mb-1 group-hover:text-neutral-950 transition-colors">
+            <h4 className="text-xl font-semibold text-neutral-900 mb-2 group-hover:text-neutral-950 transition-colors">
               {title}
             </h4>
-            <p className="text-sm text-neutral-600">{description}</p>
+            <p className="text-base text-neutral-600">{description}</p>
           </div>
           <svg
-            className="w-5 h-5 text-neutral-400 group-hover:text-neutral-600 group-hover:translate-x-1 transition-all duration-300"
+            className="w-6 h-6 text-neutral-400 group-hover:text-neutral-600 group-hover:translate-x-1 transition-all duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

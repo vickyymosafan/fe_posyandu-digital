@@ -75,10 +75,10 @@ export function StatCard({
     <Card className="hover:shadow-md transition-shadow duration-300">
       <div className="flex items-start justify-between">
         <div className="flex-1">
-          <p className="text-sm text-neutral-600 mb-1">{label}</p>
+          <p className="text-base text-neutral-600 mb-1">{label}</p>
           <p className="text-3xl font-bold text-neutral-900">{value}</p>
           {description && (
-            <p className="text-xs text-neutral-500 mt-2">{description}</p>
+            <p className="text-sm text-neutral-500 mt-2">{description}</p>
           )}
         </div>
         {icon && (

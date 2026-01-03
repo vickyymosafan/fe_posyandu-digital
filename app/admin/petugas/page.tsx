@@ -38,7 +38,7 @@ import { formatDate } from '@/lib/utils/formatters';
 export default function DaftarPetugasPage() {
   const router = useRouter();
   const { petugas, isLoading, toggleStatus } = usePetugasList();
-  
+
   // State untuk modal konfirmasi
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedPetugas, setSelectedPetugas] = useState<Petugas | null>(null);
@@ -153,11 +153,10 @@ export default function DaftarPetugasPage() {
                     </TableCell>
                     <TableCell>
                       <span
-                        className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
-                          p.aktif
+                        className={`inline-flex items-center px-4 py-1.5 rounded-full text-base font-medium ${p.aktif
                             ? 'bg-green-100 text-green-800'
                             : 'bg-red-100 text-red-800'
-                        }`}
+                          }`}
                       >
                         {p.aktif ? 'Aktif' : 'Nonaktif'}
                       </span>
