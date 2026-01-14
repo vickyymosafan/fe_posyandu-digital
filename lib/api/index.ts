@@ -4,11 +4,12 @@
  * File ini mengexport semua API clients untuk kemudahan import.
  *
  * Usage:
- * import { authAPI, lansiaAPI, pemeriksaanAPI } from '@/lib/api';
+ * import { authAPI, lansiaAPI, pemeriksaanAPI, dashboardAPI } from '@/lib/api';
  */
 
 export { apiClient } from './client';
 export { authAPI } from './auth';
+export { dashboardAPI } from './dashboard';
 export { lansiaAPI } from './lansia';
 export { pemeriksaanAPI } from './pemeriksaan';
 export { petugasAPI } from './petugas';

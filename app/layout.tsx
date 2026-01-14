@@ -3,6 +3,7 @@ import { Montserrat } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/lib/contexts';
 import { NotificationProvider } from '@/components/ui';
+import { QueryProvider } from '@/lib/providers/QueryProvider';
 
 const montserrat = Montserrat({
   variable: '--font-montserrat',
@@ -42,12 +43,15 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${montserrat.variable} font-sans antialiased`}>
-        <AuthProvider>
-          <NotificationProvider position="top-right" defaultDuration={5000}>
-            {children}
-          </NotificationProvider>
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <NotificationProvider position="top-right" defaultDuration={5000}>
+              {children}
+            </NotificationProvider>
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
 }
+

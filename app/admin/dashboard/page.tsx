@@ -13,7 +13,7 @@
  */
 
 import { AdminLayout } from '@/components/layout';
-import { useDashboardStats } from '@/lib/hooks';
+import { useDashboardStatsLegacy as useDashboardStats } from '@/lib/hooks';
 import {
   StatCard,
   TrendChart,

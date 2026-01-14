@@ -10,7 +10,7 @@ export { useOffline } from './useOffline';
 export { useForm } from './useForm';
 export type { UseFormOptions, UseFormReturn } from './useForm';
 export { useLoginForm } from './useLoginForm';
-export { useDashboardStats } from './useDashboardStats';
+export { useDashboardStats, useDashboardStatsLegacy } from './useDashboardStats';
 export { usePetugasList } from './usePetugasList';
 export { usePetugasForm } from './usePetugasForm';
 export { useLansiaList } from './useLansiaList';
