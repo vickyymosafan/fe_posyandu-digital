@@ -31,7 +31,7 @@ export default function LoginPage() {
         {/* Gambar Latar */}
         <div className="absolute inset-0">
           <Image
-            src="/images/login-hero.png"
+            src="/images/side-kiri-login.webp"
             alt="Lansia Bahagia di Posyandu"
             fill
             className="object-cover opacity-90"
