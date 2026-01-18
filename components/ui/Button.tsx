@@ -10,7 +10,7 @@ import React from 'react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   /** Varian visual tombol */
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'brand';
   /** Ukuran tombol */
   size?: 'sm' | 'md' | 'lg';
   /** Status loading */
@@ -48,6 +48,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       secondary: 'bg-neutral-200 text-neutral-900 hover:bg-neutral-300 focus-visible:ring-neutral-400',
       danger: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-600',
       ghost: 'bg-transparent text-neutral-900 hover:bg-neutral-100 focus-visible:ring-neutral-400',
+      brand: 'bg-emerald-600 text-white hover:bg-emerald-700 focus-visible:ring-emerald-600 shadow-sm hover:shadow-md',
     };
 
     // Size classes

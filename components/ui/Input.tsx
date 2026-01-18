@@ -23,6 +23,8 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   rightIcon?: React.ReactNode;
   /** Full width */
   fullWidth?: boolean;
+  /** Custom class for label */
+  labelClassName?: string;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -38,6 +40,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       required,
       disabled,
       className = '',
+      labelClassName = '',
       id,
       ...props
     },
@@ -76,7 +79,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             htmlFor={inputId}
-            className="block text-base font-semibold text-neutral-900 mb-2"
+            className={`block text-base font-semibold text-neutral-900 mb-2 ${labelClassName}`.trim()}
           >
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
