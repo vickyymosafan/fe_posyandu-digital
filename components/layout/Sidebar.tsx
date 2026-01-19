@@ -61,11 +61,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     switch (variant) {
       case 'sage':
         return {
-          active: 'bg-sage-500 text-white shadow-md shadow-sage-200',
-          inactive: 'text-neutral-600 hover:bg-sage-50 hover:text-sage-700',
+          active: 'bg-neutral-900 text-white shadow-md',
+          inactive: 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900',
           activeIcon: 'text-white',
-          inactiveIcon: 'text-sage-400',
-          border: 'border-sage-100',
+          inactiveIcon: 'text-neutral-500',
+          border: 'border-neutral-200',
         };
       case 'emerald':
         return {
