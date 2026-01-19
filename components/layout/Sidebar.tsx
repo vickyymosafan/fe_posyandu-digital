@@ -39,7 +39,7 @@ export interface SidebarProps {
   /** Callback untuk menutup sidebar */
   onClose: () => void;
   /** Color theme variant */
-  variant?: 'neutral' | 'sage' | 'emerald';
+  variant?: 'neutral' | 'emerald';
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -58,32 +58,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   // Color Styles based on variant
   const getStyles = () => {
-    switch (variant) {
-      case 'sage':
-        return {
-          active: 'bg-neutral-900 text-white shadow-md',
-          inactive: 'text-neutral-700 hover:bg-neutral-100 hover:text-neutral-900',
-          activeIcon: 'text-white',
-          inactiveIcon: 'text-neutral-500',
-          border: 'border-neutral-200',
-        };
-      case 'emerald':
-        return {
-          active: 'bg-emerald-600 text-white shadow-lg shadow-emerald-100',
-          inactive: 'text-neutral-600 hover:bg-emerald-50 hover:text-emerald-700',
-          activeIcon: 'text-white',
-          inactiveIcon: 'text-emerald-500',
-          border: 'border-emerald-100',
-        };
-      default:
-        return {
-          active: 'bg-neutral-900 text-white',
-          inactive: 'text-neutral-700 hover:bg-neutral-100',
-          activeIcon: 'text-white',
-          inactiveIcon: 'text-neutral-500',
-          border: 'border-neutral-200',
-        };
+    if (variant === 'emerald') {
+      return {
+        active: 'bg-emerald-600 text-white shadow-lg shadow-emerald-100',
+        inactive: 'text-neutral-600 hover:bg-emerald-50 hover:text-emerald-700',
+        activeIcon: 'text-white',
+        inactiveIcon: 'text-emerald-500',
+        border: 'border-emerald-100',
+      };
     }
+    // Default (neutral)
+    return {
+      active: 'bg-neutral-900 text-white',
+      inactive: 'text-neutral-700 hover:bg-neutral-100',
+      activeIcon: 'text-white',
+      inactiveIcon: 'text-neutral-500',
+      border: 'border-neutral-200',
+    };
   };
 
   const styles = getStyles();
@@ -158,9 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div
                 className={`flex items-center gap-3 p-3 rounded-xl border ${styles.border} bg-neutral-50/50`}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${variant === 'sage' ? 'bg-sage-100 text-sage-700' :
-                  variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'
-                  }`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'}`}>
                   {user.nama?.charAt(0).toUpperCase()}
                 </div>
                 <div className="flex-1 min-w-0">
@@ -168,7 +157,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {user.nama}
                   </p>
                   <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${variant === 'sage' ? 'bg-sage-500' : 'bg-green-500'}`}></span>
+                    <span className={`w-2 h-2 rounded-full ${variant === 'emerald' ? 'bg-emerald-500' : 'bg-green-500'}`}></span>
                     <p className="text-xs text-neutral-500 capitalize">
                       {user.role?.toLowerCase()} &bull; Online
                     </p>
