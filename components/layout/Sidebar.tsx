@@ -90,7 +90,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   // Helper to render a navigation list
   const renderNavList = (items: NavigationItem[]) => (
-    <ul className="space-y-1.5">
+    <ul className="space-y-1">
       {items.map((item) => {
         const active = isActive(item.href);
         return (
@@ -99,21 +99,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
               href={item.href}
               onClick={onClose}
               className={`
-                flex items-center gap-3 px-4 py-3 rounded-xl font-medium
-                transition-all duration-200 group relative overflow-hidden
+                flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium
+                min-h-[44px] transition-all duration-200 group
                 ${active ? styles.active : styles.inactive}
               `}
             >
               <span
-                className={`w-5 h-5 transition-colors ${active ? styles.activeIcon : styles.inactiveIcon
+                className={`w-5 h-5 flex-shrink-0 transition-colors ${active ? styles.activeIcon : styles.inactiveIcon
                   }`}
               >
                 {item.icon}
               </span>
-              <span>{item.label}</span>
-              {active && variant !== 'neutral' && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full bg-white/20" />
-              )}
+              <span className="truncate">{item.label}</span>
             </Link>
           </li>
         );
@@ -135,13 +132,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-full w-72 bg-white border-r ${styles.border}
+          fixed top-0 left-0 z-50 h-full w-[280px] bg-white border-r ${styles.border}
           transition-transform duration-300 ease-in-out shadow-xl md:shadow-none
           md:sticky md:top-0 md:h-screen md:translate-x-0 overflow-hidden flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        <div className="flex flex-col h-full bg-white/50 backdrop-blur-xl">
+        <div className="flex flex-col h-full">
           {/* Header sidebar (mobile only - close button) */}
           <div className={`flex items-center justify-end p-4 md:hidden ${styles.border}`}>
             <button
@@ -157,11 +154,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
           {/* User Profile Summary (Desktop & Mobile) */}
           {user && (
-            <div className="px-6 pb-6">
+            <div className="p-4 md:pt-6">
               <div
-                className={`flex items-center gap-3 p-3 rounded-2xl border ${styles.border} bg-white/50`}
+                className={`flex items-center gap-3 p-3 rounded-xl border ${styles.border} bg-neutral-50/50`}
               >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${variant === 'sage' ? 'bg-sage-100 text-sage-700' :
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${variant === 'sage' ? 'bg-sage-100 text-sage-700' :
                   variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'
                   }`}>
                   {user.nama?.charAt(0).toUpperCase()}
@@ -182,13 +179,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
 
           {/* Navigation items */}
-          <nav className="flex-1 overflow-y-auto px-6 pb-6 scrollbar-hide">
+          <nav className="flex-1 overflow-y-auto px-4 pb-4">
             {navigationGroups ? (
-              <div className="space-y-8">
+              <div className="space-y-6">
                 {navigationGroups.map((group, idx) => (
                   <div key={idx}>
                     {group.title && (
-                      <h3 className="text-xs font-bold text-neutral-400 uppercase tracking-wider mb-4 px-4">
+                      <h3 className="text-[11px] font-semibold text-neutral-400 uppercase tracking-wider mb-2 px-3">
                         {group.title}
                       </h3>
                     )}
@@ -202,18 +199,18 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </nav>
 
           {/* Footer */}
-          <div className={`p-6 border-t ${styles.border}`}>
+          <div className={`p-4 border-t ${styles.border} mt-auto`}>
             <button
-              onClick={() => window.location.href = '/login'} // Simple logout for prototype
-              className="flex items-center gap-3 w-full px-4 py-3 text-neutral-600 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors font-medium text-sm group"
+              onClick={() => window.location.href = '/login'}
+              className="flex items-center gap-3 w-full px-3 py-2.5 text-neutral-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors font-medium text-sm min-h-[44px]"
             >
-              <svg className="w-5 h-5 group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
               <span>Keluar</span>
             </button>
-            <p className="text-xs text-neutral-400 text-center mt-6">
-              v1.0.0 &copy; 2026
+            <p className="text-[10px] text-neutral-400 text-center mt-4">
+              v1.0.0
             </p>
           </div>
         </div>
