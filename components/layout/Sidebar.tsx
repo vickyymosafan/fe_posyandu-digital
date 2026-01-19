@@ -142,23 +142,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         `}
       >
         <div className="flex flex-col h-full bg-white/50 backdrop-blur-xl">
-          {/* Header sidebar (mobile only - or generic logo area) */}
-          <div className={`flex items-center justify-between p-6 md:p-8 ${styles.border} md:border-none`}>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl overflow-hidden shadow-sm">
-                <img
-                  src="/icons/icon-192x192.png"
-                  alt="Posyandu Logo"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h2 className="font-bold text-neutral-900 text-lg leading-tight">Posyandu<br />Lansia</h2>
-              </div>
-            </div>
+          {/* Header sidebar (mobile only - close button) */}
+          <div className={`flex items-center justify-end p-4 md:hidden ${styles.border}`}>
             <button
               onClick={onClose}
-              className="p-2 text-neutral-500 hover:bg-neutral-100 rounded-lg md:hidden"
+              className="p-2 text-neutral-500 hover:bg-neutral-100 rounded-lg"
+              aria-label="Tutup menu"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -173,7 +162,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={`flex items-center gap-3 p-3 rounded-2xl border ${styles.border} bg-white/50`}
               >
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${variant === 'sage' ? 'bg-sage-100 text-sage-700' :
-                    variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'
+                  variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'
                   }`}>
                   {user.nama?.charAt(0).toUpperCase()}
                 </div>
