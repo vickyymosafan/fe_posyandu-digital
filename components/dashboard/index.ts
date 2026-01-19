@@ -14,3 +14,10 @@ export { QuickNavCard } from './QuickNavCard';
 export type { QuickNavCardProps } from './QuickNavCard';
 
 export { DashboardSkeleton } from './DashboardSkeleton';
+
+export { HeroCard } from './HeroCard';
+export type { HeroCardProps } from './HeroCard';
+
+export { HelperCard } from './HelperCard';
+export type { HelperCardProps } from './HelperCard';
+

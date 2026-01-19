@@ -23,7 +23,7 @@ export interface StatCardProps {
   /**
    * Warna accent (optional)
    */
-  color?: 'blue' | 'green' | 'purple' | 'orange';
+  color?: 'blue' | 'green' | 'purple' | 'orange' | 'sage' | 'emerald';
 
   /**
    * Deskripsi tambahan (optional)
@@ -66,9 +66,11 @@ export function StatCard({
   // Color mapping untuk accent
   const colorClasses = {
     blue: 'text-blue-600 bg-blue-50',
-    green: 'text-green-600 bg-green-50',
+    green: 'text-emerald-600 bg-emerald-50', // Updated to Emerald for Admin
     purple: 'text-purple-600 bg-purple-50',
-    orange: 'text-orange-600 bg-orange-50',
+    orange: 'text-coral-500 bg-coral-50', // Updated to Coral
+    sage: 'text-sage-600 bg-sage-50', // New for Petugas
+    emerald: 'text-emerald-600 bg-emerald-50', // New for Admin
   };
 
   return (

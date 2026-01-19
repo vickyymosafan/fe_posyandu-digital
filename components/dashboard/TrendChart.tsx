@@ -2,8 +2,8 @@
 
 import { Card } from '@/components/ui';
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -34,7 +34,7 @@ export interface TrendChartProps {
   title: string;
 
   /**
-   * Warna line (optional)
+   * Warna chart (stroke & gradient)
    */
   lineColor?: string;
 
@@ -61,9 +61,9 @@ function CustomTooltip({ active, payload }: TooltipProps) {
     const data = payload[0].payload;
     return (
       <div className="bg-white p-4 rounded-xl shadow-lg border border-neutral-200">
-        <p className="text-base text-neutral-600 mb-1">{data.tanggal}</p>
-        <p className="text-xl font-bold text-neutral-900">
-          {data.jumlah} pemeriksaan
+        <p className="text-sm font-medium text-neutral-500 mb-1">{data.tanggal}</p>
+        <p className="text-2xl font-bold text-neutral-900">
+          {data.jumlah} <span className="text-sm font-normal text-neutral-500">pemeriksaan</span>
         </p>
       </div>
     );
@@ -74,31 +74,19 @@ function CustomTooltip({ active, payload }: TooltipProps) {
 /**
  * TrendChart Component
  * 
- * Komponen untuk menampilkan grafik tren menggunakan Recharts.
+ * Komponen untuk menampilkan grafik tren menggunakan Area Chart dengan gradient.
  * 
- * Mengikuti prinsip:
- * - SRP: Hanya bertanggung jawab untuk menampilkan chart
- * - OCP: Mudah diperluas dengan props (color, label, dll)
- * - DRY: Reusable untuk berbagai jenis trend data
- * - Composition: Menggunakan Card component
+ * Principles:
+ * - Visual: Smooth area chart for better data visualization
+ * - Responsive: Adapts to container size
+ * - Accessible: Clear tooltip and labels
  * 
  * @param {TrendChartProps} props - Props component
- * @returns {JSX.Element} TrendChart component
- * 
- * @example
- * ```tsx
- * <TrendChart
- *   data={trendData}
- *   title="Tren Pemeriksaan 7 Hari Terakhir"
- *   lineColor="#0ea5e9"
- *   yAxisLabel="Jumlah"
- * />
- * ```
  */
 export function TrendChart({
   data,
   title,
-  lineColor = '#0ea5e9',
+  lineColor = '#10b981', // Default to Emerald if not specified
   yAxisLabel = 'Jumlah',
 }: TrendChartProps) {
   // Jika tidak ada data, tampilkan empty state
@@ -115,41 +103,53 @@ export function TrendChart({
 
   return (
     <Card>
-      <h3 className="text-xl font-bold text-neutral-900 mb-6">{title}</h3>
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-neutral-900">{title}</h3>
+        {/* Placeholder for Filters as per design requirements */}
+        <div className="flex gap-2 text-sm bg-neutral-100 p-1 rounded-lg">
+          <button className="px-3 py-1 bg-white shadow-sm rounded-md font-medium text-neutral-900">7 Hari</button>
+          <button className="px-3 py-1 text-neutral-500 hover:text-neutral-900">Bulan Ini</button>
+        </div>
+      </div>
+
       <div className="h-80">
         <ResponsiveContainer width="100%" height="100%">
-          <LineChart
+          <AreaChart
             data={data}
-            margin={{ top: 10, right: 30, left: 10, bottom: 10 }}
+            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
+            <defs>
+              <linearGradient id="colorJumlah" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor={lineColor} stopOpacity={0.2} />
+                <stop offset="95%" stopColor={lineColor} stopOpacity={0} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
             <XAxis
               dataKey="tanggal"
-              stroke="#737373"
-              style={{ fontSize: '14px' }}
+              stroke="#a3a3a3"
+              style={{ fontSize: '12px' }}
+              tickLine={false}
+              axisLine={false}
               dy={10}
             />
             <YAxis
-              stroke="#737373"
-              style={{ fontSize: '14px' }}
+              stroke="#a3a3a3"
+              style={{ fontSize: '12px' }}
+              tickLine={false}
+              axisLine={false}
               dx={-10}
-              label={{
-                value: yAxisLabel,
-                angle: -90,
-                position: 'insideLeft',
-                style: { fontSize: '14px', fill: '#525252', fontWeight: 500 },
-              }}
             />
-            <Tooltip content={<CustomTooltip />} />
-            <Line
+            <Tooltip content={<CustomTooltip />} cursor={{ stroke: lineColor, strokeWidth: 1, strokeDasharray: '5 5' }} />
+            <Area
               type="monotone"
               dataKey="jumlah"
               stroke={lineColor}
               strokeWidth={3}
-              dot={{ fill: lineColor, r: 6 }}
-              activeDot={{ r: 8 }}
+              fillOpacity={1}
+              fill="url(#colorJumlah)"
             />
-          </LineChart>
+          </AreaChart>
         </ResponsiveContainer>
       </div>
     </Card>

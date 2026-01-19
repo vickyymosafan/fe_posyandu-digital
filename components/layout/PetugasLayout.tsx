@@ -90,6 +90,7 @@ export const PetugasLayout: React.FC<PetugasLayoutProps> = ({ children }) => {
           navigationItems={petugasNavigationItems}
           isOpen={isSidebarOpen}
           onClose={handleCloseSidebar}
+          variant="sage"
         />
 
         {/* Main content */}
