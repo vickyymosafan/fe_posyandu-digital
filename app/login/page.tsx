@@ -172,15 +172,7 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          {/* Footer Mobile/Desktop */}
-          <div className="mt-8 pt-8 border-t border-neutral-100 text-center">
-            <p className="text-sm text-neutral-500">
-              Butuh bantuan akses?{' '}
-              <a href="#" className="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline transition-all">
-                Hubungi Administrator
-              </a>
-            </p>
-          </div>
+
         </div>
       </div>
     </div>
