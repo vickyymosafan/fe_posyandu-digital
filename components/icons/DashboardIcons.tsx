@@ -1,9 +1,11 @@
 /**
  * Dashboard Icons
- * 
- * Simple SVG icons untuk dashboard.
- * Mengikuti prinsip DRY dan reusability.
+ *
+ * Simple SVG icons untuk dashboard dengan React.memo untuk optimasi.
+ * Mengikuti prinsip DRY, reusability, dan performance optimization.
  */
+
+import React, { memo } from 'react';
 
 export interface IconProps {
   className?: string;
@@ -13,7 +15,10 @@ export interface IconProps {
 /**
  * Icon User untuk Petugas
  */
-export function UsersIcon({ className = '', size = 24 }: IconProps) {
+export const UsersIcon = memo(function UsersIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -31,12 +36,15 @@ export function UsersIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
 
 /**
  * Icon untuk Lansia
  */
-export function UserGroupIcon({ className = '', size = 24 }: IconProps) {
+export const UserGroupIcon = memo(function UserGroupIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -54,12 +62,15 @@ export function UserGroupIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
 
 /**
  * Icon untuk Pemeriksaan
  */
-export function ClipboardCheckIcon({ className = '', size = 24 }: IconProps) {
+export const ClipboardCheckIcon = memo(function ClipboardCheckIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -77,35 +88,15 @@ export function ClipboardCheckIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
-
-/**
- * Icon untuk Audit Log
- */
-export function DocumentTextIcon({ className = '', size = 24 }: IconProps) {
-  return (
-    <svg
-      className={className}
-      width={size}
-      height={size}
-      fill="none"
-      stroke="currentColor"
-      viewBox="0 0 24 24"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-      />
-    </svg>
-  );
-}
+});
 
 /**
  * Icon untuk Daftar Lansia
  */
-export function ClipboardListIcon({ className = '', size = 24 }: IconProps) {
+export const ClipboardListIcon = memo(function ClipboardListIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -123,12 +114,15 @@ export function ClipboardListIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
 
 /**
  * Icon untuk Settings/Petugas
  */
-export function CogIcon({ className = '', size = 24 }: IconProps) {
+export const CogIcon = memo(function CogIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -152,12 +146,15 @@ export function CogIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
 
 /**
  * Icon untuk Tambah User/Pendaftaran
  */
-export function UserPlusIcon({ className = '', size = 24 }: IconProps) {
+export const UserPlusIcon = memo(function UserPlusIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -175,12 +172,15 @@ export function UserPlusIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
 
 /**
  * Icon untuk Pencarian
  */
-export function SearchIcon({ className = '', size = 24 }: IconProps) {
+export const SearchIcon = memo(function SearchIcon({
+  className = '',
+  size = 24,
+}: IconProps) {
   return (
     <svg
       className={className}
@@ -198,4 +198,4 @@ export function SearchIcon({ className = '', size = 24 }: IconProps) {
       />
     </svg>
   );
-}
+});
