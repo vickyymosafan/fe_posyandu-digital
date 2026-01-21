@@ -37,12 +37,6 @@ class AuthAPI {
    * POST /auth/login
    */
   async login(email: string, password: string): Promise<APIResponse<LoginResponse>> {
-    console.log('[AuthAPI] Login request:', {
-      email,
-      endpoint: '/auth/login',
-      timestamp: new Date().toISOString(),
-    });
-
     try {
       const response = await apiClient.post<LoginResponse>(
         '/auth/login',
@@ -53,29 +47,13 @@ class AuthAPI {
         { skipAuth: true } // Skip auth untuk login
       );
 
-      console.log('[AuthAPI] Login response:', {
-        hasData: !!response.data,
-        hasToken: !!response.data?.token,
-        hasUser: !!response.data?.user,
-        hasError: !!response.error,
-        response: response,
-        timestamp: new Date().toISOString(),
-      });
-
       // Simpan token jika login berhasil
       if (response.data?.token) {
         setToken(response.data.token);
-        console.log('[AuthAPI] Token saved to localStorage');
       }
 
       return response;
     } catch (error) {
-      console.error('[AuthAPI] Login failed (caught error):', {
-        error: error instanceof Error ? error.message : 'Unknown error',
-        errorType: error instanceof Error ? error.constructor.name : 'Unknown',
-        timestamp: new Date().toISOString(),
-      });
-
       // Return APIResponse format dengan error
       // Jangan throw, biar AuthContext bisa handle dengan konsisten
       return {

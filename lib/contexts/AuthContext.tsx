@@ -88,8 +88,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         email: decoded.email,
         role: decoded.role,
       };
-    } catch (error) {
-      console.error('Error decoding token:', error);
+    } catch {
       return null;
     }
   }, []);
@@ -137,8 +136,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
             clearToken();
           }
         }
-      } catch (error) {
-        console.error('Error initializing auth:', error);
+      } catch {
         clearToken();
       } finally {
         setIsLoading(false);
@@ -157,39 +155,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async (email: string, password: string): Promise<User> => {
       // FAIL FAST: Validate input
       if (!email || email.trim().length === 0) {
-        console.error('❌ [AuthContext] Login failed - empty email');
         throw new AuthenticationError('Email tidak boleh kosong');
       }
 
       if (!password || password.length === 0) {
-        console.error('❌ [AuthContext] Login failed - empty password');
         throw new AuthenticationError('Password tidak boleh kosong');
       }
-
-      console.log('[AuthContext] Login attempt:', {
-        email,
-        timestamp: new Date().toISOString(),
-      });
 
       try {
         setIsLoading(true);
 
-        console.log('[AuthContext] Calling authAPI.login...');
         const response = await authAPI.login(email, password);
 
-        console.log('[AuthContext] Login response received:', {
-          hasData: !!response.data,
-          hasError: !!response.error,
-          response: response,
-          responseKeys: Object.keys(response),
-          timestamp: new Date().toISOString(),
-        });
-
         if (!response.data) {
-          console.error('[AuthContext] Login failed - no data:', {
-            error: response.error,
-            timestamp: new Date().toISOString(),
-          });
           throw new AuthenticationError(response.error || 'Login gagal');
         }
 
@@ -206,32 +184,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
           };
         }
 
-        console.log('[AuthContext] Login successful:', {
-          userId: completeUser.id,
-          userName: completeUser.nama,
-          userEmail: completeUser.email,
-          userRole: completeUser.role,
-          hasToken: !!token,
-          timestamp: new Date().toISOString(),
-        });
-
         // Save token
         saveToken(token);
-        console.log('[AuthContext] Token saved to localStorage and cookie');
 
         // Set user state
         setUser(completeUser);
-        console.log('[AuthContext] User state updated');
 
         // Return user data untuk immediate use
         return completeUser;
       } catch (error) {
-        console.error('[AuthContext] Login error:', {
-          error: error instanceof Error ? error.message : 'Unknown error',
-          errorType: error instanceof Error ? error.constructor.name : 'Unknown',
-          timestamp: new Date().toISOString(),
-        });
-
         clearToken();
         setUser(null);
         throw error;
@@ -250,8 +211,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setIsLoading(true);
 
       // Call logout API (best effort, tidak throw error jika gagal)
-      await authAPI.logout().catch((error) => {
-        console.error('Logout API error:', error);
+      await authAPI.logout().catch(() => {
+        // Silent fail for security
       });
     } finally {
       // Clear token dan user state
@@ -269,12 +230,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async (nama: string) => {
       // FAIL FAST: Validate input
       if (!nama || nama.trim().length === 0) {
-        console.error('❌ [AuthContext] Update nama failed - empty nama');
         throw new Error('Nama tidak boleh kosong');
       }
 
       if (!user) {
-        console.error('❌ [AuthContext] Update nama failed - no user');
         throw new AuthenticationError('User tidak ditemukan');
       }
 
@@ -305,17 +264,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const updatePassword = useCallback(async (oldPassword: string, newPassword: string) => {
     // FAIL FAST: Validate input
     if (!oldPassword || oldPassword.length === 0) {
-      console.error('❌ [AuthContext] Update password failed - empty old password');
       throw new Error('Password lama tidak boleh kosong');
     }
 
     if (!newPassword || newPassword.length === 0) {
-      console.error('❌ [AuthContext] Update password failed - empty new password');
       throw new Error('Password baru tidak boleh kosong');
     }
 
     if (newPassword.length < 6) {
-      console.error('❌ [AuthContext] Update password failed - password too short');
       throw new Error('Password baru minimal 6 karakter');
     }
 
