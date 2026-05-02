@@ -60,10 +60,10 @@ function CustomTooltip({ active, payload }: TooltipProps) {
   if (active && payload && payload.length > 0) {
     const data = payload[0].payload;
     return (
-      <div className="bg-white p-4 rounded-xl shadow-lg border border-neutral-200">
-        <p className="text-sm font-medium text-neutral-500 mb-1">{data.tanggal}</p>
-        <p className="text-2xl font-bold text-neutral-900">
-          {data.jumlah} <span className="text-sm font-normal text-neutral-500">pemeriksaan</span>
+      <div className="bg-white/80 backdrop-blur-md p-4 rounded-xl shadow-xl border border-white/50">
+        <p className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-1">{data.tanggal}</p>
+        <p className="text-3xl font-bold text-emerald-700">
+          {data.jumlah} <span className="text-sm font-medium text-neutral-500 lowercase">pemeriksaan</span>
         </p>
       </div>
     );

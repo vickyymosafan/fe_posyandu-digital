@@ -74,7 +74,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50/50 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-white via-neutral-50 to-neutral-100/50">
       {/* Header */}
       <Header onMenuClick={handleToggleSidebar} showMenuButton />
 

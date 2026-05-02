@@ -32,8 +32,8 @@ export const Table = React.forwardRef<HTMLTableElement, TableProps>(
     // Variant classes
     const variantClasses = {
       default: '',
-      striped: '[&_tbody_tr:nth-child(odd)]:bg-neutral-50',
-      bordered: 'border border-neutral-200',
+      striped: '[&_tbody_tr:nth-child(even)]:bg-neutral-50/30',
+      bordered: 'border border-neutral-200/50',
     };
 
     // Combine classes
@@ -72,7 +72,7 @@ export const TableHead = React.forwardRef<HTMLTableSectionElement, TableHeadProp
     return (
       <thead
         ref={ref}
-        className={`bg-neutral-100 border-b border-neutral-200 ${className}`.trim()}
+        className={`bg-neutral-50/80 backdrop-blur-sm border-b border-neutral-200/50 ${className}`.trim()}
         {...props}
       >
         {children}
@@ -152,7 +152,7 @@ export const TableHeader = React.forwardRef<HTMLTableCellElement, TableHeaderPro
     },
     ref
   ) => {
-    const baseClasses = 'px-6 py-4 text-sm font-bold text-neutral-900 uppercase tracking-wider bg-neutral-100';
+    const baseClasses = 'px-6 py-4 text-xs font-semibold text-neutral-500 uppercase tracking-wider';
     const sortableClasses = sortable ? 'cursor-pointer select-none hover:bg-neutral-200' : '';
 
     return (
@@ -189,7 +189,7 @@ export const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     return (
       <td
         ref={ref}
-        className={`px-6 py-5 text-base text-neutral-800 ${className}`.trim()}
+        className={`px-6 py-5 text-sm font-medium text-neutral-700 ${className}`.trim()}
         {...props}
       >
         {children}

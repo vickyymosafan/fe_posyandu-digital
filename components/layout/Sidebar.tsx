@@ -60,20 +60,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const getStyles = () => {
     if (variant === 'emerald') {
       return {
-        active: 'bg-emerald-600 text-white shadow-lg shadow-emerald-100',
-        inactive: 'text-neutral-600 hover:bg-emerald-50 hover:text-emerald-700',
+        active: 'bg-gradient-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-500/30 font-semibold',
+        inactive: 'text-neutral-600 hover:bg-emerald-50/50 hover:text-emerald-700 font-medium',
         activeIcon: 'text-white',
-        inactiveIcon: 'text-emerald-500',
-        border: 'border-emerald-100',
+        inactiveIcon: 'text-emerald-500/70 group-hover:text-emerald-600 transition-colors',
+        border: 'border-emerald-100/50',
       };
     }
     // Default (neutral)
     return {
-      active: 'bg-neutral-900 text-white',
-      inactive: 'text-neutral-700 hover:bg-neutral-100',
+      active: 'bg-gradient-to-r from-neutral-900 to-neutral-800 text-white shadow-lg shadow-neutral-900/20 font-semibold',
+      inactive: 'text-neutral-600 hover:bg-neutral-100/50 hover:text-neutral-900 font-medium',
       activeIcon: 'text-white',
-      inactiveIcon: 'text-neutral-500',
-      border: 'border-neutral-200',
+      inactiveIcon: 'text-neutral-400 group-hover:text-neutral-600 transition-colors',
+      border: 'border-neutral-200/50',
     };
   };
 
@@ -123,8 +123,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 z-50 h-full w-[280px] bg-white border-r ${styles.border}
-          transition-transform duration-300 ease-in-out shadow-xl md:shadow-none
+          fixed top-0 left-0 z-50 h-full w-[280px] bg-white/80 backdrop-blur-xl border-r ${styles.border}
+          transition-transform duration-300 ease-in-out shadow-[4px_0_24px_rgba(0,0,0,0.02)] md:shadow-none
           md:sticky md:top-0 md:h-screen md:translate-x-0 overflow-hidden flex flex-col
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
@@ -143,29 +143,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          {/* User Profile Summary (Desktop & Mobile) */}
-          {user && (
-            <div className="p-4 md:pt-6">
-              <div
-                className={`flex items-center gap-3 p-3 rounded-xl border ${styles.border} bg-neutral-50/50`}
-              >
-                <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 ${variant === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-neutral-100 text-neutral-700'}`}>
-                  {user.nama?.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-semibold text-neutral-900 truncate text-sm">
-                    {user.nama}
-                  </p>
-                  <div className="flex items-center gap-1.5">
-                    <span className={`w-2 h-2 rounded-full ${variant === 'emerald' ? 'bg-emerald-500' : 'bg-green-500'}`}></span>
-                    <p className="text-xs text-neutral-500 capitalize">
-                      {user.role?.toLowerCase()} &bull; Online
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+
 
           {/* Navigation items */}
           <nav className="flex-1 overflow-y-auto px-4 pb-4">

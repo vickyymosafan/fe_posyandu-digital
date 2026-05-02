@@ -74,23 +74,27 @@ export function StatCard({
   };
 
   return (
-    <Card className="hover:shadow-md transition-shadow duration-300">
-      <div className="flex items-start justify-between">
+    <Card className="relative overflow-hidden bg-white/60 backdrop-blur-xl border border-white/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+      <div className="flex items-start justify-between relative z-10">
         <div className="flex-1">
-          <p className="text-base text-neutral-600 mb-1">{label}</p>
-          <p className="text-3xl font-bold text-neutral-900">{value}</p>
+          <p className="text-sm font-semibold text-neutral-500 uppercase tracking-wider mb-2">{label}</p>
+          <p className="text-4xl font-extrabold text-neutral-900 group-hover:text-emerald-700 transition-colors">{value}</p>
           {description && (
-            <p className="text-sm text-neutral-500 mt-2">{description}</p>
+            <p className="text-sm text-neutral-500 mt-3 flex items-center gap-1.5 opacity-80">
+              {description}
+            </p>
           )}
         </div>
         {icon && (
           <div
-            className={`p-3 rounded-xl ${colorClasses[color]} transition-all duration-300`}
+            className={`p-4 rounded-2xl ${colorClasses[color]} bg-opacity-50 backdrop-blur-sm group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-inner`}
           >
             {icon}
           </div>
         )}
       </div>
+      {/* Decorative background blob */}
+      <div className="absolute -right-8 -top-8 w-32 h-32 bg-gradient-to-br from-white/40 to-transparent rounded-full blur-2xl pointer-events-none group-hover:bg-emerald-500/10 transition-colors duration-500" />
     </Card>
   );
 }
