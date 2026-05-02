@@ -56,6 +56,7 @@ export interface MinimalLansia {
   kode: string;
   nama: string;
   tanggalLahir: Date;
+  gender: Gender;
 }
 
 // ============================================
