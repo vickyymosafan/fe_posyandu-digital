@@ -18,6 +18,8 @@ import {
   transformToGulaDarahChartData,
   hasChartData,
 } from '@/lib/utils/chartData';
+import { format, parseISO } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 /**
  * Component untuk menampilkan grafik tren kesehatan
@@ -80,6 +82,7 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                 <XAxis
                   dataKey="tanggal"
                   tick={{ fontSize: 14 }}
+                  tickFormatter={(val) => format(parseISO(val), 'dd MMM', { locale: id })}
                   stroke="#737373"
                   dy={10}
                 />
@@ -95,6 +98,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
                     fontSize: '14px',
+                  }}
+                  labelFormatter={(label) => {
+                    try { return format(parseISO(label as string), 'dd MMM yyyy', { locale: id }); } catch (e) { return label; }
                   }}
                   formatter={(value: number) => [value.toFixed(1), 'BMI']}
                 />
@@ -125,6 +131,7 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                 <XAxis
                   dataKey="tanggal"
                   tick={{ fontSize: 14 }}
+                  tickFormatter={(val) => format(parseISO(val), 'dd MMM', { locale: id })}
                   stroke="#737373"
                   dy={10}
                 />
@@ -140,6 +147,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
                     fontSize: '14px',
+                  }}
+                  labelFormatter={(label) => {
+                    try { return format(parseISO(label as string), 'dd MMM yyyy', { locale: id }); } catch (e) { return label; }
                   }}
                 />
                 <Legend wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }} />
@@ -180,6 +190,7 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                 <XAxis
                   dataKey="tanggal"
                   tick={{ fontSize: 14 }}
+                  tickFormatter={(val) => format(parseISO(val), 'dd MMM', { locale: id })}
                   stroke="#737373"
                   dy={10}
                 />
@@ -195,6 +206,9 @@ export function HealthTrendCharts({ pemeriksaan, months = 6 }: HealthTrendCharts
                     border: '1px solid #e5e5e5',
                     borderRadius: '8px',
                     fontSize: '14px',
+                  }}
+                  labelFormatter={(label) => {
+                    try { return format(parseISO(label as string), 'dd MMM yyyy', { locale: id }); } catch (e) { return label; }
                   }}
                   formatter={(value: unknown, name: string) => {
                     if (typeof value !== 'number') return null;

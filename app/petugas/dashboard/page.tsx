@@ -14,7 +14,7 @@
 
 import { PetugasLayout } from '@/components/layout';
 import { useDashboardStatsLegacy as useDashboardStats, useAuth } from '@/lib/hooks';
-import { StatCard, HeroCard, HelperCard, DashboardSkeleton } from '@/components/dashboard';
+import { StatCard, HeroCard, HelperCard, DashboardSkeleton, TrendChart } from '@/components/dashboard';
 import {
   UserGroupIcon,
   ClipboardCheckIcon,
@@ -26,7 +26,7 @@ import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { ROUTES } from '@/lib/constants/navigation';
 
 function PetugasDashboardContent() {
-  const { stats, isLoading, error } = useDashboardStats();
+  const { stats, trendData, isLoading, error } = useDashboardStats();
   const { user } = useAuth();
 
   // Loading state
@@ -152,6 +152,16 @@ function PetugasDashboardContent() {
               />
             </div>
           )}
+        </section>
+
+        {/* Trend Chart */}
+        <section>
+          <TrendChart
+            data={trendData}
+            title="Tren Pemeriksaan 7 Hari Terakhir"
+            lineColor="#059669"
+            yAxisLabel="Jumlah Pemeriksaan"
+          />
         </section>
       </div>
     </div>

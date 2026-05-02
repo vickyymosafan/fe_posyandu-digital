@@ -29,7 +29,7 @@ export function filterLastMonths(
   months: number = 6
 ): Pemeriksaan[] {
   const cutoffDate = subMonths(new Date(), months);
-  
+
   return pemeriksaan
     .filter((p) => {
       const tanggal = new Date(p.tanggal);
@@ -48,7 +48,7 @@ export function transformToBMIChartData(
   pemeriksaan: Pemeriksaan[]
 ): ChartDataPoint[] {
   return pemeriksaan.map((p) => ({
-    tanggal: format(new Date(p.tanggal), 'dd MMM', { locale: id }),
+    tanggal: p.tanggal instanceof Date ? p.tanggal.toISOString() : new Date(p.tanggal).toISOString(),
     nilai: p.bmi || null,
     label: p.kategoriBmi,
   }));
@@ -69,7 +69,7 @@ export function transformToTekananDarahChartData(
   label?: string;
 }> {
   return pemeriksaan.map((p) => ({
-    tanggal: format(new Date(p.tanggal), 'dd MMM', { locale: id }),
+    tanggal: p.tanggal instanceof Date ? p.tanggal.toISOString() : new Date(p.tanggal).toISOString(),
     sistolik: p.sistolik || null,
     diastolik: p.diastolik || null,
     label: p.tekananDarah,
@@ -94,7 +94,7 @@ export function transformToGulaDarahChartData(
   duaJpp: number | undefined;
 }> {
   return pemeriksaan.map((p) => ({
-    tanggal: format(new Date(p.tanggal), 'dd MMM', { locale: id }),
+    tanggal: p.tanggal instanceof Date ? p.tanggal.toISOString() : new Date(p.tanggal).toISOString(),
     gdp: p.gulaPuasa ?? undefined,
     gds: p.gulaSewaktu ?? undefined,
     duaJpp: p.gula2Jpp ?? undefined,
