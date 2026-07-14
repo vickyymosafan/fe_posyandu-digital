@@ -45,19 +45,36 @@ export default function LoginPage() {
 
         {/* Konten Branding overlay */}
         <div className="relative z-10 w-full flex flex-col justify-between p-12 text-white">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 overflow-hidden">
-              {/* Logo Image */}
+          <div className="flex items-center justify-between w-full">
+            <div className="flex items-center gap-4">
               <Image
                 src="/icons/icon-192x192.png"
                 alt="Logo"
-                width={32}
+                width={72}
+                height={72}
+                className="object-contain"
+                unoptimized
+              />
+              <span className="font-bold text-2xl tracking-wide">Posyandu Lansia</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Image
+                src="/unmuh.png"
+                alt="Universitas Muhammadiyah"
+                width={80}
+                height={32}
+                className="object-contain"
+                unoptimized
+              />
+              <Image
+                src="/dikti-saintek.png"
+                alt="Dikti Saintek"
+                width={80}
                 height={32}
                 className="object-contain"
                 unoptimized
               />
             </div>
-            <span className="font-bold text-lg tracking-wide">Posyandu Lansia</span>
           </div>
 
           <div className="mb-8">
