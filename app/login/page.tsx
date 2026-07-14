@@ -88,7 +88,7 @@ export default function LoginPage() {
           </div>
 
           <div className="text-sm text-emerald-200/60 font-medium">
-            © 2026 Posyandu Digital Indonesia
+            © 2025 Posyandu Digital Indonesia
           </div>
         </div>
       </div>
