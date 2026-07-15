@@ -31,10 +31,10 @@ export default function LoginPage() {
         {/* Gambar Latar */}
         <div className="absolute inset-0">
           <Image
-            src="/images/side-kiri-login.webp"
+            src="/images/posyandu1.jpeg"
             alt="Lansia Bahagia di Posyandu"
             fill
-            className="object-cover opacity-90"
+            className="object-cover object-[20%_50%] opacity-90"
             priority
             quality={90}
             unoptimized
